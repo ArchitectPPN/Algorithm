@@ -59,9 +59,22 @@ class Sort
         return $this->outOfOrder;
     }
 
+    /**
+     * 冒泡排序
+     *
+     * @return array
+     */
     public function popSort(): array
     {
+        for ($startPos = 0; $startPos < $this->outOfOrderLength; $startPos++) {
+            for ($second = $startPos + 1; $second < $this->outOfOrderLength; $second++) {
+                if ($this->outOfOrder[$startPos] < $this->outOfOrder[$second]) {
+                    $this->swapPos($startPos, $second);
+                }
+            }
+        }
 
+        return $this->outOfOrder;
     }
 
     /**
@@ -78,8 +91,13 @@ class Sort
     }
 }
 
-$outOfOrder = (new generateOutOfOrderArray(5))->get();
+$outOfOrder = (new generateOutOfOrderArray(2))->get();
+print_r($outOfOrder);
 
+// 选择排序
 $sortOrder = (new Sort($outOfOrder))->selectSort();
+// 冒泡排序
+$sortOrder = (new Sort($outOfOrder))->popSort();
+
 print_r($sortOrder);
 
