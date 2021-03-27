@@ -78,6 +78,24 @@ class Sort
     }
 
     /**
+     * 插入排序
+     *
+     * @return array
+     */
+    public function insertSort(): array
+    {
+        for ($firstStart = 1; $firstStart < $this->outOfOrderLength; $firstStart++) {
+            for ($secondStart = $firstStart; $secondStart > 0; $secondStart--) {
+                if ($this->outOfOrder[$secondStart] < $this->outOfOrder[$secondStart - 1]) {
+                    $this->swapPos($secondStart, $secondStart - 1);
+                }
+            }
+        }
+
+        return $this->outOfOrder;
+    }
+
+    /**
      * 交换位置
      *
      * @param int $minPos
@@ -91,13 +109,16 @@ class Sort
     }
 }
 
-$outOfOrder = (new generateOutOfOrderArray(2))->get();
+$outOfOrder = (new generateOutOfOrderArray(5))->get();
 print_r($outOfOrder);
 
 // 选择排序
 $sortOrder = (new Sort($outOfOrder))->selectSort();
+print_r($sortOrder);
 // 冒泡排序
 $sortOrder = (new Sort($outOfOrder))->popSort();
-
+print_r($sortOrder);
+// 插入排序
+$sortOrder = (new Sort($outOfOrder))->insertSort();
 print_r($sortOrder);
 
