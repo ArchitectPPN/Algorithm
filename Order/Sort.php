@@ -95,6 +95,33 @@ class Sort
         return $this->outOfOrder;
     }
 
+    public function quickSort(): array
+    {
+
+    }
+
+    /**
+     * 希尔排序
+     */
+    public function shellSort(): array
+    {
+        $loopTimes = 0;
+        for ($gap = 4; $gap >= 1; $gap = $gap / 2) {
+            for ($firstStart = $gap; $firstStart < $this->outOfOrderLength; $firstStart++) {
+                for ($secondStart = $firstStart; $secondStart >= $gap; $secondStart -= $gap) {
+                    if ($this->outOfOrder[$secondStart] < $this->outOfOrder[$secondStart - $gap]) {
+                        $this->swapPos($secondStart, $secondStart - $gap);
+                        $loopTimes++;
+                    }
+                }
+            }
+        }
+
+        echo $loopTimes;
+
+        return $this->outOfOrder;
+    }
+
     /**
      * 交换位置
      *
@@ -109,16 +136,33 @@ class Sort
     }
 }
 
-$outOfOrder = (new generateOutOfOrderArray(5))->get();
+$outOfOrder = (new generateOutOfOrderArray(100))->get();
 print_r($outOfOrder);
+//$outOfOrder = [1,15,2,6,5,4,8,7,9,10,3,14,12,11,13];
 
 // 选择排序
-$sortOrder = (new Sort($outOfOrder))->selectSort();
+//$sortOrder = (new Sort($outOfOrder))->selectSort();
+//print_r($sortOrder);
+//// 冒泡排序
+//$sortOrder = (new Sort($outOfOrder))->popSort();
+//print_r($sortOrder);
+//// 插入排序
+//$sortOrder = (new Sort($outOfOrder))->insertSort();
+//print_r($sortOrder);
+// 希尔排序
+$sortOrder = (new Sort($outOfOrder))->shellSort();
 print_r($sortOrder);
-// 冒泡排序
-$sortOrder = (new Sort($outOfOrder))->popSort();
-print_r($sortOrder);
-// 插入排序
-$sortOrder = (new Sort($outOfOrder))->insertSort();
-print_r($sortOrder);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
