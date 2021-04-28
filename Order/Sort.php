@@ -71,6 +71,12 @@ class Sort
         return $this->outOfOrder;
     }
 
+    /**
+     * 快速排序
+     *
+     * @return array
+     * 
+     */
     public function quickSort(): array
     {
 
