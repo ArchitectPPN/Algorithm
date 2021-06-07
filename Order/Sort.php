@@ -15,6 +15,13 @@ class Sort
 
     /**
      * 选择排序
+     * 思路:
+     * 1. 首先在未排序序列中找到最小（大）元素，存放到排序序列的起始位置。
+     * 2. 再从剩余未排序元素中继续寻找最小（大）元素，然后放到已排序序列的末尾。
+     * 3. 重复第二步，直到所有元素均排序完毕。
+     *
+     * 优化思路:
+     * 双向循环, 同时查找最大和最小值;
      *
      * @return array
      */
@@ -37,6 +44,10 @@ class Sort
 
     /**
      * 冒泡排序
+     * 1. 比较相邻两个数字的大小, 如果第一个比第二个大, 交换位置
+     * 2. 对每一组相邻数据做同样的工作,从开始到结尾的最后一对. 到此最后一位将是最大或最小的值
+     * 3. 针对所有重复的元素重复上面的步骤, 除了最大或最小的那个值
+     * 4. 持续每次对越来越少的元素重复上面的步骤，直到没有任何一对数字需要比较
      *
      * @return array
      */
@@ -55,6 +66,8 @@ class Sort
 
     /**
      * 插入排序
+     * 1. 把一组数据的第一个元素看做一个有序数据, 然后将第二个到最后一个视为待排序数据
+     * 2. 从头开始扫描未排序序列, 将扫描的每个元素插入有序序列的适当位置, 如果待插入的元素与有序序列中的某个元素相等,则将待插入元素插入到相等元素的后面.
      *
      * @return array
      */
@@ -73,17 +86,53 @@ class Sort
 
     /**
      * 快速排序
+     * 1. 从数列中挑出一个元素, 称之为"基准(pivot)"
+     * 2. 重新排序数列, 所有元素比基准小的摆放在基准前面, 所有元素比基准大的摆在基准后面(相同的数可以放到任意一遍). 在这个分区退出之后, 该基准就处于数列的中间位置, 这个称为分区操作.
+     * 3. 递归的把小于基准值元素的子数列和大于基准元素的子数列排序
      *
      * @return array
      * 
      */
     public function quickSort(): array
     {
-
+        return $this->quickSortProcess($this->outOfOrder);
     }
 
     /**
-     * 希尔排序
+     * 快速排序过程
+     */
+    private function quickSortProcess(array $outOfOrder): array
+    {
+        if (count($outOfOrder) <= 1) {
+            return $outOfOrder;
+        }
+
+        // 把第一个元素作为基准
+        $pivotNum = $outOfOrder[0];
+        // 初始化左右分区
+        $rightArr = $leftArr = [];
+
+        for ($i = 1; $i < count($outOfOrder); $i++) {
+            if ($outOfOrder[$i] > $pivotNum) {
+                $rightArr[] = $outOfOrder[$i];
+            } else {
+                $leftArr[] = $outOfOrder[$i];
+            }
+        }
+
+        $leftArr = $this->quickSortProcess($leftArr);
+        $leftArr[] = $pivotNum;
+
+        $rightArr = $this->quickSortProcess($rightArr);
+
+        return array_merge($leftArr, $rightArr);
+    }
+
+    /**
+     * 希尔排序(改进的插入排序)
+     * 1. 先将整个待排序的记录序列分割成为若干子序列分别进行直接插入排序
+     * 2. 等整个序列中的记录基本有序时, 在对全体记录进行依次直接排序
+     *
      */
     public function shellSort(): array
     {
@@ -118,7 +167,7 @@ class Sort
     }
 }
 
-$outOfOrder = (new generateOutOfOrderArray(100))->get();
+$outOfOrder = (new generateOutOfOrderArray(15))->get();
 print_r($outOfOrder);
 //$outOfOrder = [1,15,2,6,5,4,8,7,9,10,3,14,12,11,13];
 
@@ -132,7 +181,9 @@ print_r($outOfOrder);
 //$sortOrder = (new Sort($outOfOrder))->insertSort();
 //print_r($sortOrder);
 // 希尔排序
-$sortOrder = (new Sort($outOfOrder))->shellSort();
+//$sortOrder = (new Sort($outOfOrder))->shellSort();
+// 快速排序
+$sortOrder = (new Sort($outOfOrder))->quickSort();
 print_r($sortOrder);
 
 
