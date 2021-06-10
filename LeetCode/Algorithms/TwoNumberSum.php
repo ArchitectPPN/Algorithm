@@ -12,7 +12,6 @@ class ListNode
     }
 }
 
-
 class Solution
 {
     public function twoNumberSum($link1, $link2)
