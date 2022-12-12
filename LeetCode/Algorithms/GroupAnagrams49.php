@@ -1,6 +1,6 @@
 <?php
 
-## 解法1：排序
+## 解法1：排序 https://leetcode.cn/problems/group-anagrams/
 
 $question = ["eat", "tea", "tan", "ate", "nat", "bat"];
 

@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// 排序解法
+// 排序解法： https://leetcode.cn/problems/group-anagrams/
 func main() {
 	question := [6]string{"eat", "tea", "tan", "ate", "nat", "bat"}
 
