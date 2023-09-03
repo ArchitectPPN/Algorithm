@@ -14,6 +14,7 @@ type SqrtX struct {
 }
 
 func (s *SqrtX) handle(x int) int {
+	// 这里使用uint64是因为，mid*mid 的值可能超过int， 就拿intMax * intMax来举例
 	var left, right, mid, tmpX uint64
 	tmpX = uint64(x)
 	left = 0
