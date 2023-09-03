@@ -25,7 +25,10 @@ return -1
  */
 func main() {
 	solution := new(LowerBound2Solution)
-	ans := solution.handle([]int{2, 3, 5, 8, 10, 12}, 1)
+	//problem := []int{2, 3, 5, 8, 10, 12}
+	problem := []int{5, 7, 7, 8, 8, 10}
+
+	ans := solution.handle(problem, 8)
 
 	fmt.Println(ans)
 }
@@ -41,6 +44,7 @@ func (l *LowerBound2Solution) handle(problem []int, target int) int {
 	// 开始二分查找
 	for left < right {
 		// /2向下取整
+		// 这里要解释一下为什么+1，举个例子： 最后只剩两个下标 [3, 4] 不加1时， (3+4) / 2 取整，为3， 那么就会陷入死循环
 		mid = (left + right + 1) >> 1
 		if problem[mid] <= target {
 			// 中间值小于目标值时，left到mid中间的数都小于target，但不一定时最大的那个，让left继续向右移动，

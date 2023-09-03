@@ -50,5 +50,6 @@ func (l *LowerBoundSolution) handle(problem []int, target int) int {
 		}
 	}
 
+	// 为什么返回right，因为right = mid, 它包含答案
 	return right
 }
