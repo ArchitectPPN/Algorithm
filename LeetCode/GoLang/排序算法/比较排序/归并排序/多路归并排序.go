@@ -1,1 +1,5 @@
-package 归并排序
+package main
+
+func main() {
+
+}

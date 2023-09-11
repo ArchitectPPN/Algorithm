@@ -1,1 +1,5 @@
-package 选择排序
+package main
+
+func main() {
+
+}
