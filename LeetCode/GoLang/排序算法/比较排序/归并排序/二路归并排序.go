@@ -11,12 +11,13 @@ type MergeSortSolution struct {
 }
 
 func (m *MergeSortSolution) handle() {
-	m.mergeSort([]int{9, 8, 7, 6, 5}, 0, 4)
+	arr := m.mergeSort([]int{9, 8, 7, 6, 5}, 0, 4)
+	fmt.Println("arr:", arr)
 }
 
-func (m *MergeSortSolution) mergeSort(arr []int, left, right int) {
+func (m *MergeSortSolution) mergeSort(arr []int, left, right int) []int {
 	if left >= right {
-		return
+		return arr
 	}
 
 	var mid int
@@ -26,7 +27,7 @@ func (m *MergeSortSolution) mergeSort(arr []int, left, right int) {
 	m.mergeSort(arr, mid+1, right)
 	m.merge(arr, left, mid, right)
 
-	fmt.Println(arr)
+	return arr
 }
 
 func (m *MergeSortSolution) merge(arr []int, left, mid, right int) {
