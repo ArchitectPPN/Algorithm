@@ -1,1 +1,5 @@
-package 非比较排序
+package main
+
+func main() {
+
+}
