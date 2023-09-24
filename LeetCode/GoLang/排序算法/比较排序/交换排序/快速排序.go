@@ -8,11 +8,21 @@ import (
 // 快速排序是冒泡排序的优化思路
 func main() {
 	waitSortArr := []int{3, 5, 4, 2, 6, 1, 18, 20, 21, 19}
-
+	
 	solution := new(quickSortSolution)
 	solution.handle(waitSortArr)
 
 	fmt.Println("sort arr:", waitSortArr)
+
+	// 单独测试pivot选取
+	res := 0
+	for {
+		if res == 6 {
+			fmt.Println("res: ", res)
+			return
+		}
+		res = solution.randomPivot(4, 6)
+	}
 }
 
 type quickSortSolution struct {
@@ -98,12 +108,16 @@ func (q *quickSortSolution) rightPivot(left, right int) int {
 }
 
 /**
- * 随机选取一个值作为 pivot
+ * 随机选取一个值作为 pivot，就是为了拿到left / right中间的一个值
+ * 分以下几种情况：
+ * 1. left = 4， right = 5，这种情况， 拿 4/5 都可以
+ * 2. left = 4， right = 6，这种情况，最好可以拿到5，或者拿到4/6其中一个
  */
 func (q *quickSortSolution) randomPivot(left, right int) int {
 	// 获取一个0-1之间的随机数
 	random := rand.Float64()
-	// 暂时未搞清楚这里+1是有什么用？
+	// 这里加1，举例来说： 如果为上面第2中情况，如果不加1，拿不到 pivot = 6的情况，因为 diff 恒等于2， 然后 2*(0-1之间的数)，int之后一直等于1或者0，
+	// 加1之后变为3*(0-1之间的数),有很大概率拿到2，最后pivot=6
 	diff := float64(right - left + 1)
 	// random * float64(right-left+1) ， 举例：0.5 * （4-3+1） = 0.5 * 2 = 1， 最后的结果会在 0-2之间
 	temVal := random * diff
