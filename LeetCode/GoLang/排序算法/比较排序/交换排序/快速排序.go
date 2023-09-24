@@ -71,6 +71,8 @@ func (q *quickSortSolution) partition(arr []int, left, right int) int {
 		}
 	}
 
+	// 因为这里return right了，所以在外面 q.quickSort(arr, left, pivot) 这里可以直接这样写
+	// 如果这里要return left，那么 q.quickSort(arr, left, pivot - 1) q.quickSort(arr, right, pivot)
 	return right
 }
 
