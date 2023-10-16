@@ -8,7 +8,7 @@ import (
 // 快速排序是冒泡排序的优化思路
 func main() {
 	waitSortArr := []int{3, 5, 4, 2, 6, 1, 18, 20, 21, 19}
-	
+
 	solution := new(quickSortSolution)
 	solution.handle(waitSortArr)
 
@@ -29,26 +29,27 @@ type quickSortSolution struct {
 }
 
 func (q *quickSortSolution) handle(nums []int) {
+	// 对nums进行排序, 从下标0开始, 一直到数组的末尾
 	q.quickSort(nums, 0, len(nums)-1)
 }
 
 // quickSort 快速排序
-func (q *quickSortSolution) quickSort(arr []int, left, right int) {
-	// 说明左右指针相遇了
+func (q *quickSortSolution) quickSort(nums []int, left, right int) {
+	// 说明左右指针相遇了, 排序结束
 	if left == right {
 		return
 	}
 
 	// 找到一个中间值
-	pivot := q.partition(arr, left, right)
+	pivot := q.partition(nums, left, right)
 	// pivot 小于 left时，继续执行，会陷入死循环
 	if pivot < left {
 		return
 	}
 	// 给左边排序：left - pivot的值排序
-	q.quickSort(arr, left, pivot)
+	q.quickSort(nums, left, pivot)
 	// 给pivot+1 - right的值进行排序
-	q.quickSort(arr, pivot+1, right)
+	q.quickSort(nums, pivot+1, right)
 }
 
 /**
@@ -58,30 +59,41 @@ func (q *quickSortSolution) quickSort(arr []int, left, right int) {
  *	3. 选择最右边；
  *  4. 随机选择，通过随机可以达到期望的O(NlogN), 有时好有时坏，总体上比较好
  */
-func (q *quickSortSolution) partition(arr []int, left, right int) int {
+func (q *quickSortSolution) partition(nums []int, left, right int) int {
 	pivot := q.randomPivot(left, right)
-	pivotVal := arr[pivot]
+	pivotVal := nums[pivot]
 
+	// 选择一个中轴数, 左边全部小于该数, 右边全部大于等于该数
 	for left <= right {
-		for arr[left] < pivotVal {
-			// left向左移动
+		// nums[left] 小于中轴, 说明当前值(nums[left])无需移动, 但是下边需要继续向右移动, 一直移动到 nums[left] 不小于中轴值(pivotVal)
+		// 然后开始移动中轴(pivotVal)右边的数字, 一直向左边移动, 移动到 nums[right]小于中轴值(pivotVal),
+		// 交换左右两个小标的值,
+		// 这里举个例子: 1 2 3 4 5 10 7 8 9, pivotVal 为 10
+		// 上面这个例子可以看到无论左右两边都是小于10的, 所以第一次循环会在left = 5时停止, 此时, pivotVal为10; 所以说left永远不会越过pivot;
+		// left无法移动后, right会开始移动, right此时为8, 值为9, 因为9小于10, 所以无需向左移动, 直接交换9和10的位置, pivotVal直接到达末尾, left = 6, right = 7
+		// 第二次循环, left一直移动到7便会停止, 至此pivotVal左边都小于它的
+		for nums[left] < pivotVal {
+			// left向右移动
 			left += 1
 		}
-		for arr[right] > pivotVal {
-			// 向右移动
+		// 同上
+		for nums[right] > pivotVal {
+			// 向左移动
 			right -= 1
 		}
+
+		// 上述左右两边都进行移动了, 且目前都已经无法移动了, 即左边的不小于中轴值(pivotVal), 右边的不大于中轴值(pivotVal)
 		if left <= right {
 			// 交换位置
-			temp := arr[left]
-			arr[left] = arr[right]
-			arr[right] = temp
+			temp := nums[left]
+			nums[left] = nums[right]
+			nums[right] = temp
 			left += 1
 			right -= 1
 		}
 	}
 
-	// 因为这里return right了，所以在外面 q.quickSort(arr, left, pivot) 这里可以直接这样写
+	// 因为这里return right了，所以在外面 q.quickSort(arr, left, pivot) q.quickSort(arr, pivot+1, right)这里可以直接这样写
 	// 如果这里要return left，那么 q.quickSort(arr, left, pivot - 1) q.quickSort(arr, right, pivot)
 	return right
 }
