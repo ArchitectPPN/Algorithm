@@ -36,16 +36,12 @@ func (q *quickSortSolution) handle(nums []int) {
 // quickSort 快速排序
 func (q *quickSortSolution) quickSort(nums []int, left, right int) {
 	// 说明左右指针相遇了, 排序结束
-	if left == right {
+	if left >= right {
 		return
 	}
 
 	// 找到一个中间值
 	pivot := q.partition(nums, left, right)
-	// pivot 小于 left时，继续执行，会陷入死循环
-	if pivot < left {
-		return
-	}
 	// 给左边排序：left - pivot的值排序
 	q.quickSort(nums, left, pivot)
 	// 给pivot+1 - right的值进行排序
@@ -126,15 +122,5 @@ func (q *quickSortSolution) rightPivot(left, right int) int {
  * 2. left = 4， right = 6，这种情况，最好可以拿到5，或者拿到4/6其中一个
  */
 func (q *quickSortSolution) randomPivot(left, right int) int {
-	// 获取一个0-1之间的随机数
-	random := rand.Float64()
-	// 这里加1，举例来说： 如果为上面第2中情况，如果不加1，拿不到 pivot = 6的情况，因为 diff 恒等于2， 然后 2*(0-1之间的数)，int之后一直等于1或者0，
-	// 加1之后变为3*(0-1之间的数),有很大概率拿到2，最后pivot=6
-	diff := float64(right - left + 1)
-	// random * float64(right-left+1) ， 举例：0.5 * （4-3+1） = 0.5 * 2 = 1， 最后的结果会在 0-2之间
-	temVal := random * diff
-	//
-	pivot := left + int(temVal)
-
-	return pivot
+	return left + rand.Intn(right-left+1)
 }
