@@ -7,7 +7,8 @@ import (
 
 // 快速排序是冒泡排序的优化思路
 func main() {
-	waitSortArr := []int{3, 5, 4, 2, 6, 1, 18, 20, 21, 19}
+	//waitSortArr := []int{3, 5, 4, 2, 6, 1, 18, 20, 21, 19}
+	waitSortArr := []int{9, 10, 50, 1, 5, 6, 30}
 
 	solution := new(quickSortSolution)
 	solution.handle(waitSortArr)
@@ -96,7 +97,7 @@ func (q *quickSortSolution) partition(nums []int, left, right int) int {
 }
 
 /**
- * 选取中间值作为 pivot
+ * 选取中间值作为 pivot, 选用中间只作为pivot需要注意不要死循环， 这个例子就会导致死循环 waitSortArr := []int{9, 10, 50, 1, 5, 6, 30}
  */
 func (q *quickSortSolution) midPivot(min, max int) int {
 	return (min + max) >> 1
