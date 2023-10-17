@@ -37,7 +37,12 @@ func (m *MergeSortSolution) merge(arr []int, left, mid, right int) {
 	j = mid + 1
 	temp = make([]int, right-left+1)
 
-	for k := 0; k < len(temp); k++ { // 合并两个有序数组
+	// 合并两个有序数组
+	for k := 0; k < len(temp); k++ {
+		// 由于i==left，所以i的值一定小于mid，所以在i<=mid并且i<j时，将小的值放入到临时数组重
+		// j是中间值+1得到的，j>right就说明，已经走到数组的末尾，所以直接将i的值放入临时数据就可以
+		// 举个例子：
+		// [3, 4, 5, 1, 2], mid为2，j一定会大于right，所以将mid之前的数字依次放入临时数组重即可
 		if j > right || i <= mid && arr[i] <= arr[j] {
 			temp[k] = arr[i]
 			i += 1
