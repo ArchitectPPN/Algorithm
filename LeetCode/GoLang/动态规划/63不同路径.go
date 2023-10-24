@@ -14,17 +14,23 @@ func main() {
 type DiffGrid struct {
 }
 
+/*
+左边是地图， 右边是到达每个点的路径总和
+
+[0 0 0] | [1 1 1]
+[0 1 0] | [1 0 1]
+[0 0 0] | [1 1 2]
+*/
 func (d *DiffGrid) handle(grid [][]int) int {
 	n := len(grid)
 	m := len(grid[0])
 
 	f := d.initF(m, n)
-	fmt.Println("f:", f)
 
 	for i := 0; i < n; i++ {
 		for j := 0; j < m; j++ {
 			// 说明碰到障碍物
-			if f[i][j] == 1 {
+			if grid[i][j] == 1 {
 				f[i][j] = 0
 			} else if i == 0 && j == 0 {
 				// 处于开始的位置
@@ -39,7 +45,7 @@ func (d *DiffGrid) handle(grid [][]int) int {
 			}
 		}
 	}
-	fmt.Println(f)
+
 	return f[n-1][m-1]
 }
 
