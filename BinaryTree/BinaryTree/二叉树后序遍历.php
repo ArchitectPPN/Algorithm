@@ -1,6 +1,8 @@
 <?php
 
-
+/**
+ * 二叉树后序遍历
+ */
 class PostOrderTraversal
 {
     public array $result = [];
@@ -13,10 +15,11 @@ class PostOrderTraversal
 
         $this->recursionProcess($root->left);
         $this->recursionProcess($root->right);
+
         $this->result[] = $root->val;
     }
 
-    public function postOrder($root)
+    public function postOrder($root): array
     {
         $this->recursionProcess($root);
 
