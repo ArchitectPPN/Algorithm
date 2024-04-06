@@ -118,3 +118,76 @@ class Solution2 {
     }
 }
 ```
+
+### 计算最大深度
+Solution1
+```php
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     public $val = null;
+ *     public $left = null;
+ *     public $right = null;
+ *     function __construct($val = 0, $left = null, $right = null) {
+ *         $this->val = $val;
+ *         $this->left = $left;
+ *         $this->right = $right;
+ *     }
+ * }
+ */
+class Solution {
+    // 二叉树最大层数
+    private $maxDepth = 0;
+    
+    /**
+     * @param TreeNode $root
+     * @return Integer
+     */
+    function maxDepth($root) {
+       $this->getMaxDepth($root, 1);
+       return $this->maxDepth;
+    }
+    
+    private function getMaxDepth($root, $depth) {
+        // 根节点为null时，直接返回
+        if (is_null($root)) {
+            return ;
+        }
+           
+        // 左右节点都是null时，比较左右两边哪个最大 
+        if (is_null($root->left) && is_null($root->right)) {
+            $this->maxDepth = max($this->maxDepth, $depth);
+        }
+        
+        $this->getMaxDepth($root->left, $depth + 1);
+        $this->getMaxDepth($root->right, $depth + 1);
+    }
+}
+```
+
+Solution2
+```php
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     public $val = null;
+ *     public $left = null;
+ *     public $right = null;
+ *     function __construct($val = 0, $left = null, $right = null) {
+ *         $this->val = $val;
+ *         $this->left = $left;
+ *         $this->right = $right;
+ *     }
+ * }
+ */
+class Solution {
+    /**
+     * @param TreeNode $root
+     * @return Integer
+     */
+    function maxDepth($root) {
+        if (is_null($root)) return 0;
+        return max($this->maxDepth($root->left) + 1, $this->maxDepth($root->right) + 1);
+    }
+}
+```
