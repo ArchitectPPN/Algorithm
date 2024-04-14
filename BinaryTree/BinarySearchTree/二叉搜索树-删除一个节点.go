@@ -26,15 +26,25 @@ func main() {
 	sevenNode := new(TreeNode)
 	sevenNode.Val = 7
 
-	fiveNode.Left = threeNode
-	fiveNode.Right = sixNode
+	eightNode := new(TreeNode)
+	eightNode.Val = 8
 
+	// [5,3,6,2,4,null,7] key = 3
+	//fiveNode.Left = threeNode
+	//fiveNode.Right = sixNode
+	//threeNode.Left = twoNode
+	//threeNode.Right = fourNode
+	//sixNode.Right = sevenNode
+
+	sevenNode.Left = threeNode
+	sevenNode.Right = eightNode
 	threeNode.Left = twoNode
-	threeNode.Right = fourNode
+	threeNode.Right = sixNode
+	twoNode.Left = oneNode
+	sixNode.Left = fourNode
+	sixNode.Right = fiveNode
 
-	sixNode.Right = sevenNode
-
-	ansNode := deleteNode(fiveNode, 3)
+	ansNode := deleteNode(sevenNode, 3)
 
 	fmt.Println("ans: ", ansNode)
 }
@@ -66,11 +76,11 @@ func deleteNode(root *TreeNode, key int) *TreeNode {
 	default:
 		// 后继节点一定存在右子树的左子树上
 		successor := root.Right
-		// 左子树不为nil时，一直往下找，找到右子树上最小的那个val
+		// 最小值一定存在左子树上，左子树不为nil时，一直往下找，找到右子树上最小的那个val
 		for successor.Left != nil {
 			successor = successor.Left
 		}
-		// 递归的删除后继节点
+		// 删除root的右节点上的successor.Val
 		successor.Right = deleteNode(root.Right, successor.Val)
 		// 将后继节点指向当前节点的左子树，完成替换
 		successor.Left = root.Left
