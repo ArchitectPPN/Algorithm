@@ -14,6 +14,10 @@ namespace BinarySearchTree;
  *     }
  * }
  */
+
+/**
+ * 递归解法
+ */
 class searchBSTSolution
 {
     /**
@@ -45,5 +49,30 @@ class searchBSTSolution
         }
 
         return $this->search($root->left, $val);
+    }
+}
+
+/**
+ * 循环
+ */
+class searchBSTSolutionForeach
+{
+    /**
+     * @param TreeNode $root
+     * @param int $val
+     * @return ?TreeNode
+     */
+    function searchBST(TreeNode $root, int $val): ?TreeNode
+    {
+        while (!is_null($root)) {
+            if ($root->val == $val) {
+                return $root;
+            } else if ($val >= $root->val) {
+                $root = $root->right;
+            } else {
+                $root = $root->left;
+            }
+        }
+        return null;
     }
 }
