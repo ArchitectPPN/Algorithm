@@ -2,6 +2,9 @@ package main
 
 import "fmt"
 
+/**
+ * 递归思路：https://leetcode.cn/problems/delete-node-in-a-bst/solutions/1529700/shan-chu-er-cha-sou-suo-shu-zhong-de-jie-n6vo/
+ */
 func main() {
 
 	// 初始化
