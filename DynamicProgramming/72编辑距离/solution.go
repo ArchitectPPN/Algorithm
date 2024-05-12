@@ -37,8 +37,10 @@ func minDistance(word1 string, word2 string) int {
 			// 修改： word1 = " horse", word2 = " ros"
 			// 这样可以更方便理解
 			if i == 0 {
+				// 这个可以认为是 "" -> horse 需要执行多少次，就一直添加就好了，变为字符串就是字符串的长度
 				dp[i][j] = j
 			} else {
+				// 这个可以认为是 horse -> "" 需要执行多少次，就一直删除就好了，变为空串就是字符串的长度
 				dp[i][0] = i
 			}
 		}
