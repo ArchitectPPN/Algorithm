@@ -50,7 +50,10 @@ func minDistance(word1 string, word2 string) int {
 		for j := 1; j <= w2Len; j++ {
 			increInLast := dp[i][j-1] + 1
 			decreInLast := dp[i-1][j] + 1
+
+			// 检查是否需要进行替换操作
 			unChange := dp[i-1][j-1]
+			// 如果不相等，则需要替换，然后操作数+1
 			if word1[i-1] != word2[j-1] {
 				unChange++
 			}

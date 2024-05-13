@@ -11,8 +11,8 @@ func main() {
 	goodsCap := []int{2, 1, 4}
 	bagCap := 4
 
-	//ans := bagQuestionSolution(goodsNum, goodsVal, goodsCap, bagCap)
-	ans := bagQuestionSolutionOptimize(goodsNum, goodsVal, goodsCap, bagCap)
+	ans := bagQuestionSolution(goodsNum, goodsVal, goodsCap, bagCap)
+	//ans := bagQuestionSolutionOptimize(goodsNum, goodsVal, goodsCap, bagCap)
 
 	fmt.Println("ans:", ans)
 }
@@ -46,6 +46,29 @@ func bagQuestionSolution(goodsNum int, goodsVal []int, goodsCap []int, bagCap in
 		}
 	}
 
+	/**
+	 * 由于进行了初始化，所以除了dp[0][0]之外其他的val均为-2147483648
+	 * 状态转移方程：
+	 *	第几个商品	商品容量			当前背包容量j		当前dp						前一dp状态					当前背包价值		最后的结果
+	 *	1			2				0				dp[1][0] = 0				dp[0][0] = 0				5				dp[1][0] = 0
+	 *	1			2				1				dp[1][1] = -2147483648		dp[0][1] = -2147483648		5				dp[1][1] = -2147483648
+	 *	1			2				2				dp[1][2] = -2147483648		dp[0][0] = 0				5				dp[1][2] = 5
+	 *	1			2				3				dp[1][3] = -2147483648		dp[0][1] = -2147483648		5				dp[1][3] = -2147483643
+	 *	1			2				4				dp[1][4] = -2147483648		dp[0][2] = -2147483648		5				dp[1][4] = -2147483643
+
+	 *	2			1				0				dp[2][0] = 0				dp[1][0] = 0				2				dp[2][0] = 0
+	 *	2			1				1				dp[2][1] = -2147483648		dp[1][0] = 0				2				dp[2][1] = 2
+	 *	2			1				2				dp[2][2] = -2147483648		dp[1][1] = 0				2				dp[2][2] = -2147483646
+	 *	2			1				3				dp[2][3] = -2147483648		dp[1][2] = 5				2				dp[2][3] = 7
+	 *	2			1				4				dp[2][4] = -2147483648		dp[1][3] = -2147483643		2				dp[2][4] = -2147483641
+
+	 *	3			4				0				dp[3][0] = 0				dp[2][0] = 0				6				dp[3][0] = 0
+	 *	3			4				1				dp[3][1] = -2147483648		dp[2][1] = 0				6				dp[3][1] = 2
+	 *	3			4				2				dp[3][2] = -2147483648		dp[2][2] = -2147483646		6				dp[3][2] = -2147483646
+	 *	3			4				3				dp[3][3] = -2147483648		dp[2][3] = 7				6				dp[3][3] = 7
+	 *	3			4				4				dp[3][4] = -2147483648		dp[2][0] = 0				6				dp[3][4] = 6
+	 */
+
 	ans := math.MinInt32
 	for j := 0; j <= bagCap; j++ {
 		ans = max(ans, dp[goodsNum][j])
@@ -65,6 +88,11 @@ func bagQuestionSolutionOptimize(goodsNum int, goodsVal []int, goodsCap []int, b
 	}
 	// 初始化背包里面没有物品时的价值
 	dp[0] = 0
+
+	/**
+	 * 模拟循环结果：
+	 *
+	 */
 
 	// 填充dp数组
 	// 一共有三个物品，从0开始遍历
