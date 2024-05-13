@@ -11,11 +11,13 @@ func main() {
 	goodsCap := []int{2, 1, 4}
 	bagCap := 4
 
-	ans := bagQuestionSolution(goodsNum, goodsVal, goodsCap, bagCap)
+	//ans := bagQuestionSolution(goodsNum, goodsVal, goodsCap, bagCap)
+	ans := bagQuestionSolutionOptimize(goodsNum, goodsVal, goodsCap, bagCap)
 
 	fmt.Println("ans:", ans)
 }
 
+// bagQuestionSolution
 func bagQuestionSolution(goodsNum int, goodsVal []int, goodsCap []int, bagCap int) int {
 	// 初始化dp数组
 	// 因为dp[i][j]代表选择前i个物品时的背包总价值，所以将整个数组初始化int的最小值
@@ -47,6 +49,38 @@ func bagQuestionSolution(goodsNum int, goodsVal []int, goodsCap []int, bagCap in
 	ans := math.MinInt32
 	for j := 0; j <= bagCap; j++ {
 		ans = max(ans, dp[goodsNum][j])
+	}
+
+	return ans
+}
+
+// bagQuestionSolution
+func bagQuestionSolutionOptimize(goodsNum int, goodsVal []int, goodsCap []int, bagCap int) int {
+	// 初始化dp数组
+	// 因为dp[i][j]代表选择前i个物品时的背包总价值，所以将整个数组初始化int的最小值
+	// 我们要从第一个元素开始，所以需要初始化容量为n+1，容量为m+1
+	dp := make([]int, bagCap+1)
+	for i := range dp {
+		dp[i] = math.MinInt32
+	}
+	// 初始化背包里面没有物品时的价值
+	dp[0] = 0
+
+	// 填充dp数组
+	// 一共有三个物品，从0开始遍历
+	for i := 0; i < goodsNum; i++ {
+		// 假设背包容量是4，依次将商品放入背包，当前背包容量大于商品容量时，可以选择当前物品或者不选当前物品
+		// j := bagCap 当前背包容量
+		// j >= goodsCap[i] 当前背包容量大于商品容量，表示可以放入该商品，放入进去后加上该商品的价值
+		for j := bagCap; j >= goodsCap[i]; j-- {
+			// dp[j-goodsCap[i]]+goodsVal[i] 将商品放入背包，然后计算背包总价值
+			dp[j] = max(dp[j], dp[j-goodsCap[i]]+goodsVal[i])
+		}
+	}
+
+	ans := math.MinInt32
+	for j := 0; j <= bagCap; j++ {
+		ans = max(ans, dp[j])
 	}
 
 	return ans
