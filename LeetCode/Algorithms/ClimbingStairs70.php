@@ -2,7 +2,7 @@
 
 class ClimbingStairs70 {
 
-    private $record = [];
+    private array $record = [];
 
     /**
      * 记忆优化递归解法
