@@ -28,9 +28,10 @@ class Solution
             for ($j = 0; $j <= $bagWeight; $j++) {
                 // 背包放不下该物品
                 if ($j >= $goodsWeight[$i - 1]) {
-                    $dp[$i][$j] = max($dp[$i][$j], $dp[$i - 1][$j - $goodsWeight[$i-1]] + $goodsValue[$i]);
+                    // $goodsValue[$i-1] 因为$i从1开始的，所以要减1，这样才能和$goodsValue的index对起来
+                    $dp[$i][$j] = max($dp[$i][$j], $dp[$i - 1][$j - $goodsWeight[$i-1]] + $goodsValue[$i-1]);
                 } else {
-                    // 直接拿上一行的结果
+                    // 放不下，直接拿上一行的结果
                     $dp[$i][$j] = $dp[$i - 1][$j];
                 }
 
