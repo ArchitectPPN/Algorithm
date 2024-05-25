@@ -1,6 +1,6 @@
 <?php
 
-namespace CoinChangeSolution;
+namespace CoinChangeIISolution;
 
 /**
  * 动归求方案数

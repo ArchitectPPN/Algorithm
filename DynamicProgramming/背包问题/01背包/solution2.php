@@ -24,5 +24,6 @@ for ($i = 1; $i < count($weight); $i++) { // 遍历物品(第0个物品已经初
         }
     }
 }
+
 echo $dp[count($weight) - 1][$bagWeight]; // 输出结果
 
