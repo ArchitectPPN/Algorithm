@@ -35,6 +35,7 @@ class Solution
         // 默认为0时有1种方法
         $dp[0] = 1;
 
+        // 这一部分的原因请看518零钱兑换II
         for ($i = 0; $i < count($nums); $i++) {
             for ($j = $left; $j >= 0; $j--) {
                 $dp[$j] += $dp[$j - $nums[$i]];
