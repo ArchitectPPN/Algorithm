@@ -44,7 +44,7 @@ int main()
 
     printf("结构体名称:%s, 年龄: %d, 性别: %s \n", Person.StructName, Person.Age, Person.Sex);
 
-    // 我们也可以直接用definedPerson定一个一个变量
+    // 我们也可以直接用definedPerson定义一个变量
     definedPerson Person2;
     Person2.Age = 22;
     strcpy(Person2.StructName, "使用typedef别名创建的变量");
@@ -57,6 +57,7 @@ int main()
     strcpy(user.StructName, "ppn");
     printf("结构体名称:%s, 年龄: %d \n", user.StructName, user.Age);
 
+    // 使用直接声明的结构体变量
     strcpy(DefineVar.StructName, "DefineStructVar");
     printf("结构体名称:%s \n", DefineVar.StructName);
 
