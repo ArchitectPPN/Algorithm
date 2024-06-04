@@ -33,7 +33,12 @@ func (l *LongestCommonSubsequence) handle(text1, text2 string) int {
 			if text1[i] == text2[j] {
 				f[i][j] = f[i-1][j-1] + 1
 			} else {
+				// str1 i-1个字符和 str2 前j个字符串的公共长度
+				// str1前0个字符和str2前1个字符， 必定是0
+				// str1前1个字符和str2前0个字符， 必定是0
+				// str1前1个字符和str2前1个字符， 是1
 				f[i][j] = l.Max(f[i-1][j], f[i][j-1])
+				//
 			}
 		}
 	}
