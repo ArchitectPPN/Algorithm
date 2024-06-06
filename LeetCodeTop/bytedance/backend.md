@@ -5,7 +5,7 @@
 |-|-|-|----|
 |25. K 个一组翻转链表|60|https://leetcode-cn.com/problems/reverse-nodes-in-k-group| 困难 |
 |3. 无重复字符的最长子串|57|https://leetcode-cn.com/problems/longest-substring-without-repeating-characters| 中等 |
-|146. LRU缓存机制|53|https://leetcode-cn.com/problems/lru-cache|
+|146. LRU缓存机制|53|https://leetcode-cn.com/problems/lru-cache| 中等 |
 |215. 数组中的第K个最大元素|52|https://leetcode-cn.com/problems/kth-largest-element-in-an-array|
 |206. 反转链表|51|https://leetcode-cn.com/problems/reverse-linked-list| 简单 |
 |103. 二叉树的锯齿形层次遍历|47|https://leetcode-cn.com/problems/binary-tree-zigzag-level-order-traversal|
