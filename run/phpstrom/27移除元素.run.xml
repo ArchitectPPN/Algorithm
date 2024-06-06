@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="27移除元素" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="双指针" path="$PROJECT_DIR$/Array/双指针/27移除元素.php">
+  <configuration default="false" name="27移除元素" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="DoublePointer" path="$PROJECT_DIR$/Array/DoublePointer/27移除元素.php">
     <CommandLine workingDirectory="$PROJECT_DIR$/Array">
       <PhpTestInterpreterSettings>
         <option name="interpreterName" value="php80" />

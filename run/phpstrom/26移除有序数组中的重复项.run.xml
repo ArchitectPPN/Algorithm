@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="26移除有序数组中的重复项" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="双指针" path="$PROJECT_DIR$/Array/双指针/26删除有序数组中的重复项.php">
+  <configuration default="false" name="26移除有序数组中的重复项" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="DoublePointer" path="$PROJECT_DIR$/Array/DoublePointer/26删除有序数组中的重复项.php">
     <CommandLine workingDirectory="$PROJECT_DIR$/Array">
       <PhpTestInterpreterSettings>
         <option name="interpreterName" value="php80" />
