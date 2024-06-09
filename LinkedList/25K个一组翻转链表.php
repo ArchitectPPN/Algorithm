@@ -79,15 +79,21 @@ class Solution {
             $end = $this->getEnd($head, $k);
             // 判断结束条件
             if ($end == null) break;
+            // 下一组开始的位置，因为end为当前组最后一个节点，那么下一组开始的节点就是end的next节点
+            // 以便于我知道下一个节点从哪儿开始
             $nextGroupHead = $end->next;
 
             // 处理head到end之间的k-1条反转
+            // 指向head的节点和end的next节点不关心，在下面进行处理
             $this->reverseList($head, $end);
+
             // 上一组跟本组的新head（之前旧的end）建立联系
             $last->next = $end;
             // 本组的新结尾(head)跟下一组的建立联系
             $head->next = $nextGroupHead;
+            // 更新last，当前节点保存下来，以便后续使用
             $last = $head;
+            // 继续往下一个节点处理
             $head = $nextGroupHead;
         }
 
