@@ -1,13 +1,13 @@
 # 后端
 我开发的[CodeTop题库](https://codetop.cc)可以按照部门、难度筛选，比markdown更方便查询高频题
 
-|题目|出现次数|链接| 难度 |
-|-|-|-|----|
-|25. K 个一组翻转链表|60|https://leetcode-cn.com/problems/reverse-nodes-in-k-group| 困难 |
+|题目|出现次数|链接| 难度 | 刷题次数 |
+|----|----|----|----|------|
+|25. K 个一组翻转链表|60|https://leetcode-cn.com/problems/reverse-nodes-in-k-group| 困难 | 1    |
 |3. 无重复字符的最长子串|57|https://leetcode-cn.com/problems/longest-substring-without-repeating-characters| 中等 |
-|146. LRU缓存机制|53|https://leetcode-cn.com/problems/lru-cache| 中等 |
+|146. LRU缓存机制|53|https://leetcode-cn.com/problems/lru-cache| 中等 | 1    |
 |215. 数组中的第K个最大元素|52|https://leetcode-cn.com/problems/kth-largest-element-in-an-array|
-|206. 反转链表|51|https://leetcode-cn.com/problems/reverse-linked-list| 简单 |
+|206. 反转链表|51|https://leetcode-cn.com/problems/reverse-linked-list| 简单 | 2    |
 |103. 二叉树的锯齿形层次遍历|47|https://leetcode-cn.com/problems/binary-tree-zigzag-level-order-traversal|
 |15. 三数之和|42|https://leetcode-cn.com/problems/3sum|
 |121. 买卖股票的最佳时机|41|https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock|
@@ -16,7 +16,7 @@
 |42. 接雨水|31|https://leetcode-cn.com/problems/trapping-rain-water|
 |33. 搜索旋转排序数组|27|https://leetcode-cn.com/problems/search-in-rotated-sorted-array|
 |31. 下一个排列|27|https://leetcode-cn.com/problems/next-permutation|
-|199. 二叉树的右视图|24|https://leetcode-cn.com/problems/binary-tree-right-side-view|
+|199. 二叉树的右视图|24|https://leetcode-cn.com/problems/binary-tree-right-side-view| 中等 | 1    |
 |54. 螺旋矩阵|24|https://leetcode-cn.com/problems/spiral-matrix|
 |143. 重排链表|24|https://leetcode-cn.com/problems/reorder-list|
 |23. 合并K个排序链表|23|https://leetcode-cn.com/problems/merge-k-sorted-lists|
