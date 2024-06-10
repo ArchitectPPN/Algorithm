@@ -65,6 +65,9 @@ class BuildLinkedList
  *  1). 上一组的尾部和新一组头部的关联
  *  2). 新一组的尾部和下一组头部的关联
  * 4. 需要考虑第一组的情况是怎么样的？ 明天记得看下
+ *  1. 初始状态：1->2->3->4->5->null, k=2
+ *  2. 添加了保护点之后，变为：0->1->2->3->4->5->null, k=2
+ *  3. 那么第一组的情况就会变为和正常的无差了
  */
 
 class Solution {
@@ -139,7 +142,7 @@ class Solution {
     {
         if($head === $end) return;
 
-        $tail = $head;
+        $last = $head;
         $head = $head->next;
 
         // 开始反转
@@ -152,14 +155,16 @@ class Solution {
             // 使用代码表达就是：
             // 第一步更新head, 当前head为1, 保留当前head, $lastHead = $head; $head = $head->next 现在head变为2
             // 然后head->next = $lastHead; 此时 1 <-> 2, 1 -> 2, 2 -> 1
-            $head->next = $tail;
+            $head->next = $last;
             // 更新tail为当前节点
-            $tail = $head;
+            $last = $head;
             // 指向下一个节点
             $head = $nextHead;
         }
 
-        $end->next = $tail;
+        // 改变end的指向，走到这个位置，last必然为end之前的一个节点
+        // 因为上面的循环会保证在end == head时结束，那么last会停留在end的上一个节点
+        $end->next = $last;
     }
 }
 
