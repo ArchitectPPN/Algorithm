@@ -17,7 +17,7 @@ class Solution {
         $len = strlen($s) - 1;
         for ($i = 0; $i <= $len; $i++) {
             if (isset($map[$i])) {
-                $ans = count($ans) >= count($map) ? $ans : $map;
+                $ans = count($map) > count($ans) ? $map : $ans;
                 $map = [];
                 continue;
             } else {
