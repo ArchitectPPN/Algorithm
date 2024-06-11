@@ -4,7 +4,7 @@
 |题目|出现次数|链接| 难度 | 刷题次数 |
 |----|----|----|----|------|
 |25. K 个一组翻转链表|60|https://leetcode-cn.com/problems/reverse-nodes-in-k-group| 困难 | 1    |
-|3. 无重复字符的最长子串|57|https://leetcode-cn.com/problems/longest-substring-without-repeating-characters| 中等 |
+|3. 无重复字符的最长子串|57|https://leetcode-cn.com/problems/longest-substring-without-repeating-characters| 中等 | 1    |
 |146. LRU缓存机制|53|https://leetcode-cn.com/problems/lru-cache| 中等 | 1    |
 |215. 数组中的第K个最大元素|52|https://leetcode-cn.com/problems/kth-largest-element-in-an-array|
 |206. 反转链表|51|https://leetcode-cn.com/problems/reverse-linked-list| 简单 | 2    |

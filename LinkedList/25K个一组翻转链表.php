@@ -128,6 +128,7 @@ class Solution {
             $head = $head->next;
         }
 
+        // 这里最差也是返回null，因为$head为null时，while循环结束了
         return $head;
     }
 
