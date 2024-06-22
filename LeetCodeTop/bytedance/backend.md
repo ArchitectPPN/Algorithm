@@ -2,21 +2,22 @@
 我开发的[CodeTop题库](https://codetop.cc)可以按照部门、难度筛选，比markdown更方便查询高频题
 
 |题目|出现次数|链接| 难度 | 刷题次数 |
-|----|----|----|----|----|
-|25. K 个一组翻转链表|60|https://leetcode-cn.com/problems/reverse-nodes-in-k-group| 困难 | 1  |
-|3. 无重复字符的最长子串|57|https://leetcode-cn.com/problems/longest-substring-without-repeating-characters| 中等 | 1  |
-|146. LRU缓存机制|53|https://leetcode-cn.com/problems/lru-cache| 中等 | 1  |
-|215. 数组中的第K个最大元素|52|https://leetcode-cn.com/problems/kth-largest-element-in-an-array|
-|206. 反转链表|51|https://leetcode-cn.com/problems/reverse-linked-list| 简单 | 2  |
-|103. 二叉树的锯齿形层次遍历|47|https://leetcode-cn.com/problems/binary-tree-zigzag-level-order-traversal| 中等 | 2  |
-|15. 三数之和|42|https://leetcode-cn.com/problems/3sum|
+|----|----|----|----|------|
+|25. K 个一组翻转链表|60|https://leetcode-cn.com/problems/reverse-nodes-in-k-group| 困难 | 1    |
+|3. 无重复字符的最长子串|57|https://leetcode-cn.com/problems/longest-substring-without-repeating-characters| 中等 | 1    |
+|146. LRU缓存机制|53|https://leetcode-cn.com/problems/lru-cache| 中等 | 1    |
+|215. 数组中的第K个最大元素|52|https://leetcode-cn.com/problems/kth-largest-element-in-an-array| 中等 | 1    |
+|206. 反转链表|51|https://leetcode-cn.com/problems/reverse-linked-list| 简单 | 2    |
+|103. 二叉树的锯齿形层次遍历|47|https://leetcode-cn.com/problems/binary-tree-zigzag-level-order-traversal| 中等 | 2    |
+|1. 两数之和|19|https://leetcode-cn.com/problems/two-sum| 简单 | 1    |
+|15. 三数之和|42|https://leetcode-cn.com/problems/3sum| 中等 | 1    |
 |121. 买卖股票的最佳时机|41|https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock|
-|160. 相交链表|32|https://leetcode-cn.com/problems/intersection-of-two-linked-lists| 简单 | 1  |
+|160. 相交链表|32|https://leetcode-cn.com/problems/intersection-of-two-linked-lists| 简单 | 1    |
 |236. 二叉树的最近公共祖先|32|https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree|
 |42. 接雨水|31|https://leetcode-cn.com/problems/trapping-rain-water|
 |33. 搜索旋转排序数组|27|https://leetcode-cn.com/problems/search-in-rotated-sorted-array|
 |31. 下一个排列|27|https://leetcode-cn.com/problems/next-permutation|
-|199. 二叉树的右视图|24|https://leetcode-cn.com/problems/binary-tree-right-side-view| 中等 | 1  |
+|199. 二叉树的右视图|24|https://leetcode-cn.com/problems/binary-tree-right-side-view| 中等 | 1    |
 |54. 螺旋矩阵|24|https://leetcode-cn.com/problems/spiral-matrix|
 |143. 重排链表|24|https://leetcode-cn.com/problems/reorder-list| 中等 |
 |23. 合并K个排序链表|23|https://leetcode-cn.com/problems/merge-k-sorted-lists|
@@ -25,11 +26,10 @@
 |69. x 的平方根|20|https://leetcode-cn.com/problems/sqrtx|
 |92. 反转链表 II|20|https://leetcode-cn.com/problems/reverse-linked-list-ii|
 |105. 从前序与中序遍历序列构造二叉树|19|https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal|
-|1. 两数之和|19|https://leetcode-cn.com/problems/two-sum|
 |124. 二叉树中的最大路径和|18|https://leetcode-cn.com/problems/binary-tree-maximum-path-sum|
 |200. 岛屿数量|18|https://leetcode-cn.com/problems/number-of-islands|
 |41. 缺失的第一个正数|17|https://leetcode-cn.com/problems/first-missing-positive|
-|101. 对称二叉树|16|https://leetcode-cn.com/problems/symmetric-tree| 简单 | 1  |
+|101. 对称二叉树|16|https://leetcode-cn.com/problems/symmetric-tree| 简单 | 1    |
 |56. 合并区间|16|https://leetcode-cn.com/problems/merge-intervals|
 |415. 字符串相加|16|https://leetcode-cn.com/problems/add-strings|
 |155. 最小栈|16|https://leetcode-cn.com/problems/min-stack|
@@ -50,7 +50,7 @@
 |48. 旋转图像|13|https://leetcode-cn.com/problems/rotate-image|
 |470. 用 Rand7() 实现 Rand10()|13|https://leetcode-cn.com/problems/implement-rand10-using-rand7|
 |补充题2. 圆环回原点问题|13|https://mp.weixin.qq.com/s/NZPaFsFrTybO3K3s7p7EVg|
-|234. 回文链表|12|https://leetcode-cn.com/problems/palindrome-linked-list| 简单 |    |
+|234. 回文链表|12|https://leetcode-cn.com/problems/palindrome-linked-list| 简单 |      |
 |518. 零钱兑换 II|12|https://leetcode-cn.com/problems/coin-change-2|
 |88. 合并两个有序数组|12|https://leetcode-cn.com/problems/merge-sorted-array|
 |2. 两数相加|12|https://leetcode-cn.com/problems/add-two-numbers|
@@ -229,7 +229,7 @@
 |67. 二进制求和|1|https://leetcode-cn.com/problems/add-binary|
 |515. 在每个树行中找最大值|1|https://leetcode-cn.com/problems/find-largest-value-in-each-tree-row|
 |1147. 段式回文|1|https://leetcode-cn.com/problems/longest-chunked-palindrome-decomposition|
-|876. 链表的中间结点|1|https://leetcode-cn.com/problems/middle-of-the-linked-list| 简单 | 1  |
+|876. 链表的中间结点|1|https://leetcode-cn.com/problems/middle-of-the-linked-list| 简单 | 1    |
 |100. 相同的树|1|https://leetcode-cn.com/problems/same-tree|
 |842. 将数组拆分成斐波那契序列|1|https://leetcode-cn.com/problems/split-array-into-fibonacci-sequence|
 |剑指 Offer 33. 二叉搜索树的后序遍历序列|1|https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-hou-xu-bian-li-xu-lie-lcof|
