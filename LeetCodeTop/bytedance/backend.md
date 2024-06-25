@@ -13,7 +13,7 @@
 |15. 三数之和|42|https://leetcode-cn.com/problems/3sum| 中等 | 1    |
 |121. 买卖股票的最佳时机|41|https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock|
 |160. 相交链表|32|https://leetcode-cn.com/problems/intersection-of-two-linked-lists| 简单 | 1    |
-|236. 二叉树的最近公共祖先|32|https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree|
+|236. 二叉树的最近公共祖先|32|https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree| 中等 | 1    |
 |42. 接雨水|31|https://leetcode-cn.com/problems/trapping-rain-water|
 |33. 搜索旋转排序数组|27|https://leetcode-cn.com/problems/search-in-rotated-sorted-array|
 |31. 下一个排列|27|https://leetcode-cn.com/problems/next-permutation|
