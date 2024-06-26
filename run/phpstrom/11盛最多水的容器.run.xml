@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="11盛最多水的容器" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="DoublePointer" path="$PROJECT_DIR$/Array/DoublePointer/11盛最多水的容器.php">
+    <CommandLine workingDirectory="Array">
+      <PhpTestInterpreterSettings>
+        <option name="interpreterName" value="php80" />
+      </PhpTestInterpreterSettings>
+    </CommandLine>
+    <method v="2" />
+  </configuration>
+</component>
