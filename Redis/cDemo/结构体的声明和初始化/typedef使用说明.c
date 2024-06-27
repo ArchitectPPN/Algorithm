@@ -32,6 +32,24 @@ typedef struct UserDemo {
     Integer Age;
 } User;
 
+// 结构体数组声明
+void structArr() {
+    printf("--------------结构体数组----------------------\n");
+    struct PersonDemo Person[2];
+    // 结构体数组赋值
+    Person[0].Age = 21;
+    strcpy(Person[0].StructName, "创建后初始化");
+    strcpy(Person[0].Sex, "man");
+    printf("结构体名称:%s, 年龄: %d, 性别: %s \n", Person[0].StructName, Person[0].Age, Person[0].Sex);
+
+    // 创建时赋值
+    struct PersonDemo Person1[2] = {{"初始化赋值", 22, "woman"},{"初始化赋值2", 23, "wo"}};
+    for (int i = 0; i < 2; i++) {
+        printf("结构体名称:%s, 年龄: %d, 性别: %s \n", Person1[i].StructName, Person1[i].Age, Person1[i].Sex);
+    }
+    printf("--------------结构体数组----------------------\n");
+}
+
 int main()
 {
     // 声明一个Person 结构体变量
@@ -61,5 +79,9 @@ int main()
     strcpy(DefineVar.StructName, "DefineStructVar");
     printf("结构体名称:%s \n", DefineVar.StructName);
 
+    // 结构体数组
+    structArr();
+
     return 0;
 }
+
