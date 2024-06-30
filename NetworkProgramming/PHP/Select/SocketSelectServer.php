@@ -88,7 +88,7 @@ class SocketSelectServer
             }
 
             if ($numChangedSockets > 0 && in_array($this->serverSock, $read)) {
-                $this->connectNewClient($read);
+                $read = $this->connectNewClient($read);
             }
 
             foreach ($read as $clientSock) {
@@ -114,9 +114,9 @@ class SocketSelectServer
 
     /**
      * @param array $read
-     * @return void
+     * @return array
      */
-    private function connectNewClient(array $read): void
+    private function connectNewClient(array $read): array
     {
         // socket_accept 获取连接， 但是每次只能建立一个新的连接
         // 循环处理所有新的连接请求 while (($newClient = @socket_accept($sock)) !== false)
@@ -130,6 +130,7 @@ class SocketSelectServer
         // 从中移除服务器端socket
         $key = array_search($this->serverSock, $read);
         unset($read[$key]);
+        return $read;
     }
 
     /**
