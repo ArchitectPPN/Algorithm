@@ -15,8 +15,8 @@
 |160. 相交链表|32|https://leetcode-cn.com/problems/intersection-of-two-linked-lists| 简单 | 1    |
 |236. 二叉树的最近公共祖先|32|https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree| 中等 | 1    |
 |11. 盛最多水的容器|6|https://leetcode-cn.com/problems/container-with-most-water| 中等 | 1    |
-|42. 接雨水|31|https://leetcode-cn.com/problems/trapping-rain-water|
-|33. 搜索旋转排序数组|27|https://leetcode-cn.com/problems/search-in-rotated-sorted-array|
+|42. 接雨水|31|https://leetcode-cn.com/problems/trapping-rain-water| 困难 | 1    |
+|33. 搜索旋转排序数组|27|https://leetcode-cn.com/problems/search-in-rotated-sorted-array| 中等 | 1    |
 |31. 下一个排列|27|https://leetcode-cn.com/problems/next-permutation|
 |199. 二叉树的右视图|24|https://leetcode-cn.com/problems/binary-tree-right-side-view| 中等 | 1    |
 |54. 螺旋矩阵|24|https://leetcode-cn.com/problems/spiral-matrix|
