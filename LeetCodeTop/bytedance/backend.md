@@ -17,7 +17,7 @@
 |11. 盛最多水的容器|6|https://leetcode-cn.com/problems/container-with-most-water| 中等 | 1    |
 |42. 接雨水|31|https://leetcode-cn.com/problems/trapping-rain-water| 困难 | 1    |
 |33. 搜索旋转排序数组|27|https://leetcode-cn.com/problems/search-in-rotated-sorted-array| 中等 | 1    |
-|31. 下一个排列|27|https://leetcode-cn.com/problems/next-permutation|
+|31. 下一个排列|27|https://leetcode-cn.com/problems/next-permutation| 中等 | 1    |
 |199. 二叉树的右视图|24|https://leetcode-cn.com/problems/binary-tree-right-side-view| 中等 | 1    |
 |54. 螺旋矩阵|24|https://leetcode-cn.com/problems/spiral-matrix|
 |143. 重排链表|24|https://leetcode-cn.com/problems/reorder-list| 中等 |
