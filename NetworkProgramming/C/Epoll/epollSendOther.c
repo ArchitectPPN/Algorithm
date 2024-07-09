@@ -35,6 +35,7 @@ void remove_client(int client_fd) {
         if (entry->fd == client_fd) {
             *current = entry->next;
             free(entry);
+            perror("remove client fd: %d write client err");
             return;
         }
         current = &entry->next;
@@ -84,10 +85,11 @@ void handle_client_message(int client_fd, int epoll_fd, struct epoll_event *even
         int other_fd = current->fd;
         if (other_fd != client_fd) {
             if (write(other_fd, buffer, bytes_read) == -1) {
-                perror("write");
+                perror("write client err");
                 close(other_fd);
                 remove_client(other_fd);
                 epoll_ctl(epoll_fd, EPOLL_CTL_DEL, other_fd, NULL);
+                printf("client disconnect fd: %d \n", client_fd);
             }
         }
         current = current->next;

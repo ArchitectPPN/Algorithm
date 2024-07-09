@@ -1,3 +1,0 @@
-F:/testC/Socket/cmake-build-debug/CMakeFiles/Socket.dir
-F:/testC/Socket/cmake-build-debug/CMakeFiles/edit_cache.dir
-F:/testC/Socket/cmake-build-debug/CMakeFiles/rebuild_cache.dir
