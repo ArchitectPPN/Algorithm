@@ -104,3 +104,17 @@ void aeDeleteEventLoop(aeEventLoop *eventLoop) {
     free(eventLoop);
 }
 
+// 创建socket
+static int createSocket(aeEventLoop *eventLoop) {
+    return 0;
+}
+
+// socket设置选项
+static void socketSetOption(aeEventLoop *eventLoop) {}
+
+
+// 绑定socket地址
+static void socketBindAddress(aeEventLoop *eventLoop) {}
+
+// socket监听地址
+static void socketListen(aeEventLoop *eventLoop) {}

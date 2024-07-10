@@ -90,7 +90,20 @@ struct epoll_event {
   - fd：一个整型，可以用来直接存储另一个文件描述符。
   - u32、u64：无符号32位或64位整数，用于存储整型数据。
 
+- 水平触发（Level-triggered）: 这是 epoll 的默认模式。在这种模式下，只要一个文件描述符的事件状态就绪，它就会一直存在于 epoll_wait() 返回的事件列表中，直到应用程序处理完这些事件。也就是说，只要事件条件满足（比如有数据可读），即使读取了一部分数据但未读完，下一次调用 epoll_wait() 仍然会返回这个事件。
+- 边缘触发（Edge-triggered）：使用 EPOLLET 标志启用。在这种模式下，epoll_wait() 只会在事件状态从不就绪变为就绪时通知应用程序一次。一旦应用程序错过了这次通知，或者没有立即处理事件，那么即使事件条件依然满足，epoll_wait() 也不会再次返回这个事件，直到事件状态再次发生变化。这意味着，如果在 epoll_wait() 返回后没有立即处理事件，那么必须采取其他措施来检测事件是否仍然有效。
+- 总结: 使用 EPOLLET 模式可以减少不必要的 epoll_wait() 唤醒次数，从而提高性能，特别是在高并发场景下。但是，这也要求应用程序必须能够及时处理事件，否则可能会错过事件。因此，在设计应用逻辑时，需要特别注意处理事件的及时性和完整性。
+- 使用: 在 epoll_event 结构体中，events 字段可以通过 OR 操作与 EPOLLET 结合，来指定事件的触发模式。例如
+```
+struct epoll_event ev;
+ev.events = EPOLLIN | EPOLLET;
+ev.data.fd = sockfd;
+epoll_ctl(epfd, EPOLL_CTL_ADD, sockfd, &ev);
+```
+
 通过epoll_event结构体，epoll不仅能够高效地管理文件描述符的事件监听，还允许开发者附加额外信息，便于在事件触发时进行进一步的处理逻辑。
+
+maxFd的问题&文件描述符问题
 
 ### 文章连接
 - [epoll_create函数简介](https://www.cnblogs.com/yubo-guan/p/17997722)

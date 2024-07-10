@@ -147,6 +147,7 @@ int main() {
 
     // 主循环
     while (1) {
+        // 获取epoll已就绪的描述符
         num_fds = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
         if (num_fds == -1) {
             perror("epoll_wait");
@@ -156,6 +157,7 @@ int main() {
         }
 
         for (int i = 0; i < num_fds; i++) {
+            // 当前事件fd等于服务器fd时, 说明有新的连接需要处理
             if (events[i].data.fd == server_fd) {
                 // 处理新连接
                 client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_addr_len);
@@ -167,7 +169,7 @@ int main() {
                 // 设置新连接为非阻塞
                 set_nonblocking(client_fd);
 
-                // 将新连接加入epoll监听列表
+                // 将新连接加入epoll监听列表, 设置边缘触发模式
                 ev.events = EPOLLIN | EPOLLET;
                 ev.data.fd = client_fd;
                 if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, client_fd, &ev) == -1) {
