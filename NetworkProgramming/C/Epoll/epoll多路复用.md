@@ -105,6 +105,51 @@ epoll_ctl(epfd, EPOLL_CTL_ADD, sockfd, &ev);
 
 maxFd的问题&文件描述符问题
 
+### 地址相关的函数
+#### struct sockaddr_in 和 struct addrinfo 有什么不同呢?
+
+struct `sockaddr_in` 和 struct `addrinfo` 都是在网络编程中使用的数据结构，但是它们分别服务于不同的目的和层次。
+
+#### struct sockaddr_in
+struct `sockaddr_in` 是一个用于存储 IPv4 地址信息的结构体。它通常用于指定网络套接字（socket）的本地或远程地址。在 C 语言中，它的定义类似于这样：
+```
+struct sockaddr_in {
+    sa_family_t sin_family;   // 地址家族，通常是 AF_INET 对于 IPv4
+    in_port_t   sin_port;     // 端口号
+    struct in_addr sin_addr;  // IP 地址
+};
+```
+
+#### struct addrinfo
+struct `addrinfo` 是一个更加高级和通用的结构体，用于存储从 getaddrinfo() 函数返回的地址信息。getaddrinfo() 函数根据主机名和端口查询地址信息，并返回一系列可能的地址配置，包括 IPv4 和 IPv6 地址，以及不同类型的套接字（如流式或数据报）。struct addrinfo 的定义如下：
+```
+struct addrinfo {
+    int          ai_flags;    // 输入标志
+    int          ai_family;   // 地址家族
+    int          ai_socktype; // 套接字类型
+    int          ai_protocol; // 协议
+    size_t       ai_addrlen;  // 地址长度
+    struct sockaddr *ai_addr; // 地址结构
+    char         *ai_canonname;// 规范化主机名
+    struct addrinfo *ai_next; // 链表中的下一个元素
+};
+```
+#### 区别总结
+- 用途：
+  - struct sockaddr_in 主要用于直接绑定或连接到一个具体的 IPv4 地址和端口。
+  - struct addrinfo 用于获取一系列可能的地址配置，通常作为 getaddrinfo() 函数的结果。
+
+- 复杂性：
+  - struct sockaddr_in 相对简单，只包含基本的地址和端口信息。
+  - struct addrinfo 更加复杂，包含了额外的信息，如套接字类型、协议、地址长度和规范化主机名。
+  
+- 灵活性：
+  - struct sockaddr_in 只适用于 IPv4。
+  - struct addrinfo 支持多种地址家族（包括 IPv4 和 IPv6）和套接字类型。
+  
+当你需要处理特定的 IPv4 地址时，你会使用 struct sockaddr_in；而当你需要处理不确定的地址类型或需要解析主机名时，struct addrinfo 就会派上用场。
+
+
 ### 文章连接
 - [epoll_create函数简介](https://www.cnblogs.com/yubo-guan/p/17997722)
 - [epoll_ctl函数](https://www.cnblogs.com/yubo-guan/p/17997734)
