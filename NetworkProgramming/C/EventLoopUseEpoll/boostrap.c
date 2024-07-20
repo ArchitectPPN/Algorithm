@@ -18,11 +18,20 @@ int main() {
     printf("最大输出 %d \n", eventLoop->setSize);
 
     // 释放aeDeleteEventLoop
-    aeDeleteEventLoop(eventLoop);
+//    aeDeleteEventLoop(eventLoop);
 
     int sockfd;
     // 创建socket
     sockfd = createSocket(eventLoop);
+
+    // 给sockfd添加连接的监听事件
+    aeCreateFileEvent(eventLoop, sockfd, AE_READABLE, acceptTcpHandler, NULL);
+
+    // 启动循环,直到需要退出
+    while(!eventLoop->stop) {
+        // 处理事件循环
+        aeProcessEvents(eventLoop, AE_ALL_EVENTS);
+    }
 
     printf("关闭fd %d \n", sockfd);
     close(sockfd);
