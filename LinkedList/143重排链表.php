@@ -65,3 +65,109 @@ class LinearListSolution
         return;
     }
 }
+
+/**
+ * 解题思路 寻找中间节点 + 反转链表 + 合并链表
+ * 1. 寻找中间节点：使用快慢指针来做
+ */
+class FindMidAndReverseLinkedAndMergeLinkedListSolution
+{
+    /**
+     * @param ?ListNode $head
+     * @return NULL
+     */
+    public function reorderList(?ListNode $head)
+    {
+        if (is_null($head)) {
+            return;
+        }
+
+        // 拿到中间节点
+        $midNode = $this->findMid($head);
+        $l1 = $head;
+        // l2为中间节点的下一个节点， 也就是l2从中间节点的下一个节点开始
+        $l2 = $midNode->next;
+        // 将中间节点的下一个节点指向null
+        $midNode->next = null;
+
+        // 反转l2，如果只有一个元素时，l2一定为null例如：[1] 1 -> null
+        $l2 = $this->reverseLinkedList($l2);
+
+        // 合并链表
+        $this->mergeLinked($l1, $l2);
+
+        return ;
+    }
+
+    /**
+     * 找到中间节点
+     *
+     * @param ListNode|null $head
+     * @return ListNode|null
+     */
+    private function findMid(?ListNode $head): ?ListNode
+    {
+        // 一开始两者都指向头节点
+        $quick = $slow = $head;
+        while ($quick && $quick->next) {
+            // 一次走一步
+            $slow = $slow->next;
+            // 一次走两步
+            $quick = $quick->next->next;
+        }
+
+        return $slow;
+    }
+
+    /**
+     * 这段代码解释请查看206题，反转的链表
+     *
+     * @param ListNode|null $head
+     * @return ?ListNode
+     */
+    private function reverseLinkedList(?ListNode $head): ?ListNode
+    {
+        // 临时变量
+        $tail = null;
+
+        while ($head) {
+            $next = $head->next;
+
+            // 指向新的节点
+            $head->next = $tail;
+            $tail = $head;
+
+            $head = $next;
+        }
+
+        return $tail;
+    }
+
+    /**
+     * 合并两个链表
+     *
+     * @param ListNode $linked1
+     * @param ?ListNode $linked2
+     * @return void
+     */
+    private function mergeLinked(ListNode $linked1, ?ListNode $linked2): void
+    {
+        $head1 = $head2 = null;
+
+        // 两个节点都不为null时循环
+        while($linked1 && $linked2) {
+            $head1 = $linked1->next;
+            $head2 = $linked2->next;
+
+            // 链表1的下一个节点指向链表2
+            // 1->5->4->null
+            $linked1->next = $linked2;
+            // 2->3->4->5->null;
+            $linked1 = $head1;
+
+            // 5->2->3->4->null
+            $linked2->next = $linked1;
+            $linked2 = $head2;
+        }
+    }
+}
