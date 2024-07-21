@@ -60,7 +60,7 @@ void aeDeleteEventLoop(aeEventLoop *eventLoop);
 int createSocket(aeEventLoop *eventLoop);
 int socketSetOption(int fd);
 int socketListen(int s, struct sockaddr *sa, socklen_t len, int backlog);
-//static int aeApiAddEvent(aeEventLoop *eventLoop, int fd, int mask);
+int aeApiAddEvent(aeEventLoop *eventLoop, int fd, int mask);
 void acceptTcpHandler(aeEventLoop *eventLoop, int sockFd, void *privdata, int mask);
 int aeProcessEvents(aeEventLoop *eventLoop, int flags);
 int aeCreateFileEvent(aeEventLoop *eventLoop, int fd, int mask, aeFileProc *proc, void *clientData);

@@ -163,10 +163,10 @@ int createSocket(aeEventLoop *eventLoop) {
         goto err;
     }
 
-err:
+    err:
     if (s != -1) close(s);
     s = ANET_ERR;
-end:
+    end:
     freeaddrinfo(servinfo);
 
     return s;
@@ -184,35 +184,58 @@ int socketSetOption(int fd) {
 
 // 添加事件
 int aeCreateFileEvent(aeEventLoop *eventLoop, int fd, int mask, aeFileProc *proc, void *clientData) {
+    printf("Create file event, fd: %d \n", fd);
+
     if (fd > eventLoop->setSize) {
         printf("超过最大数量, 当前fd: %d, 最大数量: %d", fd, eventLoop->setSize);
         return ANET_ERR;
     }
 
-//    aeFileEvent *fe = &eventLoop->events[fd];
+    aeFileEvent *fe = &eventLoop->events[fd];
+    if (aeApiAddEvent(eventLoop, fd, mask) == -1) {
+        return ANET_ERR;
+    }
 
-    return 1;
+    fe->mask |= mask;
+    // 处理读事件
+    if (mask & AE_READABLE) {
+        printf("需要处理读事件 fd: %d\n", fd);
+        fe->rFileProc = proc;
+    }
+    // 处理写事件
+//    if (mask & AE_WRITABLE) fe->wFileProc = proc;
+    fe->clientData = clientData;
+    if (fd > eventLoop->maxfd) {
+        eventLoop->maxfd = fd;
+    }
+
+    return ANET_OK;
 }
 
 // 给fd绑定事件
-//static int aeApiAddEvent(aeEventLoop *eventLoop, int fd, int mask) {
-//    aeApiState *state = eventLoop->apiData;
-//
-//    // 初始化epoll_event
-//    struct epoll_event ee = {0};
-//
-//    // 判断是添加还是修改
-//    int op = eventLoop->events[fd].mask == AE_NONE ? EPOLL_CTL_ADD : EPOLL_CTL_MOD;
-//
-//    ee.events = 0;
-//    mask |= eventLoop->events[fd].mask; /* Merge old events */
-//    if (mask & AE_READABLE) ee.events |= EPOLLIN;
+int aeApiAddEvent(aeEventLoop *eventLoop, int fd, int mask) {
+    printf("设置epoll fd: %d\n", fd);
+
+    aeApiState *state = eventLoop->apiData;
+
+    // 初始化epoll_event
+    struct epoll_event ee = {0};
+
+    // 判断是添加还是修改
+    int op = eventLoop->events[fd].mask == AE_NONE ? EPOLL_CTL_ADD : EPOLL_CTL_MOD;
+
+    ee.events = 0;
+    mask |= eventLoop->events[fd].mask; /* Merge old events */
+    if (mask & AE_READABLE) {
+        printf("ee.events 设置为 EPOLLIN epfd: %d fd: %d\n", state->epfd, fd);
+        ee.events |= EPOLLIN;
+    }
 //    if (mask & AE_WRITABLE) ee.events |= EPOLLOUT;
-//    ee.data.fd = fd;
-//    if (epoll_ctl(state->epfd,op,fd,&ee) == -1) return -1;
-//
-//    return 0;
-//}
+    ee.data.fd = fd;
+    if (epoll_ctl(state->epfd, op, fd, &ee) == -1) return -1;
+
+    return 0;
+}
 
 // 建立tcp链接
 // fe->rfileProc(eventLoop,fd,fe->clientData,mask);
@@ -224,7 +247,7 @@ void acceptTcpHandler(aeEventLoop *eventLoop, int sockFd, void *privdata, int ma
     int cFd, cPort;
     char cIp[46];
 
-    while(max--) {
+    while (max--) {
         printf("开始处理新的客户端连接 \n");
 
         // 与客户端建立链接
@@ -238,8 +261,8 @@ void acceptTcpHandler(aeEventLoop *eventLoop, int sockFd, void *privdata, int ma
         }
 
         // 转换地址类型
-        struct sockaddr_in *s = (struct sockaddr_in *)&sa;
-        inet_ntop(AF_INET,(void*)&(s->sin_addr), cIp, sizeof(cIp));
+        struct sockaddr_in *s = (struct sockaddr_in *) &sa;
+        inet_ntop(AF_INET, (void *) &(s->sin_addr), cIp, sizeof(cIp));
         cPort = ntohs(s->sin_port);
 
         printf("新的客户端连接成功:%d ip: %s port: %d\n", cFd, cIp, cPort);
@@ -278,14 +301,14 @@ int aeProcessEvents(aeEventLoop *eventLoop, int flags) {
             }
 
             // 就绪的事件调用回调函数
-            for (j = 0; j < numevents; j++ ) {
+            for (j = 0; j < numevents; j++) {
                 // 拿出绑定好的已就绪事件
                 aeFileEvent *fe = &eventLoop->events[eventLoop->fired[j].fd];
                 int mask = eventLoop->fired[j].mask;
                 int fd = eventLoop->fired[j].fd;
 
                 // 触发读事件
-                fe->rFileProc(eventLoop,fd,fe->clientData,mask);
+                fe->rFileProc(eventLoop, fd, fe->clientData, mask);
             }
         }
     }
