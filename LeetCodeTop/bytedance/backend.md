@@ -23,10 +23,11 @@
 |143. 重排链表|24|https://leetcode-cn.com/problems/reorder-list| 中等 | 2    |
 |876. 链表的中间结点|1|https://leetcode-cn.com/problems/middle-of-the-linked-list| 简单 | 2    |
 |23. 合并K个排序链表|23|https://leetcode-cn.com/problems/merge-k-sorted-lists|
+|92. 反转链表 II|20|https://leetcode-cn.com/problems/reverse-linked-list-ii|中等|1|
 |21. 合并两个有序链表|22|https://leetcode-cn.com/problems/merge-two-sorted-lists|
+|141. 环形链表|14|https://leetcode-cn.com/problems/linked-list-cycle|
 |300. 最长上升子序列|21|https://leetcode-cn.com/problems/longest-increasing-subsequence|
 |69. x 的平方根|20|https://leetcode-cn.com/problems/sqrtx|
-|92. 反转链表 II|20|https://leetcode-cn.com/problems/reverse-linked-list-ii|
 |105. 从前序与中序遍历序列构造二叉树|19|https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal|
 |124. 二叉树中的最大路径和|18|https://leetcode-cn.com/problems/binary-tree-maximum-path-sum|
 |200. 岛屿数量|18|https://leetcode-cn.com/problems/number-of-islands|
@@ -38,7 +39,6 @@
 |46. 全排列|16|https://leetcode-cn.com/problems/permutations|
 |76. 最小覆盖子串|16|https://leetcode-cn.com/problems/minimum-window-substring|
 |补充题1. 排序奇升偶降链表|16|https://mp.weixin.qq.com/s/0WVa2wIAeG0nYnVndZiEXQ|
-|141. 环形链表|14|https://leetcode-cn.com/problems/linked-list-cycle|
 |221. 最大正方形|14|https://leetcode-cn.com/problems/maximal-square|
 |20. 有效的括号|14|https://leetcode-cn.com/problems/valid-parentheses|
 |98. 验证二叉搜索树|14|https://leetcode-cn.com/problems/validate-binary-search-tree|
