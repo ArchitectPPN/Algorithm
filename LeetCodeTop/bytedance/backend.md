@@ -20,7 +20,7 @@
 |199. 二叉树的右视图|24|https://leetcode-cn.com/problems/binary-tree-right-side-view| 中等 | 1    |
 |54. 螺旋矩阵|24|https://leetcode-cn.com/problems/spiral-matrix|
 |206. 反转链表|51|https://leetcode-cn.com/problems/reverse-linked-list| 简单 | 3    |
-|143. 重排链表|24|https://leetcode-cn.com/problems/reorder-list| 中等 | 1    |
+|143. 重排链表|24|https://leetcode-cn.com/problems/reorder-list| 中等 | 2    |
 |876. 链表的中间结点|1|https://leetcode-cn.com/problems/middle-of-the-linked-list| 简单 | 2    |
 |23. 合并K个排序链表|23|https://leetcode-cn.com/problems/merge-k-sorted-lists|
 |21. 合并两个有序链表|22|https://leetcode-cn.com/problems/merge-two-sorted-lists|
