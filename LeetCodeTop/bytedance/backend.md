@@ -20,7 +20,7 @@
 |31. 下一个排列|27|https://leetcode-cn.com/problems/next-permutation| 中等 | 1    |
 |199. 二叉树的右视图|24|https://leetcode-cn.com/problems/binary-tree-right-side-view| 中等 | 1    |
 |54. 螺旋矩阵|24|https://leetcode-cn.com/problems/spiral-matrix|
-|143. 重排链表|24|https://leetcode-cn.com/problems/reorder-list| 中等 |
+|143. 重排链表|24|https://leetcode-cn.com/problems/reorder-list| 中等 | 1    |
 |23. 合并K个排序链表|23|https://leetcode-cn.com/problems/merge-k-sorted-lists|
 |21. 合并两个有序链表|22|https://leetcode-cn.com/problems/merge-two-sorted-lists|
 |300. 最长上升子序列|21|https://leetcode-cn.com/problems/longest-increasing-subsequence|
