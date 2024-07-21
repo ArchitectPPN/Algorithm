@@ -7,7 +7,6 @@
 |3. 无重复字符的最长子串|57|https://leetcode-cn.com/problems/longest-substring-without-repeating-characters| 中等 | 1    |
 |146. LRU缓存机制|53|https://leetcode-cn.com/problems/lru-cache| 中等 | 1    |
 |215. 数组中的第K个最大元素|52|https://leetcode-cn.com/problems/kth-largest-element-in-an-array| 中等 | 1    |
-|206. 反转链表|51|https://leetcode-cn.com/problems/reverse-linked-list| 简单 | 2    |
 |103. 二叉树的锯齿形层次遍历|47|https://leetcode-cn.com/problems/binary-tree-zigzag-level-order-traversal| 中等 | 2    |
 |1. 两数之和|19|https://leetcode-cn.com/problems/two-sum| 简单 | 1    |
 |15. 三数之和|42|https://leetcode-cn.com/problems/3sum| 中等 | 1    |
@@ -20,12 +19,15 @@
 |31. 下一个排列|27|https://leetcode-cn.com/problems/next-permutation| 中等 | 1    |
 |199. 二叉树的右视图|24|https://leetcode-cn.com/problems/binary-tree-right-side-view| 中等 | 1    |
 |54. 螺旋矩阵|24|https://leetcode-cn.com/problems/spiral-matrix|
-|143. 重排链表|24|https://leetcode-cn.com/problems/reorder-list| 中等 |
+|206. 反转链表|51|https://leetcode-cn.com/problems/reverse-linked-list| 简单 | 3    |
+|143. 重排链表|24|https://leetcode-cn.com/problems/reorder-list| 中等 | 2    |
+|876. 链表的中间结点|1|https://leetcode-cn.com/problems/middle-of-the-linked-list| 简单 | 2    |
 |23. 合并K个排序链表|23|https://leetcode-cn.com/problems/merge-k-sorted-lists|
+|92. 反转链表 II|20|https://leetcode-cn.com/problems/reverse-linked-list-ii|中等|1|
 |21. 合并两个有序链表|22|https://leetcode-cn.com/problems/merge-two-sorted-lists|
+|141. 环形链表|14|https://leetcode-cn.com/problems/linked-list-cycle|
 |300. 最长上升子序列|21|https://leetcode-cn.com/problems/longest-increasing-subsequence|
 |69. x 的平方根|20|https://leetcode-cn.com/problems/sqrtx|
-|92. 反转链表 II|20|https://leetcode-cn.com/problems/reverse-linked-list-ii|
 |105. 从前序与中序遍历序列构造二叉树|19|https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal|
 |124. 二叉树中的最大路径和|18|https://leetcode-cn.com/problems/binary-tree-maximum-path-sum|
 |200. 岛屿数量|18|https://leetcode-cn.com/problems/number-of-islands|
@@ -37,7 +39,6 @@
 |46. 全排列|16|https://leetcode-cn.com/problems/permutations|
 |76. 最小覆盖子串|16|https://leetcode-cn.com/problems/minimum-window-substring|
 |补充题1. 排序奇升偶降链表|16|https://mp.weixin.qq.com/s/0WVa2wIAeG0nYnVndZiEXQ|
-|141. 环形链表|14|https://leetcode-cn.com/problems/linked-list-cycle|
 |221. 最大正方形|14|https://leetcode-cn.com/problems/maximal-square|
 |20. 有效的括号|14|https://leetcode-cn.com/problems/valid-parentheses|
 |98. 验证二叉搜索树|14|https://leetcode-cn.com/problems/validate-binary-search-tree|
@@ -229,7 +230,6 @@
 |67. 二进制求和|1|https://leetcode-cn.com/problems/add-binary|
 |515. 在每个树行中找最大值|1|https://leetcode-cn.com/problems/find-largest-value-in-each-tree-row|
 |1147. 段式回文|1|https://leetcode-cn.com/problems/longest-chunked-palindrome-decomposition|
-|876. 链表的中间结点|1|https://leetcode-cn.com/problems/middle-of-the-linked-list| 简单 | 1    |
 |100. 相同的树|1|https://leetcode-cn.com/problems/same-tree|
 |842. 将数组拆分成斐波那契序列|1|https://leetcode-cn.com/problems/split-array-into-fibonacci-sequence|
 |剑指 Offer 33. 二叉搜索树的后序遍历序列|1|https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-hou-xu-bian-li-xu-lie-lcof|
