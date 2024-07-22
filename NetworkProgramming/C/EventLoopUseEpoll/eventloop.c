@@ -247,6 +247,9 @@ void acceptTcpHandler(aeEventLoop *eventLoop, int sockFd, void *privdata, int ma
     int cFd, cPort;
     char cIp[46];
 
+    // 缓冲区
+    char msg[] = "Hello, Welcome Connect! \n";
+
     while (max--) {
         printf("开始处理新的客户端连接 \n");
 
@@ -256,6 +259,7 @@ void acceptTcpHandler(aeEventLoop *eventLoop, int sockFd, void *privdata, int ma
 
         // 与客户端建立链接
         cFd = accept(sockFd, (struct sockaddr *) &sa, &salen);
+        printf("新的客户端: %d \n", cFd);
         if (cFd == -1) {
             printf("新的客户端连接失败 \n");
         }
@@ -266,6 +270,9 @@ void acceptTcpHandler(aeEventLoop *eventLoop, int sockFd, void *privdata, int ma
         cPort = ntohs(s->sin_port);
 
         printf("新的客户端连接成功:%d ip: %s port: %d\n", cFd, cIp, cPort);
+        if (write(cFd, msg, strlen(msg) + 1) == -1) {
+            printf("给客户端发消息失败:%d ip: %s port: %d\n", cFd, cIp, cPort);
+        }
         close(cFd);
         printf("关闭客户端连接:%d ip: %s port: %d\n", cFd, cIp, cPort);
     }

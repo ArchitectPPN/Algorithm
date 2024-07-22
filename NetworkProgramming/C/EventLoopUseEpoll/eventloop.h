@@ -20,6 +20,8 @@
 #define ANET_ERR -1
 #define ANET_OK 1
 
+#define BUFFER_SIZE 1024
+
 struct aeEventLoop;
 struct aeFileEvent;
 
