@@ -25,7 +25,8 @@
 |23. 合并K个排序链表|23|https://leetcode-cn.com/problems/merge-k-sorted-lists|
 |92. 反转链表 II|20|https://leetcode-cn.com/problems/reverse-linked-list-ii|中等|1|
 |21. 合并两个有序链表|22|https://leetcode-cn.com/problems/merge-two-sorted-lists|
-|141. 环形链表|14|https://leetcode-cn.com/problems/linked-list-cycle|
+|141. 环形链表|14|https://leetcode-cn.com/problems/linked-list-cycle| 简单 | 1    |
+|142. 环形链表 II|13|https://leetcode-cn.com/problems/linked-list-cycle-ii|
 |300. 最长上升子序列|21|https://leetcode-cn.com/problems/longest-increasing-subsequence|
 |69. x 的平方根|20|https://leetcode-cn.com/problems/sqrtx|
 |105. 从前序与中序遍历序列构造二叉树|19|https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal|
@@ -48,7 +49,6 @@
 |322. 零钱兑换|13|https://leetcode-cn.com/problems/coin-change|
 |162. 寻找峰值|13|https://leetcode-cn.com/problems/find-peak-element|
 |122. 买卖股票的最佳时机 II|13|https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii|
-|142. 环形链表 II|13|https://leetcode-cn.com/problems/linked-list-cycle-ii|
 |48. 旋转图像|13|https://leetcode-cn.com/problems/rotate-image|
 |470. 用 Rand7() 实现 Rand10()|13|https://leetcode-cn.com/problems/implement-rand10-using-rand7|
 |补充题2. 圆环回原点问题|13|https://mp.weixin.qq.com/s/NZPaFsFrTybO3K3s7p7EVg|
