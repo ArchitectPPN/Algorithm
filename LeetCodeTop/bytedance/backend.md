@@ -22,9 +22,9 @@
 |206. 反转链表|51|https://leetcode-cn.com/problems/reverse-linked-list| 简单 | 3    |
 |143. 重排链表|24|https://leetcode-cn.com/problems/reorder-list| 中等 | 2    |
 |876. 链表的中间结点|1|https://leetcode-cn.com/problems/middle-of-the-linked-list| 简单 | 2    |
-|23. 合并K个排序链表|23|https://leetcode-cn.com/problems/merge-k-sorted-lists|
+|23. 合并K个排序链表|23|https://leetcode-cn.com/problems/merge-k-sorted-lists|困难||
 |92. 反转链表 II|20|https://leetcode-cn.com/problems/reverse-linked-list-ii|中等|1|
-|21. 合并两个有序链表|22|https://leetcode-cn.com/problems/merge-two-sorted-lists|
+|21. 合并两个有序链表|22|https://leetcode-cn.com/problems/merge-two-sorted-lists|简单|1|
 |141. 环形链表|14|https://leetcode-cn.com/problems/linked-list-cycle| 简单 | 1    |
 |142. 环形链表 II|13|https://leetcode-cn.com/problems/linked-list-cycle-ii| 中等 | 1    |
 |300. 最长上升子序列|21|https://leetcode-cn.com/problems/longest-increasing-subsequence|
