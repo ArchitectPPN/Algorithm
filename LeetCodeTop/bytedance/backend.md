@@ -26,7 +26,7 @@
 |92. 反转链表 II|20|https://leetcode-cn.com/problems/reverse-linked-list-ii|中等|1|
 |21. 合并两个有序链表|22|https://leetcode-cn.com/problems/merge-two-sorted-lists|
 |141. 环形链表|14|https://leetcode-cn.com/problems/linked-list-cycle| 简单 | 1    |
-|142. 环形链表 II|13|https://leetcode-cn.com/problems/linked-list-cycle-ii|
+|142. 环形链表 II|13|https://leetcode-cn.com/problems/linked-list-cycle-ii| 中等 | 1    |
 |300. 最长上升子序列|21|https://leetcode-cn.com/problems/longest-increasing-subsequence|
 |69. x 的平方根|20|https://leetcode-cn.com/problems/sqrtx|
 |105. 从前序与中序遍历序列构造二叉树|19|https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal|
