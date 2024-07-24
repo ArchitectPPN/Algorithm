@@ -23,11 +23,13 @@
 |876. 链表的中间结点|1|https://leetcode-cn.com/problems/middle-of-the-linked-list| 简单 | 2    |
 |25. K 个一组翻转链表|60|https://leetcode-cn.com/problems/reverse-nodes-in-k-group| 困难 | 1    |
 |剑指 Offer 25. 合并两个排序的链表|1|https://leetcode-cn.com/problems/he-bing-liang-ge-pai-xu-de-lian-biao-lcof|
-|23. 合并K个排序链表|23|https://leetcode-cn.com/problems/merge-k-sorted-lists|困难||
-|92. 反转链表 II|20|https://leetcode-cn.com/problems/reverse-linked-list-ii|中等|1|
-|21. 合并两个有序链表|22|https://leetcode-cn.com/problems/merge-two-sorted-lists|简单|1|
+|23. 合并K个排序链表|23|https://leetcode-cn.com/problems/merge-k-sorted-lists|困难|      |
+|92. 反转链表 II|20|https://leetcode-cn.com/problems/reverse-linked-list-ii|中等| 1    |
+|21. 合并两个有序链表|22|https://leetcode-cn.com/problems/merge-two-sorted-lists|简单| 1    |
 |141. 环形链表|14|https://leetcode-cn.com/problems/linked-list-cycle| 简单 | 1    |
 |142. 环形链表 II|13|https://leetcode-cn.com/problems/linked-list-cycle-ii| 中等 | 1    |
+|234. 回文链表|12|https://leetcode-cn.com/problems/palindrome-linked-list| 简单 | 1    |
+|237. 删除链表中的节点|https://leetcode.cn/problems/delete-node-in-a-linked-list/description/|中等| 1    |
 |114. 二叉树展开为链表|8|https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list|
 |24. 两两交换链表中的节点|8|https://leetcode-cn.com/problems/swap-nodes-in-pairs|
 |剑指 Offer 22. 链表中倒数第k个节点|8|https://leetcode-cn.com/problems/lian-biao-zhong-dao-shu-di-kge-jie-dian-lcof|
@@ -66,7 +68,6 @@
 |48. 旋转图像|13|https://leetcode-cn.com/problems/rotate-image|
 |470. 用 Rand7() 实现 Rand10()|13|https://leetcode-cn.com/problems/implement-rand10-using-rand7|
 |补充题2. 圆环回原点问题|13|https://mp.weixin.qq.com/s/NZPaFsFrTybO3K3s7p7EVg|
-|234. 回文链表|12|https://leetcode-cn.com/problems/palindrome-linked-list| 简单 |      |
 |518. 零钱兑换 II|12|https://leetcode-cn.com/problems/coin-change-2|
 |88. 合并两个有序数组|12|https://leetcode-cn.com/problems/merge-sorted-array|
 |2. 两数相加|12|https://leetcode-cn.com/problems/add-two-numbers|
