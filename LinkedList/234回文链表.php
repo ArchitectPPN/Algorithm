@@ -14,6 +14,7 @@ class ListNode
     }
 }
 
+// 转数组后检查是否为回文链表
 class TranslateArraySolution
 {
     /**
@@ -34,9 +35,47 @@ class TranslateArraySolution
 
         $length = count($linkedArr);
         for ($i = 0; $i < $length / 2; $i++) {
-            if($linkedArr[$i]->val !== $linkedArr[$length - $i - 1]->val) {
+            if ($linkedArr[$i]->val !== $linkedArr[$length - $i - 1]->val) {
                 return false;
             }
+        }
+
+        return true;
+    }
+}
+
+class RecursivelyCheckSolution
+{
+    private ?ListNode $frontPointer = null;
+
+    /**
+     * @param ListNode|null $head
+     * @return Boolean
+     */
+    function isPalindrome(?ListNode $head): bool
+    {
+        $this->frontPointer = $head;
+        return $this->recursivelyCheck($head);
+    }
+
+    /**
+     *
+     *
+     * @param ListNode|null $currentNode
+     * @return bool
+     */
+    private function recursivelyCheck(?ListNode $currentNode): bool
+    {
+        if ($currentNode) {
+            if (!$this->recursivelyCheck($currentNode->next)) {
+                return false;
+            }
+
+            if ($this->frontPointer->val != $currentNode->val) {
+                return false;
+            }
+
+            $this->frontPointer = $this->frontPointer->next;
         }
 
         return true;
