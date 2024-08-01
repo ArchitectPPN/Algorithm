@@ -1,6 +1,6 @@
 <?php
 
-namespace ReverseKGroup;
+namespace ReverseKGroupSolution;
 
 
 class ListNode
@@ -11,13 +11,13 @@ class ListNode
     public int $val = 0;
 
     /**
-     * @var ListNode|null
+     * @var ?ListNode
      */
-    public null|ListNode $next = null;
+    public ?ListNode $next = null;
 
     /**
      * @param int $val
-     * @param ListNode|null $next
+     * @param ?ListNode $next
      */
     function __construct(int $val = 0, ?ListNode $next = null)
     {
