@@ -1,6 +1,6 @@
 <?php
 
-namespace ReverseKGroup;
+namespace ReverseKGroupSolution;
 
 
 class ListNode
