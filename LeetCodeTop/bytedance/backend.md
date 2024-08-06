@@ -31,15 +31,15 @@
 |234. 回文链表| 12   |https://leetcode-cn.com/problems/palindrome-linked-list| 简单 | 1    |
 |237. 删除链表中的节点| 0    |https://leetcode.cn/problems/delete-node-in-a-linked-list/description/|中等| 1    |
 |114. 二叉树展开为链表| 8    |https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list|
-|24. 两两交换链表中的节点| 8    |https://leetcode-cn.com/problems/swap-nodes-in-pairs|
+|24. 两两交换链表中的节点| 8    |https://leetcode-cn.com/problems/swap-nodes-in-pairs|中等|1|
 |剑指 Offer 22. 链表中倒数第k个节点| 8    |https://leetcode-cn.com/problems/lian-biao-zhong-dao-shu-di-kge-jie-dian-lcof|
 |138. 复制带随机指针的链表| 7    |https://leetcode-cn.com/problems/copy-list-with-random-pointer|
-|19. 删除链表的倒数第N个节点| 7    |https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list|
+|19. 删除链表的倒数第N个节点| 7    |https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list|中等|1|
 |补充题1. 排序奇升偶降链表| 16   |https://mp.weixin.qq.com/s/0WVa2wIAeG0nYnVndZiEXQ|
 |82. 删除排序链表中的重复元素 II| 10   |https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list-ii|
 |83. 删除排序链表中的重复元素| 9    |https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list|
 |148. 排序链表| 12   |https://leetcode-cn.com/problems/sort-list|
-|328. 奇偶链表| 6    |https://leetcode-cn.com/problems/odd-even-linked-list|
+|328. 奇偶链表| 6    |https://leetcode-cn.com/problems/odd-even-linked-list|中等|1|
 |61. 旋转链表| 6    |https://leetcode-cn.com/problems/rotate-list|
 |剑指 Offer 36. 二叉搜索树与双向链表| 6    |https://leetcode-cn.com/problems/er-cha-sou-suo-shu-yu-shuang-xiang-lian-biao-lcof|
 |剑指 Offer 24. 反转链表| 1    |https://leetcode-cn.com/problems/fan-zhuan-lian-biao-lcof|
