@@ -37,7 +37,7 @@
 |19. 删除链表的倒数第N个节点| 7    |https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list|中等|1|
 |补充题1. 排序奇升偶降链表| 16   |https://mp.weixin.qq.com/s/0WVa2wIAeG0nYnVndZiEXQ|
 |82. 删除排序链表中的重复元素 II| 10   |https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list-ii|
-|83. 删除排序链表中的重复元素| 9    |https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list|
+|83. 删除排序链表中的重复元素| 9    |https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list|简单|1|
 |148. 排序链表| 12   |https://leetcode-cn.com/problems/sort-list|
 |328. 奇偶链表| 6    |https://leetcode-cn.com/problems/odd-even-linked-list|中等|1|
 |61. 旋转链表| 6    |https://leetcode-cn.com/problems/rotate-list|
