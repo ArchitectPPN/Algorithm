@@ -306,7 +306,7 @@
 |848. 字母移位| 1    |https://leetcode-cn.com/problems/shifting-letters|
 |6. Z 字形变换| 1    |https://leetcode-cn.com/problems/zigzag-conversion|
 |990. 等式方程的可满足性| 1    |https://leetcode-cn.com/problems/satisfiability-of-equality-equations|
-|567. 字符串的排列| 1    |https://leetcode-cn.com/problems/permutation-in-string|
+|567. 字符串的排列| 1    |https://leetcode-cn.com/problems/permutation-in-string|简单|1|
 |496. 下一个更大元素 I| 1    |https://leetcode-cn.com/problems/next-greater-element-i|
 |967. 连续差相同的数字| 1    |https://leetcode-cn.com/problems/numbers-with-same-consecutive-differences|
 |1405. 最长快乐字符串| 1    |https://leetcode-cn.com/problems/longest-happy-string|
