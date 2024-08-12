@@ -53,7 +53,7 @@
 |101. 对称二叉树| 16   |https://leetcode-cn.com/problems/symmetric-tree| 简单 | 1    |
 |56. 合并区间| 16   |https://leetcode-cn.com/problems/merge-intervals|
 |415. 字符串相加| 16   |https://leetcode-cn.com/problems/add-strings|
-|155. 最小栈| 16   |https://leetcode-cn.com/problems/min-stack|
+|155. 最小栈| 16   |https://leetcode-cn.com/problems/min-stack|中等|1|
 |46. 全排列| 16   |https://leetcode-cn.com/problems/permutations|
 |76. 最小覆盖子串| 16   |https://leetcode-cn.com/problems/minimum-window-substring|
 |221. 最大正方形| 14   |https://leetcode-cn.com/problems/maximal-square|
