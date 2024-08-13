@@ -1,6 +1,8 @@
 # 后端
 我开发的[CodeTop题库](https://codetop.cc)可以按照部门、难度筛选，比markdown更方便查询高频题
 
+### 总题目 
+
 |题目| 出现次数 |链接| 难度 | 刷题次数 |
 |----|------|----|----|------|
 |3. 无重复字符的最长子串| 57   |https://leetcode-cn.com/problems/longest-substring-without-repeating-characters| 中等 | 1    |
@@ -52,8 +54,6 @@
 |41. 缺失的第一个正数| 17   |https://leetcode-cn.com/problems/first-missing-positive|
 |101. 对称二叉树| 16   |https://leetcode-cn.com/problems/symmetric-tree| 简单 | 1    |
 |56. 合并区间| 16   |https://leetcode-cn.com/problems/merge-intervals|
-|415. 字符串相加| 16   |https://leetcode-cn.com/problems/add-strings| 简单 | 1    |
-|155. 最小栈| 16   |https://leetcode-cn.com/problems/min-stack| 中等 | 1    |
 |46. 全排列| 16   |https://leetcode-cn.com/problems/permutations|
 |76. 最小覆盖子串| 16   |https://leetcode-cn.com/problems/minimum-window-substring|
 |221. 最大正方形| 14   |https://leetcode-cn.com/problems/maximal-square|
@@ -229,7 +229,50 @@
 |剑指 Offer 52. 两个链表的第一个公共节点| 1    |https://leetcode-cn.com/problems/liang-ge-lian-biao-de-di-yi-ge-gong-gong-jie-dian-lcof|
 |111. 二叉树的最小深度| 1    |https://leetcode-cn.com/problems/minimum-depth-of-binary-tree|
 |994. 腐烂的橘子| 1    |https://leetcode-cn.com/problems/rotting-oranges|
-|344. 反转字符串| 1    |https://leetcode-cn.com/problems/reverse-string|
+
+### 二叉树
+|题目| 出现次数 |难度 | 刷题次数 |
+|----|------|----|------|
+
+### 数组
+|题目| 出现次数 | 难度 | 刷题次数 |
+|----|------|----|------|
+
+### 栈
+| 题目           | 出现次数 | 难度 | 刷题次数 |
+|--------------|------|----|------|
+| [155. 最小栈](https://leetcode-cn.com/problems/min-stack) | 16   | 中等 | 1    |
+
+
+### 字符串
+| 题目                                                            | 出现次数 | 难度 | 刷题次数 |
+|---------------------------------------------------------------|------|----|------|
+| [344. 反转字符串](https://leetcode-cn.com/problems/reverse-string) | 1    | 简单| 1    |
+| [415. 字符串相加](https://leetcode-cn.com/problems/add-strings)| 16   | 简单 | 1    |
+
+### 递归
+| 题目                                                            | 出现次数 | 难度 | 刷题次数 |
+|---------------------------------------------------------------|------|----|------|
+
+### 排序
+| 题目                                                            | 出现次数 | 难度 | 刷题次数 |
+|---------------------------------------------------------------|------|----|------|
+
+### 图
+| 题目                                                            | 出现次数 | 难度 | 刷题次数 |
+|---------------------------------------------------------------|------|----|------|
+
+### hash
+| 题目                                                            | 出现次数 | 难度 | 刷题次数 |
+|---------------------------------------------------------------|------|----|------|
+
+### 动态规划
+| 题目                                                            | 出现次数 | 难度 | 刷题次数 |
+|---------------------------------------------------------------|------|----|------|
+
+
+|题目| 出现次数 |链接| 难度 | 刷题次数 |
+|----|------|----|----|------|
 |1299. 将每个元素替换为右侧最大元素| 1    |https://leetcode-cn.com/problems/replace-elements-with-greatest-element-on-right-side|
 |67. 二进制求和| 1    |https://leetcode-cn.com/problems/add-binary|
 |515. 在每个树行中找最大值| 1    |https://leetcode-cn.com/problems/find-largest-value-in-each-tree-row|
