@@ -127,7 +127,6 @@
 |62. 不同路径| 4    |https://leetcode-cn.com/problems/unique-paths|
 |剑指 Offer 51. 数组中的逆序对| 4    |https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof|
 |40. 组合总和 II| 4    |https://leetcode-cn.com/problems/combination-sum-ii|
-|1047. 删除字符串中的所有相邻重复项| 4    |https://leetcode-cn.com/problems/remove-all-adjacent-duplicates-in-string|
 |402. 移掉K位数字| 4    |https://leetcode-cn.com/problems/remove-k-digits|
 |169. 多数元素| 4    |https://leetcode-cn.com/problems/majority-element|
 |152. 乘积最大子数组| 4    |https://leetcode-cn.com/problems/maximum-product-subarray|
@@ -238,11 +237,11 @@
 |----|------|----|------|
 
 ### 栈
-| 题目                                                     | 出现次数 | 难度     | 刷题次数 |
-|--------------------------------------------------------|------|--------|------|
-| [155. 最小栈](https://leetcode-cn.com/problems/min-stack) | 16   | Medium | 1    |
-| [232. 用栈实现队列](https://leetcode-cn.com/problems/implement-queue-using-stacks)| 12   | Easy   | 1    |
-
+| 题目                                                                           | 出现次数 | 难度     | 刷题次数 |
+|------------------------------------------------------------------------------|------|--------|------|
+| [155. 最小栈](https://leetcode-cn.com/problems/min-stack)                       | 16   | Medium | 1    |
+| [232. 用栈实现队列](https://leetcode-cn.com/problems/implement-queue-using-stacks) | 12   | Easy   | 1    |
+| [1047. 删除字符串中的所有相邻重复项](https://leetcode-cn.com/problems/remove-all-adjacent-duplicates-in-string)| 4    | Easy   | 1    |
 
 ### 字符串
 | 题目                                                            | 出现次数 | 难度 | 刷题次数 |
