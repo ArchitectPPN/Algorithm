@@ -164,7 +164,6 @@
 |136. 只出现一次的数字| 3    |https://leetcode-cn.com/problems/single-number|
 |18. 四数之和| 3    |https://leetcode-cn.com/problems/4sum|
 |剑指 Offer 27. 二叉树的镜像| 3    |https://leetcode-cn.com/problems/er-cha-shu-de-jing-xiang-lcof|
-|225. 用队列实现栈| 3    |https://leetcode-cn.com/problems/implement-stack-using-queues| Easy   | 1    |
 |647. 回文子串| 3    |https://leetcode-cn.com/problems/palindromic-substrings|
 |34. 在排序数组中查找元素的第一个和最后一个位置| 3    |https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array|
 |165. 比较版本号| 3    |https://leetcode-cn.com/problems/compare-version-numbers|
@@ -237,11 +236,13 @@
 |----|------|----|------|
 
 ### 栈
-| 题目                                                                           | 出现次数 | 难度     | 刷题次数 |
-|------------------------------------------------------------------------------|------|--------|------|
-| [155. 最小栈](https://leetcode-cn.com/problems/min-stack)                       | 16   | Medium | 1    |
-| [232. 用栈实现队列](https://leetcode-cn.com/problems/implement-queue-using-stacks) | 12   | Easy   | 1    |
-| [1047. 删除字符串中的所有相邻重复项](https://leetcode-cn.com/problems/remove-all-adjacent-duplicates-in-string)| 4    | Easy   | 1    |
+| 题目                                                                                                | 出现次数 | 难度     | 刷题次数 |
+|---------------------------------------------------------------------------------------------------|------|--------|------|
+| [155. 最小栈](https://leetcode-cn.com/problems/min-stack)                                            | 16   | Medium | 1    |
+| [225. 用队列实现栈](https://leetcode-cn.com/problems/implement-stack-using-queues)                      | 3    || Easy   | 1    |
+| [232. 用栈实现队列](https://leetcode-cn.com/problems/implement-queue-using-stacks)                      | 12   | Easy   | 1    |
+| [496. 下一个更大元素 I](https://leetcode-cn.com/problems/next-greater-element-i)                         | 1    | Easy   |1|
+| [1047. 删除字符串中的所有相邻重复项](https://leetcode-cn.com/problems/remove-all-adjacent-duplicates-in-string) | 4    | Easy   | 1    |
 
 ### 字符串
 | 题目                                                            | 出现次数 | 难度 | 刷题次数 |
@@ -349,7 +350,6 @@
 |6. Z 字形变换| 1    |https://leetcode-cn.com/problems/zigzag-conversion|
 |990. 等式方程的可满足性| 1    |https://leetcode-cn.com/problems/satisfiability-of-equality-equations|
 |567. 字符串的排列| 1    |https://leetcode-cn.com/problems/permutation-in-string| Easy | 1    |
-|496. 下一个更大元素 I| 1    |https://leetcode-cn.com/problems/next-greater-element-i|
 |967. 连续差相同的数字| 1    |https://leetcode-cn.com/problems/numbers-with-same-consecutive-differences|
 |1405. 最长快乐字符串| 1    |https://leetcode-cn.com/problems/longest-happy-string|
 |1353. 最多可以参加的会议数目| 1    |https://leetcode-cn.com/problems/maximum-number-of-events-that-can-be-attended|
