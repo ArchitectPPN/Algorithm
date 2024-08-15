@@ -3,45 +3,45 @@
 
 ### 总题目 
 
-|题目| 出现次数 |链接| 难度 | 刷题次数 |
-|----|------|----|----|------|
-|3. 无重复字符的最长子串| 57   |https://leetcode-cn.com/problems/longest-substring-without-repeating-characters| 中等 | 1    |
-|146. LRU缓存机制| 53   |https://leetcode-cn.com/problems/lru-cache| 中等 | 1    |
-|215. 数组中的第K个最大元素| 52   |https://leetcode-cn.com/problems/kth-largest-element-in-an-array| 中等 | 1    |
-|103. 二叉树的锯齿形层次遍历| 47   |https://leetcode-cn.com/problems/binary-tree-zigzag-level-order-traversal| 中等 | 2    |
-|1. 两数之和| 19   |https://leetcode-cn.com/problems/two-sum| 简单 | 1    |
-|15. 三数之和| 42   |https://leetcode-cn.com/problems/3sum| 中等 | 1    |
+|题目| 出现次数 |链接| 难度     | 刷题次数 |
+|----|------|----|--------|------|
+|3. 无重复字符的最长子串| 57   |https://leetcode-cn.com/problems/longest-substring-without-repeating-characters| Medium | 1    |
+|146. LRU缓存机制| 53   |https://leetcode-cn.com/problems/lru-cache| Medium | 1    |
+|215. 数组中的第K个最大元素| 52   |https://leetcode-cn.com/problems/kth-largest-element-in-an-array| Medium | 1    |
+|103. 二叉树的锯齿形层次遍历| 47   |https://leetcode-cn.com/problems/binary-tree-zigzag-level-order-traversal| Medium | 2    |
+|1. 两数之和| 19   |https://leetcode-cn.com/problems/two-sum| Easy   | 1    |
+|15. 三数之和| 42   |https://leetcode-cn.com/problems/3sum| Medium | 1    |
 |121. 买卖股票的最佳时机| 41   |https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock|
-|160. 相交链表| 32   |https://leetcode-cn.com/problems/intersection-of-two-linked-lists| 简单 | 1    |
-|236. 二叉树的最近公共祖先| 32   |https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree| 中等 | 1    |
-|11. 盛最多水的容器| 6    |https://leetcode-cn.com/problems/container-with-most-water| 中等 | 1    |
-|42. 接雨水| 31   |https://leetcode-cn.com/problems/trapping-rain-water| 困难 | 1    |
-|33. 搜索旋转排序数组| 27   |https://leetcode-cn.com/problems/search-in-rotated-sorted-array| 中等 | 1    |
-|31. 下一个排列| 27   |https://leetcode-cn.com/problems/next-permutation| 中等 | 1    |
-|199. 二叉树的右视图| 24   |https://leetcode-cn.com/problems/binary-tree-right-side-view| 中等 | 1    |
+|160. 相交链表| 32   |https://leetcode-cn.com/problems/intersection-of-two-linked-lists| Easy   | 1    |
+|236. 二叉树的最近公共祖先| 32   |https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree| Medium | 1    |
+|11. 盛最多水的容器| 6    |https://leetcode-cn.com/problems/container-with-most-water| Medium | 1    |
+|42. 接雨水| 31   |https://leetcode-cn.com/problems/trapping-rain-water| Hard   | 1    |
+|33. 搜索旋转排序数组| 27   |https://leetcode-cn.com/problems/search-in-rotated-sorted-array| Medium | 1    |
+|31. 下一个排列| 27   |https://leetcode-cn.com/problems/next-permutation| Medium | 1    |
+|199. 二叉树的右视图| 24   |https://leetcode-cn.com/problems/binary-tree-right-side-view| Medium | 1    |
 |54. 螺旋矩阵| 24   |https://leetcode-cn.com/problems/spiral-matrix|
-|206. 反转链表| 51   |https://leetcode-cn.com/problems/reverse-linked-list| 简单 | 3    |
-|143. 重排链表| 24   |https://leetcode-cn.com/problems/reorder-list| 中等 | 2    |
-|876. 链表的中间结点| 1    |https://leetcode-cn.com/problems/middle-of-the-linked-list| 简单 | 2    |
-|25. K 个一组翻转链表| 60   |https://leetcode-cn.com/problems/reverse-nodes-in-k-group| 困难 | 1    |
+|206. 反转链表| 51   |https://leetcode-cn.com/problems/reverse-linked-list| Easy   | 3    |
+|143. 重排链表| 24   |https://leetcode-cn.com/problems/reorder-list| Medium | 2    |
+|876. 链表的中间结点| 1    |https://leetcode-cn.com/problems/middle-of-the-linked-list| Easy   | 2    |
+|25. K 个一组翻转链表| 60   |https://leetcode-cn.com/problems/reverse-nodes-in-k-group| Hard   | 1    |
 |剑指 Offer 25. 合并两个排序的链表| 1    |https://leetcode-cn.com/problems/he-bing-liang-ge-pai-xu-de-lian-biao-lcof|
-|23. 合并K个排序链表| 23   |https://leetcode-cn.com/problems/merge-k-sorted-lists| 困难 |      |
-|92. 反转链表 II| 20   |https://leetcode-cn.com/problems/reverse-linked-list-ii| 中等 | 1    |
-|21. 合并两个有序链表| 22   |https://leetcode-cn.com/problems/merge-two-sorted-lists| 简单 | 1    |
-|141. 环形链表| 14   |https://leetcode-cn.com/problems/linked-list-cycle| 简单 | 1    |
-|142. 环形链表 II| 13   |https://leetcode-cn.com/problems/linked-list-cycle-ii| 中等 | 1    |
-|234. 回文链表| 12   |https://leetcode-cn.com/problems/palindrome-linked-list| 简单 | 1    |
-|237. 删除链表中的节点| 0    |https://leetcode.cn/problems/delete-node-in-a-linked-list/description/| 中等 | 1    |
+|23. 合并K个排序链表| 23   |https://leetcode-cn.com/problems/merge-k-sorted-lists| Hard   |      |
+|92. 反转链表 II| 20   |https://leetcode-cn.com/problems/reverse-linked-list-ii| Medium | 1    |
+|21. 合并两个有序链表| 22   |https://leetcode-cn.com/problems/merge-two-sorted-lists| Easy   | 1    |
+|141. 环形链表| 14   |https://leetcode-cn.com/problems/linked-list-cycle| Easy   | 1    |
+|142. 环形链表 II| 13   |https://leetcode-cn.com/problems/linked-list-cycle-ii| Medium | 1    |
+|234. 回文链表| 12   |https://leetcode-cn.com/problems/palindrome-linked-list| Easy   | 1    |
+|237. 删除链表中的节点| 0    |https://leetcode.cn/problems/delete-node-in-a-linked-list/description/| Medium | 1    |
 |114. 二叉树展开为链表| 8    |https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list|
-|24. 两两交换链表中的节点| 8    |https://leetcode-cn.com/problems/swap-nodes-in-pairs| 中等 | 1    |
+|24. 两两交换链表中的节点| 8    |https://leetcode-cn.com/problems/swap-nodes-in-pairs| Medium | 1    |
 |剑指 Offer 22. 链表中倒数第k个节点| 8    |https://leetcode-cn.com/problems/lian-biao-zhong-dao-shu-di-kge-jie-dian-lcof|
 |138. 复制带随机指针的链表| 7    |https://leetcode-cn.com/problems/copy-list-with-random-pointer|
-|19. 删除链表的倒数第N个节点| 7    |https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list| 中等 | 1    |
+|19. 删除链表的倒数第N个节点| 7    |https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list| Medium | 1    |
 |补充题1. 排序奇升偶降链表| 16   |https://mp.weixin.qq.com/s/0WVa2wIAeG0nYnVndZiEXQ|
 |82. 删除排序链表中的重复元素 II| 10   |https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list-ii|
-|83. 删除排序链表中的重复元素| 9    |https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list| 简单 | 1    |
+|83. 删除排序链表中的重复元素| 9    |https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list| Easy   | 1    |
 |148. 排序链表| 12   |https://leetcode-cn.com/problems/sort-list|
-|328. 奇偶链表| 6    |https://leetcode-cn.com/problems/odd-even-linked-list| 中等 | 1    |
+|328. 奇偶链表| 6    |https://leetcode-cn.com/problems/odd-even-linked-list| Medium | 1    |
 |61. 旋转链表| 6    |https://leetcode-cn.com/problems/rotate-list|
 |剑指 Offer 36. 二叉搜索树与双向链表| 6    |https://leetcode-cn.com/problems/er-cha-sou-suo-shu-yu-shuang-xiang-lian-biao-lcof|
 |剑指 Offer 24. 反转链表| 1    |https://leetcode-cn.com/problems/fan-zhuan-lian-biao-lcof|
@@ -52,7 +52,7 @@
 |124. 二叉树中的最大路径和| 18   |https://leetcode-cn.com/problems/binary-tree-maximum-path-sum|
 |200. 岛屿数量| 18   |https://leetcode-cn.com/problems/number-of-islands|
 |41. 缺失的第一个正数| 17   |https://leetcode-cn.com/problems/first-missing-positive|
-|101. 对称二叉树| 16   |https://leetcode-cn.com/problems/symmetric-tree| 简单 | 1    |
+|101. 对称二叉树| 16   |https://leetcode-cn.com/problems/symmetric-tree| Easy   | 1    |
 |56. 合并区间| 16   |https://leetcode-cn.com/problems/merge-intervals|
 |46. 全排列| 16   |https://leetcode-cn.com/problems/permutations|
 |76. 最小覆盖子串| 16   |https://leetcode-cn.com/problems/minimum-window-substring|
@@ -74,7 +74,6 @@
 |32. 最长有效括号| 12   |https://leetcode-cn.com/problems/longest-valid-parentheses|
 |958. 二叉树的完全性检验| 12   |https://leetcode-cn.com/problems/check-completeness-of-a-binary-tree|
 |198. 打家劫舍| 12   |https://leetcode-cn.com/problems/house-robber|
-|232. 用栈实现队列| 12   |https://leetcode-cn.com/problems/implement-queue-using-stacks|
 |补充题4. 手撕快速排序| 12   |https://leetcode-cn.com/problems/sort-an-array|
 |113. 路径总和 II| 11   |https://leetcode-cn.com/problems/path-sum-ii|
 |5. 最长回文子串| 11   |https://leetcode-cn.com/problems/longest-palindromic-substring|
@@ -166,7 +165,7 @@
 |136. 只出现一次的数字| 3    |https://leetcode-cn.com/problems/single-number|
 |18. 四数之和| 3    |https://leetcode-cn.com/problems/4sum|
 |剑指 Offer 27. 二叉树的镜像| 3    |https://leetcode-cn.com/problems/er-cha-shu-de-jing-xiang-lcof|
-|225. 用队列实现栈| 3    |https://leetcode-cn.com/problems/implement-stack-using-queues| 简单 | 1    |
+|225. 用队列实现栈| 3    |https://leetcode-cn.com/problems/implement-stack-using-queues| Easy   | 1    |
 |647. 回文子串| 3    |https://leetcode-cn.com/problems/palindromic-substrings|
 |34. 在排序数组中查找元素的第一个和最后一个位置| 3    |https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array|
 |165. 比较版本号| 3    |https://leetcode-cn.com/problems/compare-version-numbers|
@@ -239,16 +238,17 @@
 |----|------|----|------|
 
 ### 栈
-| 题目           | 出现次数 | 难度 | 刷题次数 |
-|--------------|------|----|------|
-| [155. 最小栈](https://leetcode-cn.com/problems/min-stack) | 16   | 中等 | 1    |
+| 题目                                                     | 出现次数 | 难度     | 刷题次数 |
+|--------------------------------------------------------|------|--------|------|
+| [155. 最小栈](https://leetcode-cn.com/problems/min-stack) | 16   | Medium | 1    |
+| [232. 用栈实现队列](https://leetcode-cn.com/problems/implement-queue-using-stacks)| 12   | Easy   | 1    |
 
 
 ### 字符串
 | 题目                                                            | 出现次数 | 难度 | 刷题次数 |
 |---------------------------------------------------------------|------|----|------|
-| [344. 反转字符串](https://leetcode-cn.com/problems/reverse-string) | 1    | 简单| 1    |
-| [415. 字符串相加](https://leetcode-cn.com/problems/add-strings)| 16   | 简单 | 1    |
+| [344. 反转字符串](https://leetcode-cn.com/problems/reverse-string) | 1    | Easy| 1    |
+| [415. 字符串相加](https://leetcode-cn.com/problems/add-strings)| 16   | Easy | 1    |
 
 ### 递归
 | 题目                                                            | 出现次数 | 难度 | 刷题次数 |
@@ -349,7 +349,7 @@
 |848. 字母移位| 1    |https://leetcode-cn.com/problems/shifting-letters|
 |6. Z 字形变换| 1    |https://leetcode-cn.com/problems/zigzag-conversion|
 |990. 等式方程的可满足性| 1    |https://leetcode-cn.com/problems/satisfiability-of-equality-equations|
-|567. 字符串的排列| 1    |https://leetcode-cn.com/problems/permutation-in-string| 简单 | 1    |
+|567. 字符串的排列| 1    |https://leetcode-cn.com/problems/permutation-in-string| Easy | 1    |
 |496. 下一个更大元素 I| 1    |https://leetcode-cn.com/problems/next-greater-element-i|
 |967. 连续差相同的数字| 1    |https://leetcode-cn.com/problems/numbers-with-same-consecutive-differences|
 |1405. 最长快乐字符串| 1    |https://leetcode-cn.com/problems/longest-happy-string|
