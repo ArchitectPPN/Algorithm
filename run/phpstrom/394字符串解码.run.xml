@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="394字符串解码" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Stack" path="$PROJECT_DIR$/Stack/394字符串解码.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$/Array">
+      <PhpTestInterpreterSettings>
+        <option name="interpreterName" value="php81" />
+      </PhpTestInterpreterSettings>
+    </CommandLine>
+    <method v="2" />
+  </configuration>
+</component>
