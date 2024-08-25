@@ -7,13 +7,10 @@
 | 题目                              | 出现次数 | 链接                                                                                                          | 难度     | 刷题次数 |
 |---------------------------------|------|-------------------------------------------------------------------------------------------------------------|--------|------|
 | 31. 下一个排列                       | 27   | https://leetcode-cn.com/problems/next-permutation                                                           | Medium | 1    |
-| 54. 螺旋矩阵                        | 24   | https://leetcode-cn.com/problems/spiral-matrix                                                              |
 | 300. 最长上升子序列                    | 21   | https://leetcode-cn.com/problems/longest-increasing-subsequence                                             |
 | 69. x 的平方根                      | 20   | https://leetcode-cn.com/problems/sqrtx                                                                      |
 | 200. 岛屿数量                       | 18   | https://leetcode-cn.com/problems/number-of-islands                                                          |
 | 41. 缺失的第一个正数                    | 17   | https://leetcode-cn.com/problems/first-missing-positive                                                     |
-| 56. 合并区间                        | 16   | https://leetcode-cn.com/problems/merge-intervals                                                            |
-| 46. 全排列                         | 16   | https://leetcode-cn.com/problems/permutations                                                               |
 | 76. 最小覆盖子串                      | 16   | https://leetcode-cn.com/problems/minimum-window-substring                                                   |
 | 221. 最大正方形                      | 14   | https://leetcode-cn.com/problems/maximal-square                                                             |
 | 20. 有效的括号                       | 14   | https://leetcode-cn.com/problems/valid-parentheses                                                          |
@@ -326,6 +323,15 @@
 | [15. 三数之和](https://leetcode-cn.com/problems/3sum)                                             | 42   | Medium | 1    |
 | [88. 合并两个有序数组](https://leetcode-cn.com/problems/merge-sorted-array)                           | 12   |        |      |
 | [80. 删除排序数组中的重复项 II](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array-ii) | 1    |        |
+| [54. 螺旋矩阵](https://leetcode-cn.com/problems/spiral-matrix)                                    | 24   | Medium | 1    |
+| [56. 合并区间](https://leetcode-cn.com/problems/merge-intervals)                                  | 16   | Medium | 1    |
+| [46. 全排列](https://leetcode-cn.com/problems/permutations)                                      | 16   | Medium | 1    |
+
+### 回溯
+
+| 题目                                                       | 出现次数 | 难度     | 刷题次数 |
+|----------------------------------------------------------|------|--------|------|
+| [46. 全排列](https://leetcode-cn.com/problems/permutations) | 16   | Medium | 1    |
 
 ### 栈
 
@@ -365,8 +371,9 @@
 
 ### 排序
 
-| 题目 | 出现次数 | 难度 | 刷题次数 |
-|----|------|----|------|
+| 题目                                                           | 出现次数 | 难度     | 刷题次数 |
+|--------------------------------------------------------------|------|--------|------|
+| [56. 合并区间](https://leetcode-cn.com/problems/merge-intervals) | 16   | Medium | 1    |
 
 ### 图
 
