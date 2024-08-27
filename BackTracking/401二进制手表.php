@@ -30,6 +30,7 @@ class Solution
         for ($i = $start; $i < 10; $i++) {
             if ($i < 4) {
                 // 更新小时数（前4个灯表示小时）
+                var_dump(sprintf("当前小时数: %d 当前偏移: %d 最终小时数: %d 开灯数量: %d", $hours, (1 << $i), $hours + (1 << $i), $turnedOn));
                 $this->backtrack($turnedOn - 1, $i + 1, $hours + (1 << $i), $minutes, $result);
             } else {
                 // 更新分钟数（后6个灯表示分钟）
