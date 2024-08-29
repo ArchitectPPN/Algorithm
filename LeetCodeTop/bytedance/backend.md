@@ -331,10 +331,14 @@
 
 | 题目                                                                           | 出现次数 | 难度     | 刷题次数 |
 |------------------------------------------------------------------------------|------|--------|------|
-| [46. 全排列](https://leetcode-cn.com/problems/permutations)                     | 16   | Medium | 1    |
 | [257. 二叉树的所有路径](https://leetcode.cn/problems/binary-tree-paths/description/) |      | Easy   | 1    |
 | [401. 二进制手表](https://leetcode.cn/problems/binary-watch/description/)         |      | Easy   | 1    |
- 
+| [46. 全排列](https://leetcode-cn.com/problems/permutations)                     | 16   | Medium | 1    |
+| [78. 子集](https://leetcode.cn/problems/subsets/description/)                  |      | Medium | 1    |
+| [77. 组合](https://leetcode.cn/problems/combinations/description/)             |      | Medium | 1    |
+| [22. 括号生成](https://leetcode.cn/problems/generate-parentheses/description/)   |      | Medium | 1    |
+| [51. N 皇后](https://leetcode.cn/problems/n-queens/description/)               |      | Hard   | 1    |
+
 ### 栈
 
 | 题目                                                                                                | 出现次数 | 难度     | 刷题次数 |
