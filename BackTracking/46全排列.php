@@ -1,6 +1,6 @@
 <?php
 
-namespace PermuteSolution;
+namespace BackTrackingPermuteSolution;
 
 # https://leetcode.cn/problems/permutations/description/
 class Solution
