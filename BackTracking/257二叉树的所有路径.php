@@ -21,6 +21,7 @@ class TreeNode
     }
 }
 
+# https://leetcode.cn/problems/binary-tree-paths/description/
 class Solution
 {
     /** @var array 临时存储 */

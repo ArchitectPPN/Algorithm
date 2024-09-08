@@ -41,7 +41,7 @@ class Solution
      */
     private function find(array $nums, int $index = 0): void
     {
-        // 递归结束条件
+        // 递归结束条件: 递归深度等于数组长度, 递归结束
         if ($index == $this->length) {
             // 临时结果写入最终答案集
             $this->ans[] = $this->tmp;
