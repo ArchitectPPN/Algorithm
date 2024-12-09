@@ -274,8 +274,8 @@
 | [199. 二叉树的右视图](https://leetcode-cn.com/problems/binary-tree-right-side-view)                                        | 24   | Medium | 1    |
 | [236. 二叉树的最近公共祖先](https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree)                         | 32   | Medium | 1    |
 | [103. 二叉树的锯齿形层次遍历](https://leetcode-cn.com/problems/binary-tree-zigzag-level-order-traversal)                       | 47   | Medium | 2    |
-| [589. N叉树的前序遍历](https://leetcode-cn.com/problems/n-ary-tree-preorder-traversal)                                     | 1    |        |
-| [102. 二叉树的层序遍历](https://leetcode-cn.com/problems/binary-tree-level-order-traversal)                                 | 13   |        |
+| [589. N叉树的前序遍历](https://leetcode-cn.com/problems/n-ary-tree-preorder-traversal)                                     | 1    | Easy   | 1    |
+| [102. 二叉树的层序遍历](https://leetcode-cn.com/problems/binary-tree-level-order-traversal)                                 | 13   | Easy   | 1    |
 | [145. 二叉树的后序遍历](https://leetcode-cn.com/problems/binary-tree-postorder-traversal)                                   | 3    | Easy   |
 | [94. 二叉树的中序遍历](https://leetcode-cn.com/problems/binary-tree-inorder-traversal)                                      | 9    |        |
 | [958. 二叉树的完全性检验](https://leetcode-cn.com/problems/check-completeness-of-a-binary-tree)                              | 12   |        |      |
