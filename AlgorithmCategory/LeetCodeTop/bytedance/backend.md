@@ -13,7 +13,6 @@
 | 41. 缺失的第一个正数                    | 17   | https://leetcode-cn.com/problems/first-missing-positive                                                     |
 | 76. 最小覆盖子串                      | 16   | https://leetcode-cn.com/problems/minimum-window-substring                                                   |
 | 221. 最大正方形                      | 14   | https://leetcode-cn.com/problems/maximal-square                                                             |
-| 20. 有效的括号                       | 14   | https://leetcode-cn.com/problems/valid-parentheses                                                          |
 | 39. 组合总和                        | 14   | https://leetcode-cn.com/problems/combination-sum                                                            |
 | 53. 最大子序和                       | 13   | https://leetcode-cn.com/problems/maximum-subarray                                                           |
 | 48. 旋转图像                        | 13   | https://leetcode-cn.com/problems/rotate-image                                                               |
@@ -343,9 +342,11 @@
 
 | 题目                                                                                                | 出现次数 | 难度     | 刷题次数 |
 |---------------------------------------------------------------------------------------------------|------|--------|------|
+| [20. 有效的括号](https://leetcode-cn.com/problems/valid-parentheses)                                   | 14   | Easy   | 1    |
 | [155. 最小栈](https://leetcode-cn.com/problems/min-stack)                                            | 16   | Medium | 1    |
 | [225. 用队列实现栈](https://leetcode-cn.com/problems/implement-stack-using-queues)                      | 3    |        | Easy | 1    |
 | [232. 用栈实现队列](https://leetcode-cn.com/problems/implement-queue-using-stacks)                      | 12   | Easy   | 1    |
+| [234. 回文链表](https://leetcode-cn.com/problems/palindrome-linked-list)                              | 12   | Easy   | 1    |
 | [496. 下一个更大元素 I](https://leetcode-cn.com/problems/next-greater-element-i)                         | 1    | Easy   | 1    |
 | [1047. 删除字符串中的所有相邻重复项](https://leetcode-cn.com/problems/remove-all-adjacent-duplicates-in-string) | 4    | Easy   | 1    |
 | [剑指 Offer 31. 栈的压入、弹出序列](https://leetcode-cn.com/problems/zhan-de-ya-ru-dan-chu-xu-lie-lcof)      | 1    |        |
