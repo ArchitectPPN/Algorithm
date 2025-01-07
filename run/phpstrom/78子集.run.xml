@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="78子集" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="BackTracking" path="$PROJECT_DIR$/BackTracking/subsets/78子集.php">
+  <configuration default="false" name="78子集" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="BackTracking" path="$PROJECT_DIR$/AlgorithmCategory/BackTracking/subsets/78子集.php">
     <CommandLine workingDirectory="$PROJECT_DIR$/Array">
       <PhpTestInterpreterSettings>
         <option name="interpreterName" value="php81" />

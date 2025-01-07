@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="BuildNewLinkedList" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="LinkedList" path="$PROJECT_DIR$/LinkedList/ReverseLinkedList.php">
-    <CommandLine workingDirectory="$PROJECT_DIR$/LinkedList">
+  <configuration default="false" name="BuildNewLinkedList" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="LinkedList" path="$PROJECT_DIR$/AlgorithmCategory/LinkedList/ReverseLinkedList.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory/LinkedList">
       <PhpTestInterpreterSettings>
         <option name="interpreterName" value="php81" />
       </PhpTestInterpreterSettings>

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="257二叉树的所有路径" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="BackTracking" path="$PROJECT_DIR$/BackTracking/401二进制手表.php">
+  <configuration default="false" name="257二叉树的所有路径" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="BackTracking" path="$PROJECT_DIR$/AlgorithmCategory/BackTracking/401二进制手表.php">
     <CommandLine workingDirectory="$PROJECT_DIR$/Array">
       <PhpTestInterpreterSettings>
         <option name="interpreterName" value="php81" />
