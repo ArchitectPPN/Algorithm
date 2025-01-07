@@ -12,7 +12,13 @@
  */
 
 /**
+ * 如果再次看这道题看不懂时, 就debug一遍, 然后再看下leetCode题解, 就会很清晰了.
+ *
  * 柱状图中最大的矩形
+ * 整体思路, 使用栈:
+ * 1. 遍历数组, 栈顶元素小于当前元素时, 入栈;
+ * 2. 出栈, 栈顶元素大于当前元素时, 说明当前下标的最大矩形可以被计算出来了;
+ *
  */
 class LargestRectangleInHistogramSolutionOne
 {
@@ -33,6 +39,7 @@ class LargestRectangleInHistogramSolutionOne
         }
         // 标记最大的矩形
         $area = 0;
+        // 初始化栈
         $stack = [];
         // [2, 1, 5, 6, 2, 3]
         // 2 stack为空，直接将2入栈
@@ -81,10 +88,16 @@ class LargestRectangleInHistogramSolutionOne
     }
 }
 
-$question = [2, 1, 5, 6, 2, 3];
-
 $solution = new LargestRectangleInHistogramSolutionOne();
-$solution->largestRectangleArea($question);
+
+# 标准问题
+$solution->largestRectangleArea([2, 1, 5, 6, 2, 3]);
+
+# 连续问题
+$solution->largestRectangleArea([2, 5, 5, 5, 6, 3]);
+
+# 特殊问题
+$solution->largestRectangleArea([2, 0, 5, 0, 2, 3]);
 
 class LargestRectangleInHistogramSolutionTwo
 {
@@ -127,3 +140,6 @@ class LargestRectangleInHistogramSolutionTwo
         return $area;
     }
 }
+
+$solution = new LargestRectangleInHistogramSolutionTwo();
+$solution->largestRectangleArea([2, 0, 5, 0, 2, 3]);
