@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="394字符串解码" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Stack" path="$PROJECT_DIR$/Stack/394字符串解码.php">
-    <CommandLine workingDirectory="$PROJECT_DIR$/Array">
+  <configuration default="false" name="394字符串解码" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Stack" path="$PROJECT_DIR$/AlgorithmCategory/Stack/394字符串解码.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory">
       <PhpTestInterpreterSettings>
-        <option name="interpreterName" value="php81" />
+        <option name="interpreterName" value="php80" />
       </PhpTestInterpreterSettings>
     </CommandLine>
     <method v="2" />

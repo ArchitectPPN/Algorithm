@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="PHP二维数组排序" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Sort" path="$PROJECT_DIR$/AlgorithmCategory/Sort/二维数组排序.php">
-    <CommandLine workingDirectory="$PROJECT_DIR$/Array">
+    <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory/Sort">
       <PhpTestInterpreterSettings>
-        <option name="interpreterName" value="php81" />
+        <option name="interpreterName" value="php80" />
       </PhpTestInterpreterSettings>
     </CommandLine>
     <method v="2" />
