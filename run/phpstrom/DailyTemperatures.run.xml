@@ -2,7 +2,7 @@
   <configuration default="false" name="DailyTemperatures" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Stack" path="$PROJECT_DIR$/AlgorithmCategory/Stack/739DailyTemperatures-MonotoneStack.php">
     <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory/Stack">
       <PhpTestInterpreterSettings>
-        <option name="interpreterName" value="php81" />
+        <option name="interpreterName" value="php80" />
       </PhpTestInterpreterSettings>
     </CommandLine>
     <method v="2" />

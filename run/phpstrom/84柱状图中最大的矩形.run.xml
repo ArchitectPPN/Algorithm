@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="84柱状图中最大的矩形" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Stack" path="$PROJECT_DIR$/Stack/84柱状图中最大的矩形.php">
-    <CommandLine workingDirectory="$PROJECT_DIR$/Array">
+  <configuration default="false" name="84柱状图中最大的矩形" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Stack" path="$PROJECT_DIR$/AlgorithmCategory/Stack/84柱状图中最大的矩形.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory">
       <PhpTestInterpreterSettings>
-        <option name="interpreterName" value="php81" />
+        <option name="interpreterName" value="php80" />
       </PhpTestInterpreterSettings>
     </CommandLine>
     <method v="2" />
