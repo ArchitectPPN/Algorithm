@@ -67,6 +67,10 @@ class HashSolution
 
 /**
  * 解题思路: 方法二：单调栈 + 哈希表 https://leetcode.cn/problems/next-greater-element-i/solutions/1065517/xia-yi-ge-geng-da-yuan-su-i-by-leetcode-bfcoj/
+ * 1. 因为nums1是nums2的子集, 直接将nums2遍历, 寻找每个元素的下一个更大的值
+ * 2. 当前元素大于栈顶元素时, 将栈顶元素出栈, 当前元素就是栈顶元素下一个更大的值, 栈为空时入栈
+ * 3. 因为要计算每个元素的下一个更大的值, 所以我们建立一个hash表来存储这个信息, key为栈顶元素, value为当前元素
+ * 4. 最后循环拿出nums1每个元素对应的下一个更大值
  */
 class StackSolution
 {
