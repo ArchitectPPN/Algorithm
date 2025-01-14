@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="933NumberOfRecentCalls" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Queue" path="$PROJECT_DIR$/AlgorithmCategory/Queue/933NumberOfRecentCalls.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$">
+      <PhpTestInterpreterSettings>
+        <option name="interpreterName" value="php81" />
+      </PhpTestInterpreterSettings>
+    </CommandLine>
+    <method v="2" />
+  </configuration>
+</component>
