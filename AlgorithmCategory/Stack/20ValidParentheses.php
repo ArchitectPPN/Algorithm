@@ -2,9 +2,13 @@
 
 namespace AlgorithmCategory\Stack\ValidParentheses;
 
+# [20. 有效的括号](https://leetcode.cn/problems/valid-parentheses/description/)
+
 class Solution
 {
     /**
+     * 解法1
+     *
      * @param array $str
      * @return bool
      */
@@ -48,6 +52,7 @@ class Solution
     }
 
     /**
+     * 解法2
      * @param string $str
      * @return bool
      */
