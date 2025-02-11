@@ -4,8 +4,9 @@ namespace AlgorithmCategory\Stack;
 
 class MyStackUseArray
 {
-    /** @var array  */
+    /** @var array */
     private array $stack;
+
     /**
      * Initialize your data structure here.
      */
@@ -17,9 +18,9 @@ class MyStackUseArray
     /**
      * Push element x onto stack.
      * @param Integer $x
-     * @return NULL
+     * @return void
      */
-    public function push(int $x)
+    public function push(int $x): void
     {
         $this->stack[] = $x;
     }
@@ -65,6 +66,7 @@ class MyStackUseSplQueue
 {
     private SplQueue $queue1;
     private SplQueue $queue2;
+
     /**
      * Initialize your data structure here.
      */
@@ -77,9 +79,9 @@ class MyStackUseSplQueue
     /**
      * Push element x onto stack.
      * @param Integer $x
-     * @return NULL
+     * @return void
      */
-    public function push($x)
+    public function push(int $x): void
     {
         $this->queue1->enqueue($x);
     }
@@ -90,7 +92,9 @@ class MyStackUseSplQueue
      */
     public function pop()
     {
-        if ($this->empty()) return -1;
+        if ($this->empty()) {
+            return -1;
+        }
         // 来回倒腾一次
         while ($this->queue1->count() > 1) {
             $this->queue2->enqueue($this->queue1->dequeue());

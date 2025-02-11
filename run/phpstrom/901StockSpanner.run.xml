@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="901StockSpanner" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Stack" path="$PROJECT_DIR$/AlgorithmCategory/Stack/901StockSpanner-MonotoneStack.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory/Stack">
+      <PhpTestInterpreterSettings>
+        <option name="interpreterName" value="php81" />
+      </PhpTestInterpreterSettings>
+    </CommandLine>
+    <method v="2" />
+  </configuration>
+</component>
