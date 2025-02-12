@@ -2,6 +2,7 @@
 
 # 901. 股票价格跨度 https://leetcode.cn/problems/online-stock-span/description/
 
+# 2025年2月11日
 class StockSpanner
 {
     /** @var array 存储价格跨度的stack */
@@ -51,5 +52,46 @@ $priceList = [
 
 $stockSpanner = new StockSpanner();
 foreach ($priceList as $price) {
-    echo 'price: ' . $price . ' stockSpan:' .$stockSpanner->next($price) . PHP_EOL;
+    echo 'price: ' . $price . ' stockSpan:' . $stockSpanner->next($price) . PHP_EOL;
+}
+
+# 2025年2月12日
+
+/**
+ * 理解:
+ * 其实就是在一个数组中, 求小于等于当前元素的个数, 同时满足连续递减的特性.
+ * 求出一个之后, 将其结果入栈, 方便后续继续求解.
+ * 100, 110, 60, 120
+ * 第一个元素为 100, 所以在它之前比它小的数字有0个, 算上自身, 所以结果为1;
+ * 第二个元素为 110, 所以在它之前比它小的数字有1个, 计算答案时, 因为知道100的结果, 所以直接将100的结果累加, 就能拿到结果, 最后答案为2;
+ * 第三个元素为 60, 所以在它之前比它小的数字有0个, 算上自身, 所以结果为1;
+ * 第四个元素为 120, 一眼看上去, 他比所有数字都大, 所以直接累加前面数字的计算结果即可, 最后的答案为4;
+ */
+class StockSpannerReviewOne
+{
+    /** @var array 价格栈 */
+    private array $priceStack = [];
+
+    /**
+     * @param int $price
+     * @return int
+     */
+    public function next(int $price): int
+    {
+        // 声明当前的结果, 默认为1, 因为包含自身
+        $priceSpan = 1;
+        // 栈不为空, 并且栈顶元素小于当前价格, 就需要累加之前的计算结果
+        while (!empty($this->priceStack) && $price >= end($this->priceStack)[0]) {
+            $top = array_pop($this->priceStack);
+            $priceSpan += $top[1];
+        }
+
+        // 将当前价格对应的结果入栈, 方便后续计算
+        $this->priceStack[] = [
+            $price,
+            $priceSpan,
+        ];
+
+        return $priceSpan;
+    }
 }
