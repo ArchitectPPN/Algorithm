@@ -93,3 +93,49 @@ class TrappingRainWaterSolutionReviewOne
         return $ans;
     }
 }
+
+# 2025年2月13日
+class TrappingRainWaterSolutionReviewTwo
+{
+    /**
+     * 理解:
+     * 题目要求我计算能存储的水量最大值, 想要能够存储雨水, 就必须能满足形成低洼. 例如: 1, 0, 2; 这样在0的位置就会产生低洼, 就可以蓄水.
+     * 思路:
+     *  使用单调递减栈, 依次遍历数组, 当前元素如果大于栈顶元素, 那么就可以形成低洼, 存水, 就需要出栈, 然后计算低洼的宽度, 高度, 然后累加到答案中.
+     *
+     * @param array $height
+     * @return int
+     */
+    public function trap(array $height): int
+    {
+        // 初始化一个栈
+        $stack = [];
+        // 初始化答案
+        $ans = 0;
+        // 获取数组的长度
+        $arrLen = count($height);
+
+        // 从0 到数组长度-1, 依次遍历数组
+        for ($i = 0; $i < $arrLen; $i++) {
+            // 栈不为空, 并且当前元素大于栈顶元素, 可以形成低洼, 就可以出栈了
+            while (!empty($stack) && $height[$i] > $height[end($stack)]) {
+                // 出栈
+                $top = array_pop($stack);
+                // 检查栈是否为空, 如果为空, 说明左边已经没有元素了, 无法形成低洼
+                if (empty($stack)) {
+                    break;
+                }
+
+                $waterWidth = $i - end($stack) - 1;
+                $waterHeight = min($height[$i], $height[end($stack)]) - $height[$top];
+
+                $ans += $waterWidth * $waterHeight;
+            }
+
+            // 入栈
+            $stack[] = $i;
+        }
+
+        return $ans;
+    }
+}
