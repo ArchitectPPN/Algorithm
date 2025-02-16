@@ -1,5 +1,7 @@
 <?php
 
+# 394. 字符串解码 https://leetcode.cn/problems/decode-string/description/
+
 namespace AlgorithmCategory\Stack;
 
 class SolutionWithStack

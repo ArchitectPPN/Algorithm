@@ -1,8 +1,9 @@
 <?php
 
+# 1047.删除字符串中的所有相邻重复项 https://leetcode.cn/problems/remove-all-adjacent-duplicates-in-string/description/
+
 namespace AlgorithmCategory\Stack\RemoveAllAdjacentDuplicatesInString;
 
-# 1047.删除字符串中的所有相邻重复项 https://leetcode.cn/problems/remove-all-adjacent-duplicates-in-string/description/
 class Solution
 {
 

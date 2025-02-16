@@ -11,6 +11,8 @@
  *  581: 最短无序连续子数组
  */
 
+# 84. 柱状图中最大的矩形 https://leetcode.cn/problems/largest-rectangle-in-histogram/description/
+
 namespace AlgorithmCategory\Stack;
 /**
  * 如果再次看这道题看不懂时, 就debug一遍, 然后再看下leetCode题解, 就会很清晰了.
