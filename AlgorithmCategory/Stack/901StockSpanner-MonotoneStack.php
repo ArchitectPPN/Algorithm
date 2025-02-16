@@ -95,3 +95,32 @@ class StockSpannerReviewOne
         return $priceSpan;
     }
 }
+
+# 2025年2月16日
+class StockSpannerReviewThree
+{
+    /** @var array 价格栈 */
+    private array $priceStack = [];
+
+    /**
+     * @param int $price
+     * @return int
+     */
+    public function next(int $price): int
+    {
+        // 因为题目要求小于等于今天的价格，所以跨度默认就是1
+        $priceSpanner = 1;
+
+        // 栈不为空，当前元素大于等于栈顶元素
+        while (!empty($this->priceStack) && $price >= end($this->priceStack)[0]) {
+            // 出栈
+            $top = array_pop($this->priceStack);
+            $priceSpanner += $top[1];
+        }
+
+        // 入栈
+        $this->priceStack[] = [$price, $priceSpanner];
+
+        return $priceSpanner;
+    }
+}
