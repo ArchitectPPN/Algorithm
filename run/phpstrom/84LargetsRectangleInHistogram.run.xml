@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="84柱状图中最大的矩形" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Stack" path="$PROJECT_DIR$/AlgorithmCategory/Stack/84LargestRectangleInHistogram.php">
+  <configuration default="false" name="84LargetsRectangleInHistogram" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Stack" path="$PROJECT_DIR$/AlgorithmCategory/Stack/84LargestRectangleInHistogram.php">
     <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory">
       <PhpTestInterpreterSettings>
         <option name="interpreterName" value="php80" />

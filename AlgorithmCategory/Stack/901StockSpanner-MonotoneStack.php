@@ -119,8 +119,51 @@ class StockSpannerReviewThree
         }
 
         // 入栈
-        $this->priceStack[] = [$price, $priceSpanner];
+        $this->priceStack[] = [
+            $price,
+            $priceSpanner,
+        ];
 
         return $priceSpanner;
+    }
+}
+
+# 2025年2月17日
+
+/**
+ * 思路: 题目要求是小于等于当前的价格, 所以默认跨度就是自身, 就是1; 而且是从后往前找, 从大到小, 符合单调递减的特性;
+ * 从前遍历, 例如: 100, 80, 90, 60 入栈顺序为: 100, 80, 遇到90时, 80先出栈, 符合后进先出的特性;
+ * @author
+ */
+class StockSpannerReviewThreeAgain
+{
+    /** @var array 价格栈 */
+    private array $priceStack = [];
+
+    /**
+     * @param int $price
+     * @return int
+     */
+    public function next(int $price): int
+    {
+        // 题目要求小于等于当前价格, 所以跨度默认为1
+        $defaultSpan = 1;
+
+        // 栈不为空, 当前价格大于等于栈顶价格
+        // 要一直将符合条件的元素出栈, 直到不符合条件为止, 所以要使用while
+        while (!empty($this->priceStack) && $price >= end($this->priceStack)[0]) {
+            // 栈顶元素出栈
+            $top = array_pop($this->priceStack);
+            // 将小于当前价格的跨度累加到当前跨度上, 例如: 100 60 70 80 90, 当前价格为90时, 60 70 80 都小于90, 所以需要将60 70 80的跨度累加到90的跨度上
+            $defaultSpan += $top[1];
+        }
+
+        // 入栈
+        $this->priceStack[] = [
+            $price,
+            $defaultSpan,
+        ];
+
+        return $defaultSpan;
     }
 }

@@ -85,42 +85,41 @@ class LargestRectangleInHistogramSolutionOne
 
 $solution = new LargestRectangleInHistogramSolutionOne();
 
-# 标准问题
-$solution->largestRectangleArea(
-    [
-        2,
-        1,
-        5,
-        6,
-        2,
-        3,
-    ]
-);
+# CommonQuestion 标准问题
+$commonQuestion = [
+    2,
+    1,
+    5,
+    6,
+    2,
+    3,
+];
+# SuccessiveQuestion 连续问题
+$successiveQuestion = [
+    2,
+    5,
+    5,
+    5,
+    6,
+    3,
+];
+# specialQuestion 特殊问题
+$specialQuestion = [
+    2,
+    0,
+    5,
+    0,
+    2,
+    3,
+];
 
+$solution->largestRectangleArea($commonQuestion);
 # 连续问题
-$solution->largestRectangleArea(
-    [
-        2,
-        5,
-        5,
-        5,
-        6,
-        3,
-    ]
-);
-
+$solution->largestRectangleArea($successiveQuestion);
 # 特殊问题
-$solution->largestRectangleArea(
-    [
-        2,
-        0,
-        5,
-        0,
-        2,
-        3,
-    ]
-);
+$solution->largestRectangleArea($specialQuestion);
 
+# 2025年2月16日
 class LargestRectangleInHistogramSolutionTwo
 {
     function largestRectangleArea(array $heights): int
@@ -164,13 +163,4 @@ class LargestRectangleInHistogramSolutionTwo
 }
 
 $solution = new LargestRectangleInHistogramSolutionTwo();
-$solution->largestRectangleArea(
-    [
-        2,
-        0,
-        5,
-        0,
-        2,
-        3,
-    ]
-);
+$solution->largestRectangleArea($commonQuestion);
