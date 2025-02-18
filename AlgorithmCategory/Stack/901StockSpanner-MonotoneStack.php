@@ -167,3 +167,41 @@ class StockSpannerReviewThreeAgain
         return $defaultSpan;
     }
 }
+
+# 2025年2月18日
+
+/**
+ * 思路:
+ * 题目要去从后往前看, 小于等于当前价格, 跨度+1; 所以默认跨度就是1;
+ *
+ * @author niujunqing
+ */
+class StockSpannerReviewFour
+{
+    /** @var array 价格栈 */
+    private array $priceStack = [];
+
+    /**
+     * @param int $price
+     * @return int
+     */
+    public function next(int $price): int
+    {
+        // 小于等于当前价格, 默认跨度为1
+        $defaultSpan = 1;
+
+        // 栈不为空, 栈顶元素小于等于当前价格, 跨度累加
+        while(!empty($this->priceStack) && $price >= end($this->priceStack)[0]) {
+            $top = array_pop($this->priceStack);
+            $defaultSpan += $top[1];
+        }
+
+        // 将结果入栈
+        $this->priceStack[] = [
+            $price,
+            $defaultSpan,
+        ];
+
+        return $defaultSpan;
+    }
+}
