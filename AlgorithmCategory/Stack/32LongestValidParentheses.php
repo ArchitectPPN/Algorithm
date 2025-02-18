@@ -57,7 +57,7 @@ class LongestValidParenthesesSolution
             } else {
                 // 出栈
                 $splStack->pop();
-                // 栈为空
+                // 栈为空，说明这个右括号没有能与之匹配的左括号，我们将其作为新的基准压入栈中
                 if ($splStack->isEmpty()) {
                     // 将当前右括号的索引压入栈中，作为新的基准
                     $splStack->push($i);
