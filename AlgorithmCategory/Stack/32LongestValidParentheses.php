@@ -76,7 +76,6 @@ class LongestValidParenthesesSolutionReviewOne
 {
     /**
      * thinking:
-     *
      * @param string $s
      * @return int
      */
@@ -105,6 +104,51 @@ class LongestValidParenthesesSolutionReviewOne
             } else {
                 // 栈不为空, 计算当前右括号与栈顶元素的距离, 保留最大值
                 $maxAns = max($maxAns, $i - $splStack->top());
+            }
+        }
+
+        return $maxAns;
+    }
+}
+
+/**
+ * thinking:
+ * 使用栈来解决该问题;
+ * 1. 我们将每一个 "(" 入栈
+ * 2. 遇到的每一个 ")" 都出栈
+ *  如果栈为空, 说明当前的右括号没有匹配的左括号, 将当前右括号入栈, 作为新的边界
+ *  如果栈不为空, 计算当前右括号与栈顶元素的距离, 保留最大值
+ * @author niujunqing
+ */
+class LongestValidParenthesesSolutionReviewTwo
+{
+    /**
+     * thinking:
+     * @param string $s
+     * @return int
+     */
+    public function longestValidParentheses(string $s): int
+    {
+        // 字符串的长度
+        $sLen = strlen($s);
+        // 初始化一个栈
+        $stack = new SplStack();
+        $stack->push(-1);
+        // 最大的长度
+        $maxAns = 0;
+
+        for ($i = 0; $i < $sLen; $i++) {
+            // 左括号下标入栈
+            if ($s[$i] == "(") {
+                $stack->push($i);
+            } else {
+                $stack->pop();
+                if ($stack->isEmpty()) {
+                    $stack->push($i);
+                } else {
+                    // 更新最大值
+                    $maxAns = max($maxAns, $i - $stack->top());
+                }
             }
         }
 
