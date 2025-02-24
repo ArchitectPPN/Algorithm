@@ -96,6 +96,54 @@ class SimplifyPathSolutionReviewOne
         return '/' . implode('/', $filePathStack);
     }
 }
+
 $question = "/home/";
 $svc = new SimplifyPathSolutionReviewOne();
+echo $svc->simplifyPath($question);
+
+# 2025年2月24日
+class SimplifyPathSolutionReviewTwo
+{
+    /**
+     * Thinking:
+     * 将目录按照 "/" 进行分割, 然后对分割出来的路径进行判断
+     * 如果是 "." 直接丢掉;
+     * 如果是 ".." 时, 栈不为空时, 栈顶元素出栈;
+     * @param string $path
+     * @return string
+     */
+    public function simplifyPath(string $path): string
+    {
+        // 初始化循环开始的下标
+        $startIndex = 0;
+        // 字符串的长度
+        $sLen = strlen($path);
+        // 路径栈
+        $pathStack = [];
+
+        while ($startIndex < $sLen) {
+            // 过滤掉所有的 "/"
+            while ($path[$startIndex] == "/" && $startIndex < $sLen) {
+                $startIndex++;
+            }
+
+            $tmpPath = "";
+            // 拼接两个"/"之间的路径
+            while ($path[$startIndex] != "/" && $startIndex < $sLen) {
+                $tmpPath .= $path[$startIndex];
+            }
+            // 判断当前路径是否是 "..", 栈不为空时, 栈顶元素出栈
+            if ($tmpPath == '..') {
+                $pathStack && array_pop($pathStack);
+            } elseif ($tmpPath != '.' && $tmpPath != '') {
+                $pathStack[] = $tmpPath;
+            }
+        }
+
+        return '/' . implode('/', $pathStack);
+    }
+}
+
+$question = "/home/";
+$svc = new SimplifyPathSolutionReviewTwo();
 echo $svc->simplifyPath($question);
