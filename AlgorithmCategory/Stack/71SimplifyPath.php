@@ -88,7 +88,7 @@ class SimplifyPathSolutionReviewOne
 
             if ($tmpPath == "..") {
                 $filePathStack && array_pop($filePathStack);
-            } elseif ($tmpPath == "." && $tmpPath != "") {
+            } elseif ($tmpPath != "." && $tmpPath != "") {
                 $filePathStack[] = $tmpPath;
             }
         }
