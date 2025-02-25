@@ -17,8 +17,8 @@ class EvaluateReversePolishNotationSolution
         foreach ($tokens as $token) {
             if ($token == "+" || $token == "-" || $token == "*" || $token == "/") {
                 // 去除栈顶两个数字
-                $num1 = array_pop($stack);
                 $num2 = array_pop($stack);
+                $num1 = array_pop($stack);
 
                 switch ($token) {
                     case "+":
@@ -41,5 +41,45 @@ class EvaluateReversePolishNotationSolution
         }
 
         return empty($stack) ? 0 : array_pop($stack);
+    }
+}
+
+# 2025年2月25日
+
+class EvaluateReversePolishNotationSolutionReviewOne
+{
+    public function evalRPN(array $tokens): int
+    {
+        $arrLen = count($tokens);
+        $stack = new SplStack();
+        for ($i = 0; $i < $arrLen; $i++) {
+            if ($tokens[$i] == "+" || $tokens[$i] == "-" || $tokens[$i] == "*" || $tokens[$i] == "/") {
+                $oneNum = $stack->pop();
+                $twoNum = $stack->pop();
+                $resVal = 0;
+
+                switch ($tokens[$i]) {
+                    case "+":
+                        $resVal = $oneNum + $twoNum;
+                        break;
+                    case "-":
+                        $resVal = $oneNum - $twoNum;
+                        break;
+                    case "*":
+                        $resVal = $oneNum * $twoNum;
+                        break;
+                    case "/":
+                        $resVal = intval($oneNum / $twoNum);
+                        break;
+                }
+                // 计算完毕后，放入栈中，以便后续继续使用
+                $stack->push($resVal);
+                continue;
+            }
+
+            $stack->push($tokens[$i]);
+        }
+
+        return $stack->pop();
     }
 }

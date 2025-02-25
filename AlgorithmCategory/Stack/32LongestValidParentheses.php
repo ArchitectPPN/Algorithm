@@ -155,3 +155,34 @@ class LongestValidParenthesesSolutionReviewTwo
         return $maxAns;
     }
 }
+
+# 2025年2月19日
+class LongestValidParenthesesSolutionReviewThree
+{
+    public function longestValidParentheses(string $s): int
+    {
+        $maxAns = 0;
+
+        $sLen = strlen($s);
+        $stack = new SplStack();
+
+        $stack->push(-1);
+
+        for ($i = 0; $i < $sLen; $i++) {
+            // 左括号就入栈
+            if ($s[$i] == '(') {
+                $stack->push($i);
+            } else {
+                $stack->pop();
+                if ($stack->isEmpty()) {
+                    // 说明没有与之匹配的左括号,将其作为基准值
+                    $stack->push($i);
+                } else {
+                    $maxAns = max($maxAns, $i - $stack->top());
+                }
+            }
+        }
+
+        return $maxAns;
+    }
+}

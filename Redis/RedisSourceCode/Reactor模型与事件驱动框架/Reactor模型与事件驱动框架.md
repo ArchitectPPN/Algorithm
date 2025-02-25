@@ -166,3 +166,6 @@ aeCreateFileEvent 如何实现事件和处理函数的注册呢？
 Linux 提供了 epoll_ctl API，用于增加新的观察事件。而 Redis 在此基础上，封装了 aeApiAddEvent 函数，对 epoll_ctl 进行调用。aeCreateFileEvent 就会调用 aeApiAddEvent，然后 aeApiAddEvent 再通过调用 epoll_ctl，来注册希望监听的事件和相应的处理函数。等到 aeProceeEvents 函数捕获到实际事件时，它就会调用注册的函数对事件进行处理了。
 
 ![img_3.png](img_3.png)
+
+问题： 
+- epoll_wait 为什么返回的是已就绪事件的数量？

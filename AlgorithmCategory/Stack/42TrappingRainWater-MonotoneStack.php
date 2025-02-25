@@ -173,3 +173,45 @@ class TrappingRainWaterSolutionReviewThree
         return $waterVolume;
     }
 }
+
+# 2025年2月25日
+
+class TrappingRainWaterSolutionReviewFour
+{
+    /**
+     * 计算最大接水量
+     * @param array $height
+     * @return int
+     */
+    public function trap(array $height): int
+    {
+        // 用来记录最大的接水量
+        $maxWater = 0;
+        // 获取数组的长度
+        $arrLen = count($height);
+        // 栈
+        $waterStack = new SplStack();
+
+        for ($i = 0; $i < $arrLen; $i++) {
+            // 当栈不为空，当前元素大于栈顶元素，说明可以形成低洼蓄水
+            while (!$waterStack->isEmpty() && $height[$i] > $height[$waterStack->top()]) {
+                // 出栈
+                $top = $waterStack->pop();
+                // 出栈以后，栈为空，说明左边已经没有高度，无法形成低洼蓄水
+                if ($waterStack->isEmpty()) {
+                    break;
+                }
+                // 开始计算蓄水的面积
+                $waterWidth = $i - $waterStack->top() - 1;
+                $waterHeight = min($height[$i], $height[$waterStack->top()]) - $height[$top];
+
+                $maxWater += $waterHeight * $waterWidth;
+            }
+
+            // 入栈
+            $waterStack->push($i);
+        }
+
+        return $maxWater;
+    }
+}
