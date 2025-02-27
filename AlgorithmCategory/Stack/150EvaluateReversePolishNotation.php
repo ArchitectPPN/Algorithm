@@ -83,3 +83,46 @@ class EvaluateReversePolishNotationSolutionReviewOne
         return $stack->pop();
     }
 }
+
+# 2025年2月27日
+class EvaluateReversePolishNotationSolutionReviewTwo
+{
+    public function evalRPN(array $tokens): int
+    {
+        $stack = new SplStack();
+
+        $operator = [
+            '+',
+            '-',
+            '*',
+            '/',
+        ];
+        foreach ($tokens as $token) {
+            if (in_array($token, $operator)) {
+                $num2 = $stack->pop();
+                $num1 = $stack->pop();
+
+                switch ($token) {
+                    case '+':
+                        $stack->push($num1 + $num2);
+                        break;
+                    case '-':
+                        $stack->push($num1 - $num2);
+                        break;
+                    case '*':
+                        $stack->push($num1 * $num2);
+                        break;
+                    case '/':
+                        $stack->push(intval($num1 / $num2));
+                        break;
+                }
+                continue;
+            }
+
+            // 遇到数字就入栈
+            $stack->push($token);
+        }
+
+        return $stack->top();
+    }
+}

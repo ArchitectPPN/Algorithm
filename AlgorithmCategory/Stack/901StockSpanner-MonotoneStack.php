@@ -173,7 +173,6 @@ class StockSpannerReviewThreeAgain
 /**
  * 思路:
  * 题目要去从后往前看, 小于等于当前价格, 跨度+1; 所以默认跨度就是1;
- *
  * @author niujunqing
  */
 class StockSpannerReviewFour
@@ -191,7 +190,7 @@ class StockSpannerReviewFour
         $defaultSpan = 1;
 
         // 栈不为空, 栈顶元素小于等于当前价格, 跨度累加
-        while(!empty($this->priceStack) && $price >= end($this->priceStack)[0]) {
+        while (!empty($this->priceStack) && $price >= end($this->priceStack)[0]) {
             $top = array_pop($this->priceStack);
             $defaultSpan += $top[1];
         }
@@ -201,6 +200,48 @@ class StockSpannerReviewFour
             $price,
             $defaultSpan,
         ];
+
+        return $defaultSpan;
+    }
+}
+
+/**
+ * Thinking:
+ * 从前往后看, 小于等于当前价格, 跨度+1
+ * 单调递增栈
+ * @author niujunqing
+ */
+class StockSpannerReviewFive
+{
+    /** @var SplStack 单调递减栈 */
+    private SplStack $priceStack;
+
+    public function __construct()
+    {
+        $this->priceStack = new SplStack();
+    }
+
+    /**
+     * @param $price
+     * @return int
+     */
+    public function next($price): int
+    {
+        $defaultSpan = 1;
+
+        // 当前价格大于等于栈顶元素, 跨度累加
+        while (!$this->priceStack->isEmpty() && $price >= $this->priceStack->top()[0]) {
+            $top = $this->priceStack->pop();
+            $defaultSpan += $top[1];
+        }
+
+        // 将结果入栈
+        $this->priceStack->push(
+            [
+                $price,
+                $defaultSpan,
+            ]
+        );
 
         return $defaultSpan;
     }
