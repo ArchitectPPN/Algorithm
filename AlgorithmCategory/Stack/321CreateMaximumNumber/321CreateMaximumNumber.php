@@ -1,6 +1,15 @@
 <?php
 # 321. 拼接最大数 https://leetcode.cn/problems/create-maximum-number/description/ D
 
+/**
+ * Thinking
+ * 题目要求找出给定数组的最大拼接数，要求返回 k 个元素
+ * 那么就从num1和num2中各取出最大的子序列， 从num1中取出 0 - k个元素，从num2中取出 k - (0到k)个元素，从这些结果中取出最大的值
+ * 子问题1：从数组中取出k个长度的最大子序列
+ * 子问题2: 合并两个数组的最大子序列，组成最大的子序列
+ * 子问题3: 比较当前和上一个子序列大小
+ * 最后返回答案
+ */
 class CreateMaximumNumberSolution
 {
     public function maxNumber($nums1, $nums2, $k)
