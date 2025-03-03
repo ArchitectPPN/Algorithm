@@ -55,7 +55,6 @@ class SimplifyPathSolution
 //$svc = new SimplifyPathSolution();
 //echo $svc->simplifyPath($question);
 
-
 class SimplifyPathSolutionReviewOne
 {
     /**
@@ -131,6 +130,7 @@ class SimplifyPathSolutionReviewTwo
             // 拼接两个"/"之间的路径
             while ($path[$startIndex] != "/" && $startIndex < $sLen) {
                 $tmpPath .= $path[$startIndex];
+                $startIndex++;
             }
             // 判断当前路径是否是 "..", 栈不为空时, 栈顶元素出栈
             if ($tmpPath == '..') {
@@ -147,3 +147,50 @@ class SimplifyPathSolutionReviewTwo
 $question = "/home/";
 $svc = new SimplifyPathSolutionReviewTwo();
 echo $svc->simplifyPath($question);
+
+# 2025年3月3日
+
+/**
+ * thinking:
+ * 整体思路就是将路径按照 '/' 进行分割, 然后对每一部份进行处理
+ * 如果当前部分为 . 或者 ""(空字符) 就舍弃
+ * 如果当前部分为 .. 就弹出栈顶元素
+ */
+class SimplifyPathSolutionReviewThree
+{
+    /**
+     * @param string $path
+     * @return string
+     */
+    function simplifyPath(string $path): string
+    {
+        $startIndex = 0;
+        $sLen = strlen($path);
+        $pathStack = [];
+
+        while ($startIndex < $sLen) {
+            // 过滤掉所有的 /
+            while ($path[$startIndex] == "/" && $startIndex < $sLen) {
+                $startIndex++;
+            }
+
+            $tmpPath = "";
+            while ($startIndex < $sLen && $path[$startIndex] != "/") {
+                // 拼接上当前元素
+                $tmpPath .= $path[$startIndex];
+            }
+
+            if ($tmpPath == "..") {
+                $pathStack && array_pop($pathStack);
+            } elseif ($tmpPath != "." && $tmpPath != "") {
+                $pathStack[] = $tmpPath;
+            }
+        }
+
+        return '/' . implode('/', $pathStack);
+    }
+}
+
+$question = "/home";
+$svc = new SimplifyPathSolutionReviewThree();
+echo $svc->simplifyPath($question) . PHP_EOL;
