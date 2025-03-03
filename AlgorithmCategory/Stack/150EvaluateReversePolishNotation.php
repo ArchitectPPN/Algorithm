@@ -126,3 +126,70 @@ class EvaluateReversePolishNotationSolutionReviewTwo
         return $stack->top();
     }
 }
+
+# 2025年2月27日
+
+/**
+ * Thinking
+ * 从前向后进行遍历，遇到数字就入栈，遇到运算符就出栈计算，把计算的结果再入栈
+ */
+class EvaluateReversePolishNotationSolutionReviewThree
+{
+    /**
+     * @param array $tokens
+     * @return int
+     */
+    public function evalRPN(array $tokens): int
+    {
+        $stack = new SplStack();
+        $arrLen = count($tokens);
+        for ($i = 0; $i < $arrLen; $i++) {
+            switch ($tokens[$i]) {
+                case "+":
+                case "-":
+                case "*":
+                case "/":
+                    $this->operate($stack, $tokens[$i]);
+                    break;
+                default:
+                    $stack->push($tokens[$i]);
+                    break;
+            }
+        }
+
+        return $stack->pop();
+    }
+
+    /**
+     * @param SplStack $stack
+     * @param string $operate 运算符
+     * @return void
+     */
+    private function operate(SplStack $stack, string $operate): void
+    {
+        // ["1", "2", "+"] => 1 + 2
+        // 2会被先弹出来，2在运算符之后，这个顺序要注意
+        // 这里要记住，先进后出
+        $numTwo = $stack->pop();
+        $numOne = $stack->pop();
+        $calVal = 0;
+        switch ($operate) {
+            case "+":
+                $calVal = $numOne + $numTwo;
+                break;
+            case "-":
+                $calVal = $numOne - $numTwo;
+                break;
+            case "*":
+                $calVal = $numOne * $numTwo;
+                break;
+            case "/":
+                $calVal = intval($numOne / $numTwo);
+                break;
+        }
+        $stack->push($calVal);
+    }
+}
+
+$svc = new EvaluateReversePolishNotationSolutionReviewThree();
+echo $svc->evalRPN(["2", "1", "+", "3", "*"]);
