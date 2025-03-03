@@ -115,3 +115,57 @@ class RemoveDuplicateLettersSolutionOne
         return implode('', $this->ansStack);
     }
 }
+
+/**
+ * Thinking:
+ * 1. 每一个字母只可以出现一次
+ * 2. 保证字符的相对顺序下尽可能保证字典序最小
+ */
+class RemoveDuplicateLettersSolutionTwo
+{
+    /**
+     * 移除重复的字母并保证字典序最小
+     * @param string $s
+     * @return string
+     */
+    function removeDuplicateLetters(string $s): string
+    {
+        // 获取字符串的长度
+        $sLen = strlen($s);
+        // 最后的结果栈
+        $ansStack = [];
+        // init a array to store char last index
+        // 统计出每一个字符最后出现的位置
+        $charLastIndex = array_fill(0, 26, ['exist' => false, 'lastIndex' => -1]);
+        for ($i = 0; $i < $sLen; $i++) {
+            $charLastIndex[ord($s[$i]) - ord('a')]['lastIndex'] = $i;
+        }
+
+
+        for ($i = 0; $i < $sLen; $i++) {
+            // 如果该字符已经存在栈中了，直接跳过
+            $charIndex = ord($s[$i]) - ord('a');
+            if ($ansStack && $charLastIndex[$charIndex]['exist']) {
+                continue;
+            }
+
+            // 栈不为空，当前元素小于栈顶元素，栈顶元素在后面还有
+            while ($ansStack
+                && ord(end($ansStack)) > ord($s[$i])
+                && $charLastIndex[ord(end($ansStack)) - ord('a')]['lastIndex'] > $i
+            ) {
+                // 弹出栈顶元素
+                $top = array_pop($ansStack);
+                // 标记栈顶元素不存在
+                $charLastIndex[ord($top) - ord('a')]['exist'] = false;
+            }
+
+            // 入栈
+            $ansStack[] = $s[$i];
+            $charLastIndex[$charIndex]['exist'] = true;
+        }
+
+        // 返回连接在一起的字符串
+        return implode('', $ansStack);
+    }
+}
