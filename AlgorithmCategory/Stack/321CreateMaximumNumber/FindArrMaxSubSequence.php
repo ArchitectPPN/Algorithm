@@ -32,7 +32,7 @@ class FindArrMaxSubSequence
 
             // $top >= 0说明栈不为空，
             // 栈不为空，并且当前元素大于栈顶元素，还可以继续删除元素
-            while ($top >= 0 && $stack[$top] < $nowNum && $remain > 0) {
+            while ($top >= 0 && $stack[$top] > $nowNum && $remain > 0) {
                 // 通过下标向左移动，来达到出栈的效果
                 $top -= 1;
                 // 删除掉元素，可删除元素数量减少1
