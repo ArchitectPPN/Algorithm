@@ -1,10 +1,12 @@
 <?php
 
+# 1673. 找出最具竞争力的子序列 https://leetcode.cn/problems/find-the-most-competitive-subsequence/description/
+
 /**
  * 直接操作栈
  * @author niujunqing
  */
-class FindMostCompetitiveSubSequence
+class FindTheMostCompetitiveSubSequence
 {
     /**
      * @param Integer[] $nums
@@ -57,7 +59,7 @@ $question = [
 ];
 $k = 3;
 
-$svc = new FindMostCompetitiveSubSequence();
+$svc = new FindTheMostCompetitiveSubSequence();
 $ans = $svc->mostCompetitive($question, $k);
 var_dump($ans);
 
@@ -65,7 +67,7 @@ var_dump($ans);
  * 使用下标的方式来操作栈
  * @author niujunqing
  */
-class FindMostCompetitiveSubSequenceUseIndex
+class FindTheMostCompetitiveSubSequenceUseIndex
 {
     /**
      * @param Integer[] $arr
@@ -117,6 +119,6 @@ class FindMostCompetitiveSubSequenceUseIndex
     }
 }
 
-$svc = new FindMostCompetitiveSubSequenceUseIndex();
+$svc = new FindTheMostCompetitiveSubSequenceUseIndex();
 $ans = $svc->mostCompetitive($question, $k);
 var_dump($ans);
