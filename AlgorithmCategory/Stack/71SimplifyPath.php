@@ -194,3 +194,40 @@ class SimplifyPathSolutionReviewThree
 $question = "/home";
 $svc = new SimplifyPathSolutionReviewThree();
 echo $svc->simplifyPath($question) . PHP_EOL;
+
+# 2025年3月10日
+
+class SimplifyPathSolutionReviewFour
+{
+    /**
+     * @param string $path
+     * @return string
+     */
+    public function simplifyPath(string $path): string
+    {
+        $sLen = strlen($path);
+        $startIndex = 0;
+        $pathStack = [];
+
+        while ($startIndex < $sLen) {
+            // 过滤掉 /
+            while ($path[$startIndex] == "/" && $startIndex < $sLen) {
+                $startIndex++;
+            }
+
+            $currentPath = "";
+            while ($path[$startIndex] != "/" && $startIndex < $sLen) {
+                $currentPath .= $path[$startIndex];
+                $startIndex++;
+            }
+
+            if ($currentPath == "..") {
+                $pathStack && array_pop($pathStack);
+            } else if ($currentPath != '.' && $currentPath != '') {
+                $pathStack[] = $currentPath;
+            }
+        }
+
+        return '/' . implode('/', $pathStack);
+    }
+}

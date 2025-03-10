@@ -186,3 +186,43 @@ class LongestValidParenthesesSolutionReviewThree
         return $maxAns;
     }
 }
+
+# 2025年3月10日
+class LongestValidParenthesesSolutionReviewFour
+{
+    /*
+     * THINKING
+     * 使用下标相减来得到符合条件的长度，每次相减都更新答案，如果比之前的结果大则更新，否则不更新
+     * 遇到左括号我们就入栈，
+     * 遇到有括号就出栈
+     */
+    public function longestValidParentheses(string $s): int
+    {
+        // 获取字符串的长度
+        $sLen = strlen($s);
+
+        // 栈, 栈里存储元素的下标
+        $stack = new SplStack();
+        $ans = 0;
+        $stack->push(-1);
+
+        for ($i = 0; $i < $sLen; $i++) {
+            if ($s[$i] == '(') {
+                // 入栈
+                $stack->push($i);
+                continue;
+            }
+            if ($s[$i] == ')') {
+                $top = $stack->top();
+                // 栈为空，说明栈内没有与之匹配的左括号， 我们就要把当前元素当作左边界
+                if ($stack->isEmpty()) {
+                    $stack->push($i);
+                    continue;
+                }
+                $ans = max($ans, $i - $stack->top());
+            }
+        }
+
+        return $ans;
+    }
+}

@@ -122,3 +122,26 @@ class FindTheMostCompetitiveSubSequenceUseIndex
 $svc = new FindTheMostCompetitiveSubSequenceUseIndex();
 $ans = $svc->mostCompetitive($question, $k);
 var_dump($ans);
+
+class FindTheMostCompetitiveSubSequenceReviewOne
+{
+    /**
+     * @param Integer[] $arr
+     * @param Integer $k
+     * @return Integer[]
+     */
+    function mostCompetitive(array $arr, int $k): array
+    {
+        $stack = [];
+        $arrLength = count($arr);
+        for ($i = 0; $i < $arrLength; $i++) {
+
+        }
+
+
+    }
+}
+
+$svc = new FindTheMostCompetitiveSubSequenceReviewOne();
+$ans = $svc->mostCompetitive($question, $k);
+var_dump($ans);
