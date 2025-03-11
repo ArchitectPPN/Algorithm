@@ -70,10 +70,64 @@ class RemoveKDigitsSolution
     }
 }
 
+$svc = new RemoveKDigitsSolution();
 $num = "10200";
 $k = 1;
+echo $svc->removeKDigits($num, $k) . PHP_EOL;
 
-$svc = new RemoveKDigitsSolution();
+$num = "1432219";
+$k = 3;
+echo $svc->removeKDigits($num, $k) . PHP_EOL;
+
+$num = "10";
+$k = 2;
+echo $svc->removeKDigits($num, $k) . PHP_EOL;
+
+class RemoveKDigitsSolutionReviewOne
+{
+    /**
+     * THINKING:
+     * 这次我们不修改K的含义
+     * @param String $num
+     * @param Integer $k
+     * @return String
+     */
+    function removeKDigits(string $num, int $k): string
+    {
+        // 最小子序列栈
+        $miniSubsequenceStack = [];
+
+        // 数组的长度
+        $arrLen = strlen($num);
+        $maxLen = $arrLen - $k;
+        if ($maxLen <= 0) {
+            return '0';
+        }
+
+        for ($i = 0; $i < $arrLen; $i++) {
+            // 栈不为空
+            while (
+                $miniSubsequenceStack
+                && end($miniSubsequenceStack) > $num[$i]
+                && $k > 0
+            ) {
+                array_pop($miniSubsequenceStack);
+                $k--;
+            }
+
+            $miniSubsequenceStack[] = $num[$i];
+        }
+
+        $miniSubsequenceStack = array_slice($miniSubsequenceStack, 0, $maxLen);
+        $ansStr = ltrim(implode('', $miniSubsequenceStack), '0');
+
+        return $ansStr == '' ? '0' : $ansStr;
+    }
+}
+
+$svc = new RemoveKDigitsSolutionReviewOne();
+$num = "10200";
+$k = 1;
 echo $svc->removeKDigits($num, $k) . PHP_EOL;
 
 $num = "1432219";
