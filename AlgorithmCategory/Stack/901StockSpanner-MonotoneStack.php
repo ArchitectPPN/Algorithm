@@ -41,6 +41,9 @@ class StockSpanner
 }
 
 $priceList = [
+    80,
+    101,
+    90,
     100,
     80,
     60,
@@ -245,4 +248,48 @@ class StockSpannerReviewFive
 
         return $defaultSpan;
     }
+}
+
+/**
+ * THINKING:
+ * 1. 从前往后看, 找到比今天小的价格, 然后跨度+1, 找到比今天大的, 直接break;
+ * 2. 不能跨天
+ * @author niujunqing
+ */
+class StockSpannerReviewSix
+{
+    /** @var SplStack */
+    private SplStack $priceStack;
+
+    public function __construct()
+    {
+        $this->priceStack = new SplStack();
+    }
+
+    public function next($price): int
+    {
+        // 因为今天也算, 所以默认跨度就是1
+        $defaultSpan = 1;
+
+        // 一旦涉及到循环, 就要考虑栈是否为空, 所以很自然就能写出
+        // 当前的价格大于等于栈顶元素, 把栈顶的元素的价格累加
+        while (!$this->priceStack->isEmpty() && $price >= $this->priceStack->top()[0]) {
+            $defaultSpan += $this->priceStack->pop()[1];
+        }
+
+        // 入栈的元素为, 当前价格 和 跨度
+        $this->priceStack->push([
+            $price,
+            $defaultSpan,
+        ]);
+
+        return $defaultSpan;
+    }
+}
+
+var_dump("StockSpannerReviewSix");
+
+$stockSpanner = new StockSpannerReviewSix();
+foreach ($priceList as $price) {
+    echo 'price: ' . $price . ' stockSpan:' . $stockSpanner->next($price) . PHP_EOL;
 }
