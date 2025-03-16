@@ -1,5 +1,7 @@
 <?php
 
+# 401. 二进制手表 https://leetcode.cn/problems/binary-watch/
+
 namespace ReadBinaryWatchBackTracking;
 
 class Solution

@@ -1,6 +1,5 @@
 <?php
 
-namespace AlgorithmCategory\Array\TheSumOfNNumbers;
 
 class HashSolution {
 
