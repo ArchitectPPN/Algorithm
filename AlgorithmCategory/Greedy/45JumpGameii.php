@@ -2,7 +2,7 @@
 
 # 45. 跳跃游戏 II https://leetcode.cn/problems/jump-game-ii/
 
-class JumpGameIISolution
+class JumpGameIISolutionOne
 {
     /**
      * 永远找最远的位置
@@ -40,7 +40,51 @@ class JumpGameIISolution
     }
 }
 
-$svc = new JumpGameIISolution();
+$svc = new JumpGameIISolutionOne();
+echo $svc->jump(
+        [
+            2,
+            3,
+            1,
+            1,
+            4,
+        ]
+    ) . PHP_EOL;
+
+/**
+ * 从左向右遍历, 一直找能跳到末尾位置最小的下标, 然后不断缩小下标, 知道这个下标为0, 循环结束
+ * @author niujunqing
+ */
+class JumpGameIISolutionTwo
+{
+    /**
+     * 永远找最远的位置
+     * @param array $ans
+     * @return int
+     */
+    public function jump(array $ans): int
+    {
+        // 跳到最后一步
+        $maxPosition = count($ans) - 1;
+        // $maxPosition = count($ans); 这个表示, 到达最后一步以后, 仍然需要往后跳一步
+        $step = 0;
+
+        while ($maxPosition > 0) {
+            for ($i = 0; $i < $maxPosition; $i++) {
+                $tmpIndex = $i + $ans[$i];
+                if ($tmpIndex >= $maxPosition) {
+                    $maxPosition = $i;
+                    $step++;
+                    break;
+                }
+            }
+        }
+
+        return $step;
+    }
+}
+
+$svc = new JumpGameIISolutionTwo();
 echo $svc->jump(
         [
             2,

@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="394StringDecode" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Stack" path="$PROJECT_DIR$/AlgorithmCategory/Stack/394DecodeString.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory" />
+    <method v="2" />
+  </configuration>
+</component>
