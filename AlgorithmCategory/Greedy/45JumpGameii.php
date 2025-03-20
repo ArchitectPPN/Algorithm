@@ -151,3 +151,37 @@ echo $svc->jump(
             4,
         ]
     ) . PHP_EOL;
+
+class JumpGameIISolutionReviewTwo
+{
+    /**
+     * @param array $ans
+     * @return int
+     */
+    public function jump(array $ans): int
+    {
+        // 元素总数
+        $ansLength = count($ans);
+        $step = 0;
+        if ($ansLength <= 1) {
+            return $step;
+        }
+        // 当前跳跃能到达的最远位置
+        $nowSkipPosition = 0;
+        // 上一次的跳跃边界位置
+        $lastSkipEnd = 0;
+
+        // 从第一步开始跳, 最后一步不需要跳跃
+        for ($i = 0; $i < $ansLength - 1; $i++) {
+            $nowSkipPosition = max($nowSkipPosition, $nowSkipPosition + $ans[$i]);
+
+            // 到达跳跃边界时, 更新跳跃步数和跳跃边界位置
+            if ($lastSkipEnd == $i) {
+                $lastSkipEnd = $nowSkipPosition;
+                $step++;
+            }
+        }
+
+        return $step;
+    }
+}
