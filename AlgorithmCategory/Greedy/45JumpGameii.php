@@ -185,3 +185,54 @@ class JumpGameIISolutionReviewTwo
         return $step;
     }
 }
+
+$svc = new JumpGameIISolutionReviewTwo();
+echo $svc->jump(
+        [
+            2,
+            3,
+            1,
+            1,
+            4,
+        ]
+    ) . PHP_EOL;
+
+class JumpGameIISolutionTwoReviewOne
+{
+    /**
+     * @param array $ans
+     * @return int
+     */
+    public function jump(array $ans): int
+    {
+        // 从后往前遍历
+        $maxStepPosition = count($ans) - 1;
+
+        // 步数
+        $step = 0;
+        while ($maxStepPosition > 0) {
+            for ($i = 0; $i < $maxStepPosition; $i++) {
+                // 当前步数向后移
+                $tmpIndex = $i + $ans[$i];
+                if ($tmpIndex >= $maxStepPosition) {
+                    $maxStepPosition = $i;
+                    $step++;
+                    break;
+                }
+            }
+        }
+
+        return $step;
+    }
+}
+
+$svc = new JumpGameIISolutionTwoReviewOne();
+echo $svc->jump(
+        [
+            2,
+            3,
+            1,
+            1,
+            4,
+        ]
+    ) . PHP_EOL;
