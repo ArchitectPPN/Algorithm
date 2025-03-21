@@ -33,15 +33,54 @@ class MaximumSubarraySolution
 
 $svc = new MaximumSubarraySolution();
 echo $svc->maxSubArray(
-    [
-        -2,
-        1,
-        -3,
-        4,
-        -1,
-        2,
-        1,
-        -5,
-        4,
-    ]
-) . PHP_EOL;
+        [
+            -2,
+            1,
+            -3,
+            4,
+            -1,
+            2,
+            1,
+            -5,
+            4,
+        ]
+    ) . PHP_EOL;
+
+class MaximumSubarraySolutionReviewOne
+{
+    /**
+     * @param array $nums
+     * @return int
+     */
+    public function maxSubArray(array $nums): int
+    {
+        $numsLen = count($nums);
+
+        if ($numsLen == 0) {
+            return 0;
+        }
+
+        $nowSum = $maxSum = 0;
+        for ($i = 0; $i < $numsLen; $i++) {
+            $nowSum = max($nowSum + $nums[$i], $nums[$i]);
+            $maxSum = max($maxSum, $nowSum);
+        }
+
+        return $maxSum;
+    }
+}
+
+$svc = new MaximumSubarraySolutionReviewOne();
+echo $svc->maxSubArray(
+        [
+            -2,
+            1,
+            -3,
+            4,
+            -1,
+            2,
+            1,
+            -5,
+            4,
+        ]
+    ) . PHP_EOL;
