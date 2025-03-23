@@ -23,7 +23,7 @@ class JumpGameIISolutionOne
         $maxPosition = 0;
         // 当前跳跃覆盖的边界
         $end = 0;
-
+        // [1, 0, 0, 5, 1]
         for ($i = 0; $i < $ansLength - 1; $i++) {
             // 更新当前能到达的最远位置
             $maxPosition = max($maxPosition, $i + $ans[$i]);
