@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="122BestTimeToBuyAndSellStockII" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Greedy" path="$PROJECT_DIR$/AlgorithmCategory/Greedy/122BestTimeToBuyAndSellStockii.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$/Redis/RedisSourceCode/zipList">
+      <PhpTestInterpreterSettings>
+        <option name="interpreterName" value="php80" />
+      </PhpTestInterpreterSettings>
+    </CommandLine>
+    <method v="2" />
+  </configuration>
+</component>
