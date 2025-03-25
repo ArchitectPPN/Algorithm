@@ -1,5 +1,7 @@
 <?php
 
+# 237. 删除链表中的节点 https://leetcode.cn/problems/delete-node-in-a-linked-list/description/
+
 namespace DeleteNode;
 
 class ListNode

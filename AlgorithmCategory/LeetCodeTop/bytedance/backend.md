@@ -317,14 +317,14 @@
 
 | 题目                                                                                            | 出现次数 | 难度     | 刷题次数 |
 |-----------------------------------------------------------------------------------------------|------|--------|------|
-| [215. 数组中的第K个最大元素](https://leetcode-cn.com/problems/kth-largest-element-in-an-array)          | 52   | Medium | 1    |
 | [1. 两数之和](https://leetcode-cn.com/problems/two-sum)                                           | 19   | Easy   | 1    |
 | [15. 三数之和](https://leetcode-cn.com/problems/3sum)                                             | 42   | Medium | 1    |
-| [88. 合并两个有序数组](https://leetcode-cn.com/problems/merge-sorted-array)                           | 12   |        |      |
-| [80. 删除排序数组中的重复项 II](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array-ii) | 1    |        |
+| [46. 全排列](https://leetcode-cn.com/problems/permutations)                                      | 16   | Medium | 1    |
 | [54. 螺旋矩阵](https://leetcode-cn.com/problems/spiral-matrix)                                    | 24   | Medium | 1    |
 | [56. 合并区间](https://leetcode-cn.com/problems/merge-intervals)                                  | 16   | Medium | 1    |
-| [46. 全排列](https://leetcode-cn.com/problems/permutations)                                      | 16   | Medium | 1    |
+| [80. 删除排序数组中的重复项 II](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array-ii) | 1    |        |
+| [88. 合并两个有序数组](https://leetcode-cn.com/problems/merge-sorted-array)                           | 12   |        |      |
+| [215. 数组中的第K个最大元素](https://leetcode-cn.com/problems/kth-largest-element-in-an-array)          | 52   | Medium | 1    |
 
 ### 回溯
 
