@@ -59,3 +59,47 @@ echo $svc->candy(
             2,
         ]
     ) . PHP_EOL;
+
+class CandySolutionForLoopTwice
+{
+    /**
+     * @param array $ratings
+     * @return int
+     */
+    public function candy(array $ratings): int
+    {
+        $count = count($ratings);
+        if ($count === 0) {
+            return 0;
+        }
+
+        // 初始化每个孩子至少有一颗糖果
+        $candies = array_fill(0, $count, 1);
+
+        // 第一次遍历：从左到右
+        for ($i = 1; $i < $count; $i++) {
+            if ($ratings[$i] > $ratings[$i - 1]) {
+                $candies[$i] = $candies[$i - 1] + 1;
+            }
+        }
+
+        // 第二次遍历：从右到左
+        // $i = $count - 2, 最大的下标为 $count - 1, 然后最后一个元素后面没有元素了, 所以去掉, 最后: $i = $count - 2
+        for ($i = $count - 2; $i >= 0; $i--) {
+            if ($ratings[$i] > $ratings[$i + 1]) {
+                $candies[$i] = max($candies[$i], $candies[$i + 1] + 1);
+            }
+        }
+
+        // 计算总共需要的糖果数
+        return array_sum($candies);
+    }
+}
+
+$candy = [
+    1,
+    0,
+    2,
+];
+$svc = new CandySolutionForLoopTwice();
+echo $svc->candy($candy);
