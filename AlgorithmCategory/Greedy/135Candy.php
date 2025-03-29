@@ -52,6 +52,14 @@ class CandySolution
     }
 }
 
+$svc = new CandySolution();
+echo $svc->candy(
+        [
+            1,
+            2,
+        ]
+    ) . PHP_EOL;
+
 /**
  * $candies[$i] = max($candies[$i], $candies[$i + 1] + 1); 这行看不懂时，可以看下面的例子
  *
@@ -71,15 +79,6 @@ class CandySolution
  * 最终，$candies = [1, 2, 1, 2, 1]，总共需要的糖果数为 1 + 2 + 1 + 2 + 1 = 7。
  * 通过这个例子可以看出，$candies[$i] = max($candies[$i], $candies[$i + 1] + 1); 这行代码在第二次遍历时起到了关键作用，它确保了在满足规则的同时，尽可能少地分配糖果。
  */
-
-$svc = new CandySolution();
-echo $svc->candy(
-        [
-            1,
-            2,
-        ]
-    ) . PHP_EOL;
-
 class CandySolutionForLoopTwice
 {
     /**
@@ -124,3 +123,43 @@ $candy = [
 ];
 $svc = new CandySolutionForLoopTwice();
 echo $svc->candy($candy);
+
+/**
+ * 使用两次for循环
+ * 第一次循环计算出：从左到右每一个孩子应该得到的糖果，第一个元素会被计算为1个
+ */
+class CandySolutionForLoopTwiceForLoopReviewOne
+{
+    /**
+     * @param array $ratings
+     * @return int
+     */
+    public function candy(array $ratings): int
+    {
+        // 计算孩子的数量
+        $count = count($ratings);
+        if ($count <= 1) {
+            return $count;
+        }
+
+        // 每一个孩子默认都能得到一颗
+        $totalLessNeed = array_fill(0, $count, 1);
+
+        // 从第二个孩子开始遍历
+        for ($i = 1; $i < $count; $i++) {
+            // 当前孩子评分高于前一个孩子，当前孩子就需要多获取一颗糖果
+            if ($ratings[$i] > $ratings[$i - 1]) {
+                $totalLessNeed[$i] = $totalLessNeed[$i - 1] + 1;
+            }
+        }
+
+        // $count - 2 $count - 1表示最大的下标，再减去1表示最后一个元素最右边没有孩子了， 不需要计算
+        for ($i = $count - 2; $i >= 0; $i--) {
+            if ($ratings[$i] > $ratings[$i + 1]) {
+                $totalLessNeed[$i] = max($totalLessNeed[$i], $totalLessNeed[$i + 1] + 1);
+            }
+        }
+
+        return array_sum($totalLessNeed);
+    }
+}
