@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="135Candy" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Greedy" path="$PROJECT_DIR$/AlgorithmCategory/Greedy/135Candy.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory/Greedy">
+      <PhpTestInterpreterSettings>
+        <option name="interpreterName" value="php80" />
+      </PhpTestInterpreterSettings>
+    </CommandLine>
+    <method v="2" />
+  </configuration>
+</component>
