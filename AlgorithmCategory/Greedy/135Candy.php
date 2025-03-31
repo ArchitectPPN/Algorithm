@@ -13,16 +13,17 @@ class CandySolution
         // 人数
         $count = count($ratings);
         // 如果人数为0，直接返回0
-        if ($count == 0) {
-            return 0;
-        } elseif ($count == 1) {
-            // 人数为1，直接返回1
-            return 1;
+        if ($count <= 1) {
+            return $count;
         }
 
         // 最少需要的糖果数
         $lessNeed = 1;
-        $pre = $incr = 1;
+        // 每一个孩子最少可以得到一个糖果，所以$pre默认为1
+        $pre = 1;
+        // 我们把每一个孩子单独看成一个上升序列，所以长度默认为1
+        $incr = 1;
+        // 相应的需要把递减序列长度看作0
         $decr = 0;
 
         for ($i = 1; $i < $count; $i++) {
@@ -36,8 +37,8 @@ class CandySolution
                 $lessNeed += $pre;
                 $incr = $pre;
             } else {
-                // 递减序列
-                $decr++;
+                // 递减序列，这里没有将 $i - 1 并入递减序列中
+                $decr++; // $decr++只是将当前$i并入递减序列中
                 // 如果递增序列和递减序列相等，把递增序列最后那一个+1
                 // [2,1]  2比1大, 2 -> 1递减, 2的位置需要两颗, 所以要加1
                 if ($decr === $incr) {
@@ -51,6 +52,22 @@ class CandySolution
         return $lessNeed;
     }
 }
+
+//$ratings = [1, 3, 1];
+//$ratings = [1, 3, 1, 0];
+$ratings = [1, 4, 2, 1, 0];
+// 我们把评分看作递增或递减数组，
+// 默认走递增：
+// 初始第一个孩子的评分所获得的糖果为1，如果第二个孩子比他评分高，那么第二个孩子就可以获得两个糖果，依次类推：1,2,3,4,5,6 每一个孩子获取的糖
+// 果数量就是当前所对应到的数组长度
+// 递减时情况就正好相反了：
+// 递减数组中，第一个元素的开始的糖果数量为1，随着长度增加，所需的糖果就变得越来越大，评分为： 6,5,4,3,2,1 获取到的糖果为: 1,2,3,4,5,6
+// 当递减长度和递增长度一致时，我们把递增最后一个元素并入到递减序列中来，长度就+1；
+
+//$ratings = [1, 2, 2, 2, 3, 2];
+//$ratings = [1,2,3,2,1,0];
+$svc = new CandySolution();
+echo $svc->candy($ratings) . PHP_EOL;
 
 /**
  * $candies[$i] = max($candies[$i], $candies[$i + 1] + 1); 这行看不懂时，可以看下面的例子
@@ -71,15 +88,6 @@ class CandySolution
  * 最终，$candies = [1, 2, 1, 2, 1]，总共需要的糖果数为 1 + 2 + 1 + 2 + 1 = 7。
  * 通过这个例子可以看出，$candies[$i] = max($candies[$i], $candies[$i + 1] + 1); 这行代码在第二次遍历时起到了关键作用，它确保了在满足规则的同时，尽可能少地分配糖果。
  */
-
-$svc = new CandySolution();
-echo $svc->candy(
-        [
-            1,
-            2,
-        ]
-    ) . PHP_EOL;
-
 class CandySolutionForLoopTwice
 {
     /**
@@ -124,3 +132,47 @@ $candy = [
 ];
 $svc = new CandySolutionForLoopTwice();
 echo $svc->candy($candy);
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Review Start
+
+/**
+ * 使用两次for循环
+ * 第一次循环计算出：从左到右每一个孩子应该得到的糖果，第一个元素会被计算为1个
+ */
+class CandySolutionForLoopTwiceForLoopReviewOne
+{
+    /**
+     * @param array $ratings
+     * @return int
+     */
+    public function candy(array $ratings): int
+    {
+        // 计算孩子的数量
+        $count = count($ratings);
+        if ($count <= 1) {
+            return $count;
+        }
+
+        // 每一个孩子默认都能得到一颗
+        $totalLessNeed = array_fill(0, $count, 1);
+
+        // 从第二个孩子开始遍历
+        for ($i = 1; $i < $count; $i++) {
+            // 当前孩子评分高于前一个孩子，当前孩子就需要多获取一颗糖果
+            if ($ratings[$i] > $ratings[$i - 1]) {
+                $totalLessNeed[$i] = $totalLessNeed[$i - 1] + 1;
+            }
+        }
+
+        // $count - 2 $count - 1表示最大的下标，再减去1表示最后一个元素最右边没有孩子了， 不需要计算
+        for ($i = $count - 2; $i >= 0; $i--) {
+            if ($ratings[$i] > $ratings[$i + 1]) {
+                $totalLessNeed[$i] = max($totalLessNeed[$i], $totalLessNeed[$i + 1] + 1);
+            }
+        }
+
+        return array_sum($totalLessNeed);
+    }
+}
+

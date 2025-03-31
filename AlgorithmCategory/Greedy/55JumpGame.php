@@ -47,3 +47,41 @@ echo $svc->canJump(
             4,
         ]
     ) . PHP_EOL;
+
+class JumpGameSolutionWithMaxPosition
+{
+    /**
+     * @param array $ans
+     * @return bool
+     */
+    public function canJump(array $ans): bool
+    {
+        $maxIndex = count($ans);
+        if ($maxIndex <= 1) {
+            return true;
+        }
+
+        //
+        $maxIndex -= 1;
+        $canJumpMaxIndex = 0;
+        for ($i = 0; $i <= $maxIndex; $i++) {
+            //  当前下标位置已经超过最远能跳跃的距离
+            if ($i > $canJumpMaxIndex) {
+                return false;
+            }
+
+            // $i + $ans[$i] 表示， 从$i 的位置最远可以跳跃到的位置
+            $canJumpMaxIndex = max($canJumpMaxIndex, $i + $ans[$i]);
+            if ($canJumpMaxIndex >= $maxIndex) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+$svc = new JumpGameSolutionWithMaxPosition();
+$ans = [1, 3, 1, 1, 0, 4];
+$res = $svc->canJump($ans);
+var_dump($res);
