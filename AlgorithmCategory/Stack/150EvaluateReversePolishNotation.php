@@ -193,3 +193,61 @@ class EvaluateReversePolishNotationSolutionReviewThree
 
 $svc = new EvaluateReversePolishNotationSolutionReviewThree();
 echo $svc->evalRPN(["2", "1", "+", "3", "*"]);
+
+# 2025年4月2日
+
+class EvaluateReversePolishNotationSolutionReviewFour
+{
+    /**
+     * 计算
+     * @param array $tokens
+     * @return int
+     */
+    public function evalRPN(array $tokens): int
+    {
+        // tokens的长度
+        $tokensLen = count($tokens);
+        if ($tokensLen == 0) {
+            return 0;
+        } else if ($tokensLen == 1) {
+            return $tokens[0];
+        }
+
+        $splStack = new splStack();
+        for ($i = 0; $i < $tokensLen; $i++) {
+            if (
+                $tokens[$i] != '+'
+                && $tokens[$i] != '-'
+                && $tokens[$i] != '*'
+                && $tokens[$i] != '/'
+            ) {
+                $splStack->push($tokens[$i]);
+            } else {
+                $secondNum = $splStack->pop();
+                $firstNum = $splStack->pop();
+                switch ($tokens[$i]) {
+                    case '-':
+                        $splStack->push($firstNum - $secondNum);
+                        break;
+
+                    case '+':
+                        $splStack->push($firstNum + $secondNum);
+                        break;
+
+                    case '*':
+                        $splStack->push($firstNum * $secondNum);
+                        break;
+
+                    case '/':
+                        $splStack->push(intval($firstNum / $secondNum));
+                        break;
+                }
+            }
+        }
+
+        return intval($splStack->pop());
+    }
+}
+
+$svc = new EvaluateReversePolishNotationSolutionReviewFour();
+echo $svc->evalRPN(["2", "1", "+", "3", "*"]);
