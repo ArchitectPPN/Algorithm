@@ -27,8 +27,15 @@ class FindTheMostCompetitiveSubSequence
             while (
                 $ansStack
                 && end($ansStack) > $nums[$i]
-                // 这个位置不能是 >= $k, 因为在刚好满足填满 $k 时, 如果栈顶元素大于当前元素, 就会被弹出, 这样剩下的元素 + 栈内的元素就无法填满 $k, 所以需要 count($ansStack) + $numsLen - $i > $k
-                && count($ansStack) + $numsLen - $i > $k
+                // count($ansStack) + $numsLen - $i 这段要拆开理解
+                // $numsLen - $i 表示，从$i的位置开始，还剩下几个元素
+                // [1,2,3,4]
+                // $i = 0 时， 表示从0的位置开始还有4个元素
+                // $i = 1 时， 表示从1的位置开始还有3个元素
+                // $i = 2 时， 表示从1的位置开始还有2个元素
+                // $i = 3 时， 表示从1的位置开始还有1个元素
+                // 剩余元素数量 + 栈内有的数量 > $k 才能保证最后的长度，否则可能会被 end($ansStack) > $nums[$i] 原因弹出，导致长度不够
+                && count($ansStack) + $numsLen - $i > $k // 1 + 12 - 1
             ) {
                 array_pop($ansStack);
             }
@@ -132,13 +139,28 @@ class FindTheMostCompetitiveSubSequenceReviewOne
      */
     function mostCompetitive(array $arr, int $k): array
     {
-        $stack = [];
         $arrLength = count($arr);
-        for ($i = 0; $i < $arrLength; $i++) {
-
+        if ($arrLength === 0) {
+            return [];
+        } else if ($arrLength === $k) {
+            return $arr;
+        } else if ($arrLength < $k) {
+            return [];
         }
 
+        $stack = [];
+        for ($i = 0; $i < $arrLength; $i++) {
+            while(
+                $stack
+                && end($stack) > $arr[$i]
+                && count($stack) + ($arrLength - $i) > $k
+            ) {
+                array_pop($stack);
+            }
+            $stack[] = $arr[$i];
+        }
 
+        return $stack;
     }
 }
 

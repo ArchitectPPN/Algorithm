@@ -7,7 +7,7 @@
 | [71SimplifyPath](Stack/71SimplifyPath.php)                                               | ~~2025-2-21~~ | ~~2025-2-22~~ | ~~2025-2-24~~            | ~~2025-2-28~~ | ~~2025-3-8~~  | ~~2025-3-23~~ |
 | [150EvaluateReversePolishNotation](Stack/150EvaluateReversePolishNotation.php)           | ~~2025-2-24~~ | ~~2025-2-25~~ | ~~2025-2-27~~            | ~~2025-3-1~~  | ~~2025-3-11~~ | 2025-3-26     |
 | [321CreateMaximumNumber](Stack/321CreateMaximumNumber/321CreateMaximumNumber.php)        | ~~2025-3-2~~  | ~~2025-3-3~~  | ~~2025-3-5~~             | 2025-3-9      | 2025-3-16     | 2025-4-2      |
-| [1673FindMostCompetitiveSubSequence](Stack/1673FindTheMostCompetitiveSubSequence.php)    | ~~2025-3-7~~  | ~~2025-3-8~~  | ~~2025-3-10~~            | 2025-3-14     | 2025-3-22     | 2025-4-7      |
+| [1673FindMostCompetitiveSubSequence](Stack/1673FindTheMostCompetitiveSubSequence.php)    | ~~2025-3-7~~  | ~~2025-3-8~~  | ~~2025-3-10~~            | ~~2025-3-14~~ | 2025-3-22     | 2025-4-7      |
 | [402RemoveKDigits](Stack/402RemoveKDigits.php)                                           | ~~2025-3-8~~  | ~~2025-3-9~~  | ~~2025-3-11~~            | 2025-3-15     | 2025-3-23     | 2025-4-8      |
 | [581ShortestUnSortedContinuousSubarray](Stack/581ShortestUnSortedContinuousSubarray.php) | ~~2025-3-8~~  | ~~2025-3-9~~  | ~~2025-3-11~~            | 2025-3-15     | 2025-3-23     | 2025-4-8      |
 | [128LongestConsecutiveSequence](Hash/128LongestConsecutiveSequence.php)                  | ~~2025-3-12~~ | 2025-3-13     | 2025-3-14                | 2025-3-19     | 2025-3-27     | 2025-4-13     |
