@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="1673FindMostComptitveSubSequence" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Stack" path="$PROJECT_DIR$/AlgorithmCategory/Stack/1673FindMostCompetitiveSubSequence.php">
+  <configuration default="false" name="1673FindMostComptitveSubSequence" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Stack" path="$PROJECT_DIR$/AlgorithmCategory/Stack/1673FindTheMostCompetitiveSubSequence.php">
     <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory">
       <PhpTestInterpreterSettings>
-        <option name="interpreterName" value="php56" />
+        <option name="interpreterName" value="php80" />
       </PhpTestInterpreterSettings>
     </CommandLine>
     <method v="2" />
