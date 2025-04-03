@@ -1,4 +1,4 @@
-| **Review Content**                                                                       | **当天**        | **一天**        | **三天**                   | **7天**        | **15天**       | **30天**       |
+| **Review Content**                                                                       | **当天**        | **一天**        | **三天**                   | **7天**        | **15天**       | **一个月以后**     |
 |------------------------------------------------------------------------------------------|---------------|---------------|--------------------------|---------------|---------------|---------------|
 | [42TrappingWater-MonotoneStack](Stack/42TrappingRainWater-MonotoneStack.php)             | ~~2025-2-10~~ | ~~2025-2-11~~ | ~~2025-2-13~~            | ~~2025-2-17~~ | ~~2025-2-25~~ | 2025-3-11     |
 | [901StockSpanner-MonotoneStack](Stack/901StockSpanner-MonotoneStack.php)                 | ~~2025-2-11~~ | ~~2025-2-12~~ | ~~2025-2-14(2-16&2-17)~~ | ~~2025-2-18~~ | ~~2025-2-26~~ | ~~2025-3-12~~ |
@@ -9,6 +9,7 @@
 | [321CreateMaximumNumber](Stack/321CreateMaximumNumber/321CreateMaximumNumber.php)        | ~~2025-3-2~~  | ~~2025-3-3~~  | ~~2025-3-5~~             | 2025-3-9      | 2025-3-16     | 2025-4-2      |
 | [1673FindMostCompetitiveSubSequence](Stack/1673FindTheMostCompetitiveSubSequence.php)    | ~~2025-3-7~~  | ~~2025-3-8~~  | ~~2025-3-10~~            | ~~2025-3-14~~ | 2025-3-22     | 2025-4-7      |
 | [402RemoveKDigits](Stack/402RemoveKDigits.php)                                           | ~~2025-3-8~~  | ~~2025-3-9~~  | ~~2025-3-11~~            | 2025-3-15     | 2025-3-23     | 2025-4-8      |
+| [496NextGreaterElementI-MonotoneStack](Stack/496NextGreaterElementI-MonotoneStack.php)   | ~~2025-4-3~~  | ~~2025-4-4~~  | 2025-4-6                 | 2025-4-10     | 2025-4-18     | 2025-5-3      |
 | [581ShortestUnSortedContinuousSubarray](Stack/581ShortestUnSortedContinuousSubarray.php) | ~~2025-3-8~~  | ~~2025-3-9~~  | ~~2025-3-11~~            | 2025-3-15     | 2025-3-23     | 2025-4-8      |
 | [128LongestConsecutiveSequence](Hash/128LongestConsecutiveSequence.php)                  | ~~2025-3-12~~ | 2025-3-13     | 2025-3-14                | 2025-3-19     | 2025-3-27     | 2025-4-13     |
 | [3340CheckBalancedString](String/3340CheckBalancedString.php)                            | ~~2025-3-14~~ | 2025-3-15     | 2025-3-16                | 2025-3-21     | 2025-3-29     | 2025-4-15     |
