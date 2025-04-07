@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="452MinimumNumberOfArrowsToBurstBalloons" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Stack" path="$PROJECT_DIR$/AlgorithmCategory/Greedy/452MinimumNumberOfArrowsToBurstBalloons.php">
+  <configuration default="false" name="452MinimumNumberOfArrowsToBurstBalloons" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Greedy" path="$PROJECT_DIR$/AlgorithmCategory/Greedy/452MinimumNumberOfArrowsToBurstBalloons.php">
     <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory">
       <PhpTestInterpreterSettings>
         <option name="interpreterName" value="php80" />
