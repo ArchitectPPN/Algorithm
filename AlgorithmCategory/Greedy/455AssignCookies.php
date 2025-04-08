@@ -122,3 +122,29 @@ $svc = new AssignCookiesSolution();
 foreach ($questionArr as $value) {
     echo $svc->findContentChildren($value[0], $value[1]) . PHP_EOL;
 }
+
+class AssignCookiesSolutionReviewOne
+{
+    /**
+     * @param array $g
+     * @param array $s
+     * @return int
+     */
+    function findContentChildren(array $g, array $s): int
+    {
+        // 将孩子和饼干按照从小到大排序
+        sort($g);
+        sort($s);
+
+        $childIndex = 0;
+        $cookieIndex = 0;
+        while ($childIndex < count($g) && $cookieIndex < count($s)) {
+            if ($g[$childIndex] <= $s[$cookieIndex]) {
+                $childIndex++;
+            }
+            $cookieIndex++;
+        }
+
+        return $childIndex;
+    }
+}
