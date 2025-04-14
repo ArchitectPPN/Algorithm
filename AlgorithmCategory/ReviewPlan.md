@@ -25,3 +25,4 @@
 | [455AssignCookies](Greedy/455AssignCookies.php)                                               | ~~2025-4-7~~  | ~~2025-4-8~~  | 2025-4-10                | 2025-4-14     | 2025-4-22     | 2025-5-7      |
 | [738MonotoneIncreasingDigits](Greedy/738MonotoneIncreasingDigits.php)                         | ~~2025-4-8~~  | 2025-4-9      | 2025-4-11                | 2025-4-15     | 2025-4-23     | 2025-5-8      |
 | [763PartitionLabels](Greedy/763PartitionLabels.php)                                           | ~~2025-4-9~~  | 2025-4-10     | 2025-4-12                | 2025-4-16     | 2025-4-24     | 2025-5-9      |
+| [860LemonadeChange](Greedy/860LemonadeChange.php)                                             | ~~2025-4-14~~ | 2025-4-15     | 2025-4-17                | 2025-4-19     | 2025-4-27     | 2025-5-12     |
