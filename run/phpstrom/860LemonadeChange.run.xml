@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="860LemonadeChange" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Stack" path="$PROJECT_DIR$/AlgorithmCategory/Greedy/860LemonadeChange.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory">
+      <PhpTestInterpreterSettings>
+        <option name="interpreterName" value="php80" />
+      </PhpTestInterpreterSettings>
+    </CommandLine>
+    <method v="2" />
+  </configuration>
+</component>
