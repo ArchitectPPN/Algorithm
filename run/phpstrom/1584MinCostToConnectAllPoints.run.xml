@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="1584MinCostToConnectAllPoints" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="Graph" path="$PROJECT_DIR$/AlgorithmCategory/Graph/1584MinCostToConnectAllPoints.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory/Graph">
+      <PhpTestInterpreterSettings>
+        <option name="interpreterName" value="php80" />
+      </PhpTestInterpreterSettings>
+    </CommandLine>
+    <method v="2" />
+  </configuration>
+</component>
