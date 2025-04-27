@@ -65,3 +65,14 @@ class CanFinishSolution
         return $visited == $numCourses;
     }
 }
+
+$questions = [
+    [2, [[1, 0], [0, 1]]],
+    [2, [[1, 0]]],
+];
+
+$svc = new CanFinishSolution();
+foreach ($questions as $question) {
+    $res = $svc->canFinish($question[0], $question[1]);
+    var_dump($res);
+}
