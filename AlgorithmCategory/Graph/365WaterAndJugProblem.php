@@ -26,19 +26,29 @@ class canMeasureWaterSolution
     // 定义 seen 属性，用于存储已经访问过的状态
     private array $seen = [];
 
-    public function canMeasureWater($x, $y, $z): bool
+    /**
+     * @param int $x
+     * @param int $y
+     * @param int $z
+     * @return bool
+     */
+    public function canMeasureWater(int $x, int $y, int $z): bool
     {
+        // 一开始, 两个壶都没有水
         $stack = [[0, 0]];
         while (!empty($stack)) {
             [$remainX, $remainY] = array_pop($stack);
             if ($remainX == $z || $remainY == $z || $remainX + $remainY == $z) {
                 return true;
             }
+
+            // 避免重复访问状态, 导致死循环
             $key = $remainX . ',' . $remainY;
             if (isset($this->seen[$key])) {
                 continue;
             }
             $this->seen[$key] = 1;
+
             // 把 X 壶灌满。
             $stack[] = [$x, $remainY];
             // 把 Y 壶灌满。
@@ -67,6 +77,69 @@ $questions = [
 ];
 foreach ($questions as $question) {
     $svc = new canMeasureWaterSolution();
+    $res = $svc->canMeasureWater($question[0], $question[1], $question[2]);
+    var_dump($res);
+}
+
+class canMeasureWaterSolutionReviewOne
+{
+    /** @var array 标记是否访问过 */
+    private array $visited = [];
+
+    /**
+     * @param int $x
+     * @param int $y
+     * @param int $z
+     * @return bool
+     */
+    public function canMeasureWater(int $x, int $y, int $z): bool
+    {
+        // 一开始两个壶都没有水
+        $stack = [[0, 0]];
+
+        while (!empty($stack)) {
+            // 拿出上一次的状态
+            [$remainX, $remainY] = array_pop($stack);
+            // 判断上次的状态是否满足条件
+            if ($remainX == $z || $remainY == $z || $remainY + $remainX == $z) {
+                return true;
+            }
+
+            // 防止重复访问
+            $key = $remainX . ',' . $remainY;
+            if (isset($this->visited[$key])) {
+                continue;
+            }
+            $this->visited[$key] = 1;
+
+            // 把 X 壶灌满
+            $stack[] = [$x, $remainY];
+            // 把 Y 壶灌满
+            $stack[] = [$remainX, $y];
+            // 把 X 壶倒空
+            $stack[] = [0, $remainY];
+            // 把 Y 壶倒空
+            $stack[] = [$remainX, 0];
+            // 把 X 壶的水灌进 Y 壶，直至灌满或倒空
+            $stack[] = [
+                $remainX - min($remainX, $y - $remainY),
+                $remainY + min($remainX, $y - $remainY),
+            ];
+            // 把 Y 壶的水灌进 X 壶，直至灌满或倒空
+            $stack[] = [
+                $remainX + min($remainY, $x - $remainX),
+                $remainY - min($remainY, $x - $remainX),
+            ];
+        }
+
+        return false;
+    }
+}
+$questions = [
+    [3, 5, 4]
+];
+foreach ($questions as $question) {
+    $svc = new canMeasureWaterSolutionReviewOne();
     $res = $svc->canMeasureWater($question[0], $question[1], $question[2]);
     var_dump($res);
 }
