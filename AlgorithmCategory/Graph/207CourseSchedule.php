@@ -26,7 +26,7 @@ class BFSCanFinishSolution
 
         // 遍历先决条件列表，构建图的边信息和节点入度
         foreach ($prerequisites as $info) {
-            // 学完 $info[1] 课程后，才能学 $info[0] 课程
+            // 学完 $info[1] 课程后，可以学 $info[0] 课程
             $this->edges[$info[1]][] = $info[0];
             // 目标节点 $info[0] 的入度加 1, 也就是 $info[0] 需要先完成几门课程
             $this->indeg[$info[0]]++;
