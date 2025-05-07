@@ -49,6 +49,9 @@ class FindRedundantConnectionSolution
     public function find(int $index): int
     {
         if ($this->parent[$index] != $index) {
+            // 这行代码实现了路径压缩优化。
+            // 在递归查找根节点的过程中，会把元素 $index 直接连接到根节点上，而不是保留原来的多层父节点关系。
+            // 这样做的好处是，下次再查找 $index 或其子孙节点的根节点时，查找路径会大大缩短，从而提升查找效率。
             $this->parent[$index] = $this->find($this->parent[$index]);
         }
         return $this->parent[$index];
