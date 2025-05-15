@@ -1,5 +1,7 @@
 <?php
 
+# 1928. 规定时间内到达终点的最小花费 https://leetcode.cn/problems/minimum-cost-to-reach-destination-in-time/description/
+
 class minCostSolution
 {
     // 极大值，使用 PHP_INT_MAX 的一半避免溢出问题
@@ -23,21 +25,21 @@ class minCostSolution
         for ($t = 1; $t <= $maxTime; ++$t) {
             // 遍历所有边（无向边，双向处理）
             foreach ($edges as $edge) {
-                $i = $edge[0];
-                $j = $edge[1];
+                $start = $edge[0];
+                $end = $edge[1];
                 $cost = $edge[2]; // 边的时间消耗
 
                 // 如果当前时间 t 足够支付该边的时间消耗
                 if ($cost <= $t) {
                     // 从节点 j 经过该边到达节点 i 的情况
-                    $candidateI = $f[$t - $cost][$j] + $passingFees[$i];
-                    if ($candidateI < $f[$t][$i]) {
-                        $f[$t][$i] = $candidateI;
+                    $candidateI = $f[$t - $cost][$end] + $passingFees[$start];
+                    if ($candidateI < $f[$t][$start]) {
+                        $f[$t][$start] = $candidateI;
                     }
                     // 从节点 i 经过该边到达节点 j 的情况
-                    $candidateJ = $f[$t - $cost][$i] + $passingFees[$j];
-                    if ($candidateJ < $f[$t][$j]) {
-                        $f[$t][$j] = $candidateJ;
+                    $candidateJ = $f[$t - $cost][$start] + $passingFees[$end];
+                    if ($candidateJ < $f[$t][$end]) {
+                        $f[$t][$end] = $candidateJ;
                     }
                 }
             }
