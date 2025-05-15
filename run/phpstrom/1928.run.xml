@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="1928" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="DynamicProgramming" path="$PROJECT_DIR$/AlgorithmCategory/DynamicProgramming/1928.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory/DynamicProgramming">
+      <PhpTestInterpreterSettings>
+        <option name="interpreterName" value="php80" />
+      </PhpTestInterpreterSettings>
+    </CommandLine>
+    <method v="2" />
+  </configuration>
+</component>
