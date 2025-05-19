@@ -32,24 +32,31 @@ class FindCheapestPriceSolution
         for ($t = 1; $t <= $k + 1; ++$t) {
             // 创建临时数组g，用于保存本轮松弛后的结果
             // 防止在更新过程中使用了本轮已更新的值
-            $g = array_fill(0, $n, self::MaxAnswer);
+            $process = array_fill(0, $n, self::MaxAnswer);
 
             // 遍历所有航班，尝试更新每个航班终点的最小花费
+            // 解释：从城市 0 -> 1 所需要的最小花费
             foreach ($flights as $flight) {
-                $j = $flight[0];  // 出发城市
-                $i = $flight[1];  // 到达城市
+                $start = $flight[0];  // 出发城市
+                $target = $flight[1];  // 到达城市
                 $cost = $flight[2];  // 航班价格
 
-                // 如果当前出发城市可达（f[j]不是无穷大）
+                // 比如我们有条路线为 0 -> 1 -> 2
+                // 我们必须要先计算出到达1的最小花费，然后我们才能计算出到达2的最小花费
+                // 如果当前出发城市f[start]为最大值，说明还不知道到达f[start]的最小花费，所以需要先计算出f[start]
+                // 所以每次循环就是一步一步计算到达f[start]
+
+                // 如果当前出发城市可达（f[start]不是无穷大）
                 // 并且通过该航班到达i的总花费更小
-                // 则更新临时数组g中i的最小花费
-                if ($f[$j] !== self::MaxAnswer) {
-                    $g[$i] = min($g[$i], $f[$j] + $cost);
+                // 则更新临时数组 process 中 target 的最小花费
+                if ($f[$start] !== self::MaxAnswer) {
+                    $process[$target] = min($process[$target], $f[$start] + $cost);
                 }
             }
 
             // 将临时数组g的值赋给f，完成本轮松弛
-            $f = $g;
+            // 假如这是第一轮循环，我们现在已经得到路线 0 -> 1 -> 2 中 0 -> 1 f[1] 的最小花费
+            $f = $process;
 
             // 检查经过t次松弛后，到达目标城市的最小花费是否更小
             $ans = min($ans, $f[$dst]);
