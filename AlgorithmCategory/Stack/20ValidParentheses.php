@@ -7,7 +7,7 @@ namespace AlgorithmCategory\Stack\ValidParentheses;
 class Solution
 {
     /**
-     * 解法1
+     * 解法1 STACK
      *
      * @param array $str
      * @return bool
@@ -52,7 +52,7 @@ class Solution
     }
 
     /**
-     * 解法2
+     * 解法2 HASH + STACK
      * @param string $str
      * @return bool
      */

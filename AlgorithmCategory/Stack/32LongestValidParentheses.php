@@ -40,7 +40,7 @@ class LongestValidParenthesesSolution
         // 我们可以这样理解:
         // 这是字符串:        (  (  )
         // 这是数组的下标: -1, 0, 1, 2
-        // 开始压入一个-1也符合逻辑，0 的前一位就是-1， 也是为了处理第一位是")"有括号的场景
+        // 开始压入一个-1也符合逻辑，0 的前一位就是-1， 也是为了处理第一位是")"括号的场景
         $splStack->push(-1);
 
         for ($i = 0; $i < $sLen; $i++) {
@@ -65,6 +65,7 @@ class LongestValidParenthesesSolution
     }
 }
 
+$question = '()()';
 $question = '(()';
 $question = ')()())';
 
