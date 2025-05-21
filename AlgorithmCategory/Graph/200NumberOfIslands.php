@@ -2,7 +2,7 @@
 
 # 200. 岛屿数量 https://leetcode.cn/problems/number-of-islands/description/
 
-class NumIslandsSolution
+class NumIslandsSolutionWithDFS
 {
     /** @var array Islands */
     private array $grid = [];
@@ -82,37 +82,13 @@ class NumIslandsSolution
 }
 
 $grid = [
-    [
-        "1",
-        "1",
-        "0",
-        "0",
-        "0",
-    ],
-    [
-        "1",
-        "1",
-        "0",
-        "0",
-        "0",
-    ],
-    [
-        "0",
-        "0",
-        "1",
-        "0",
-        "0",
-    ],
-    [
-        "0",
-        "0",
-        "0",
-        "1",
-        "1",
-    ],
+    ["1", "1", "0", "0", "0",],
+    ["1", "1", "0", "0", "0",],
+    ["0", "0", "1", "0", "0",],
+    ["0", "0", "0", "1", "1",],
 ];
 
-$svc = new NumIslandsSolution();
+$svc = new NumIslandsSolutionWithDFS();
 echo $svc->numIslands($grid) . PHP_EOL;
 
 class NumIslandsSolutionReviewOne
@@ -199,34 +175,10 @@ class NumIslandsSolutionReviewOne
 }
 
 $grid = [
-    [
-        "1",
-        "1",
-        "0",
-        "0",
-        "0",
-    ],
-    [
-        "1",
-        "1",
-        "0",
-        "0",
-        "0",
-    ],
-    [
-        "0",
-        "0",
-        "1",
-        "0",
-        "0",
-    ],
-    [
-        "0",
-        "0",
-        "0",
-        "1",
-        "1",
-    ],
+    ["1", "1", "0", "0", "0",],
+    ["1", "1", "0", "0", "0",],
+    ["0", "0", "1", "0", "0",],
+    ["0", "0", "0", "1", "1",],
 ];
 
 $svc = new NumIslandsSolutionReviewOne();
