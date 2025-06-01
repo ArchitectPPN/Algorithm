@@ -9,9 +9,13 @@ class NetworkDelayTimeSolution
         // 构建邻接表
         $adj = [];
         foreach ($times as $time) {
+            // 源节点
             $u = $time[0];
+            // 目标节点
             $v = $time[1];
+            // 距离
             $w = $time[2];
+
             $adj[$u][] = [$v, $w];
         }
 
@@ -20,12 +24,14 @@ class NetworkDelayTimeSolution
         // 源节点到自身的距离为0
         $dist[$k] = 0;
 
-        // 优先队列（最小堆），存储 [距离, 节点]
+        // 优先队列（最大堆，但是代码这里使用取负数的方式巧妙的转化了），存储 [距离, 节点]
         $heap = new SplPriorityQueue();
+        //  设置仅输出 value
         $heap->setExtractFlags(SplPriorityQueue::EXTR_DATA);
         $heap->insert([0, $k], 0);
 
         while (!$heap->isEmpty()) {
+            // 出队
             $current = $heap->extract();
             $d = $current[0];
             $node = $current[1];
@@ -40,10 +46,14 @@ class NetworkDelayTimeSolution
                 foreach ($adj[$node] as $neighbor) {
                     $v = $neighbor[0];
                     $w = $neighbor[1];
-                    // 松弛操作, 当前已记录的距离大于 上一个节点+当前节点的距离
+                    // 松弛操作, 当前已记录的距离大于 上一个节点+当前节点的距离，更新当前记录的距离
                     if ($dist[$v] > $dist[$node] + $w) {
                         $dist[$v] = $dist[$node] + $w;
-                        $heap->insert([$dist[$v], $v], -$dist[$v]); // 取负使最小堆生效
+                        // 取负使最小堆生效，例如：
+                        // 假设有一组数据: 7 8 9
+                        // 原本的顺序为：9 8 7
+                        // 经过取负数，现在的顺序为：-7 -8 -9
+                        $heap->insert([$dist[$v], $v], -$dist[$v]);
                     }
                 }
             }
