@@ -2,7 +2,7 @@
 
 # 695. 岛屿的最大面积 https://leetcode.cn/problems/max-area-of-island/
 
-class MaxAreaOfIslandSolution
+class MaxAreaOfIslandSolutionDFS
 {
 
     /** @var array Islands */
@@ -103,7 +103,7 @@ $questions = [
 ];
 
 foreach ($questions as $question) {
-    $svc = new MaxAreaOfIslandSolution();
+    $svc = new MaxAreaOfIslandSolutionDFS();
     $max = $svc->maxAreaOfIsland($question);
     echo $max . PHP_EOL;
 }
