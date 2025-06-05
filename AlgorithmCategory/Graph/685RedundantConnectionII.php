@@ -55,6 +55,7 @@ class FindRedundantDirectedConnectionSolution
         } else {
             $conflictEdge = $edges[$conflict];
             if ($cycle >= 0) {
+                // 若同时存在环（cycle !== -1），冲突节点的第一个父节点边必在环中，返回该边
                 return [$parent[$conflictEdge[1]], $conflictEdge[1]];
             } else {
                 return [$conflictEdge[0], $conflictEdge[1]];
@@ -63,6 +64,24 @@ class FindRedundantDirectedConnectionSolution
     }
 }
 
+/**
+ * 示例：
+ * 假设初始状态：
+ * 节点：  0 1 2 3 4
+ * 父节点：0 1 2 3 4  // 每个节点自成一个集合
+ *
+ * 执行 union(0, 1) 和 union(2, 3) 后：
+ * 节点：  0 1 2 3 4
+ * 父节点：1 1 3 3 4  // 集合 {0,1} 和 {2,3}，4 单独成集合
+ *
+ * 执行 union(1, 3) 后：
+ * 节点：0 1 2 3 4
+ * 父节点：1 3 3 3 4  // 集合 {0,1,2,3} 和 {4}
+ *
+ * 此时查询 find(0) 会触发路径压缩，结果为：
+ * 节点：0 1 2 3 4
+ * 父节点：3 3 3 3 4  // 路径压缩后，0 和 1 直接指向根节点 3
+ */
 class UnionFindWithRank
 {
     /** @var array 存储并查集的祖先节点 */
@@ -115,12 +134,23 @@ class UnionFindWithRank
      */
     public function union(int $index1, int $index2): void
     {
+        // 通过合并两个节点父节点的方式，将元素 $index1 和 $index2 所在的集合合并为一个集合
+        // 1. 通过find方法分别找到两个节点的父节点
+        // 2. 将 $index1 的根节点的父节点设为 $index2 的根节点，从而将两个集合连接
         $this->ancestor[$this->find($index1)] = $this->find($index2);
     }
 
-    public function find($index)
+    /**
+     * 查找操作 + 路径压缩： 查找元素 $index 所在集合的根节点，并进行路径压缩
+     * @param int $index
+     * @return int
+     */
+    public function find(int $index): int
     {
+        // 递归查找父节点：若当前节点的父节点不是自身（即非根节点），则递归查找其父节点的根
         if ($this->ancestor[$index] != $index) {
+            // 路径压缩：在递归返回时，将当前节点的父节点直接设为根节点，从而缩短后续查询路径
+            // 每次 find 操作会将查询路径上的所有节点直接连接到根节点，使树的深度趋近于 1，这保证了后续查询的时间复杂度接近 O (1)
             $this->ancestor[$index] = $this->find($this->ancestor[$index]);
         }
         return $this->ancestor[$index];
@@ -128,10 +158,14 @@ class UnionFindWithRank
 }
 
 $questions = [
-    [[1, 2], [1, 3], [2, 3]],
+//    [[1, 2], [1, 3], [2, 3]],
+    [[1,2], [3,2], [2,4], [4,3]],
+    [[3,2], [1,2], [2,4], [4,3]]
 ];
 $svc = new FindRedundantDirectedConnectionSolution();
 foreach ($questions as $question) {
     $ans = $svc->findRedundantDirectedConnection($question);
     var_dump($ans);
 }
+
+# 0 -> 1 -> 2 -> 0
