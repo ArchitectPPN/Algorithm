@@ -12,15 +12,15 @@ class ListNode
     public int $val = 0;
 
     /**
-     * @var ListNode|null
+     * @var RecursionListNode|null
      */
-    public null|ListNode $next = null;
+    public null|RecursionListNode $next = null;
 
     /**
      * @param int $val
-     * @param ListNode|null $next
+     * @param RecursionListNode|null $next
      */
-    function __construct(int $val = 0, ?ListNode $next = null)
+    function __construct(int $val = 0, ?RecursionListNode $next = null)
     {
         $this->val = $val;
         $this->next = $next;
@@ -31,22 +31,21 @@ class Solution
 {
     /**
      * 暴力循环解法
-     *
-     * @param ListNode|null $l1
-     * @param ListNode|null $l2
-     * @return ListNode|null
+     * @param RecursionListNode|null $l1
+     * @param RecursionListNode|null $l2
+     * @return RecursionListNode|null
      */
-    public function mergeTwoLists(?ListNode $l1, ?ListNode $l2): ?ListNode
+    public function mergeTwoLists(?RecursionListNode $l1, ?RecursionListNode $l2): ?RecursionListNode
     {
         // 两个有一个为null, 直接返回另外一个
         if (is_null($l1)) {
             return $l2;
-        } else if (is_null($l2)) {
+        } elseif (is_null($l2)) {
             return $l1;
         }
 
         // $head 最后要返回的节点
-        $head = new ListNode(-1);
+        $head = new RecursionListNode(-1);
         // next操作的节点
         $next = $head;
 
@@ -66,30 +65,5 @@ class Solution
         $next->next = is_null($l2) ? $l1 : $l2;
 
         return $head->next;
-    }
-
-    /**
-     * 递归算法
-     *
-     * @param ListNode|null $l1
-     * @param ListNode|null $l2
-     * @return ListNode|null
-     */
-    public function mergeTwoLists2(?ListNode $l1, ?ListNode $l2): ?ListNode
-    {
-        // 两个有一个为null, 直接返回另外一个
-        if (is_null($l1)) {
-            return $l2;
-        } else if (is_null($l2)) {
-            return $l1;
-        }
-
-        if ($l1->val <= $l2->val) {
-            $l1->next = $this->mergeTwoLists2($l1->next, $l2);
-            return $l1;
-        } else {
-            $l2->next = $this->mergeTwoLists2($l1, $l2);
-            return $l2;
-        }
     }
 }
