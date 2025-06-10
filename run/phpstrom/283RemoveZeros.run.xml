@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="283RemoveZeros" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="DoublePointer" path="$PROJECT_DIR$/AlgorithmCategory/DoublePointer/283MoveZeros.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory/DoublePointer">
+      <PhpTestInterpreterSettings>
+        <option name="interpreterName" value="php80" />
+      </PhpTestInterpreterSettings>
+    </CommandLine>
+    <method v="2" />
+  </configuration>
+</component>
