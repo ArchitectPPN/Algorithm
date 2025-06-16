@@ -16,48 +16,29 @@ class Solution
 
     /**
      * @param String $s
-     * @return int
+     * @return Integer
      */
     function lengthOfLongestSubstring(string $s): int
     {
-        if (strlen($s) == 1) {
-            return 1;
-        } else if (strlen($s) == 0) {
-            return 0;
-        }
+        $n = strlen($s);
+        $maxLen = 0;
+        $charMap = [];
+        $left = 0;
 
-        $ans = [];
-        $map = [];
-        $len = strlen($s) - 1;
-        for ($i = 0; $i <= $len; $i++) {
-            if (isset($map[$s[$i]])) {
-                $map = $this->getBetween($s, $map[$s[$i]] + 1, $i);
-            } else {
-                $map[$s[$i]] = $i;
+        for ($right = 0; $right < $n; $right++) {
+            $char = $s[$right];
+            // 如果字符已存在且在窗口内，调整左边界
+            if (isset($charMap[$char]) && $charMap[$char] >= $left) {
+                $left = $charMap[$char] + 1;
             }
-
-            $ans = count($map) > count($ans) ? array_keys($map) : $ans;
+            // 更新字符位置
+            $charMap[$char] = $right;
+            // 计算当前窗口长度
+            $currentLen = $right - $left + 1;
+            $maxLen = max($maxLen, $currentLen);
         }
 
-        return count($ans);
-    }
-
-    /**
-     * @param string $str question
-     * @param int $start 重复字符第一次出现的位置
-     * @param int $end 重复字符第二次出现的位置
-     * @return array
-     */
-    private function getBetween(string $str, int $start, int $end): array
-    {
-        // 对于 dvdf 这种字符串，d为重复出现的字符，但是我们仍然需要第二个d之前的那个字符v
-        // vdf才是符合要求的
-        $arr = [];
-        for ($i = $start; $i <= $end; $i++) {
-            $arr[$str[$i]] = $i;
-        }
-
-        return $arr;
+        return $maxLen;
     }
 }
 
