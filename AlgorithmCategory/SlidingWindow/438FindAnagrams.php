@@ -36,7 +36,9 @@ class FindAnagramsSolution
             $ans[] = 0;
         }
 
-        // 滑动窗口遍历
+        // 滑动窗口遍历, 这里小于 $sLen - $pLen 的原因, $i 是下标, 所以需要减去1,
+        // 也就是 $i < $sLen - $pLen 时, 已经达到-1的目的
+        // 假设字符串s 长度为 10 , p 为 3, 所以 s - p = 7, i < 7, 最大下标为 6
         for ($i = 0; $i < $sLen - $pLen; $i++) {
             // 移出窗口左边界字符
             $sCount[ord($s[$i]) - 97]--;
