@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="438FindAnagrams" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="SlidingWindow" path="$PROJECT_DIR$/AlgorithmCategory/PrefixSum/560SubarraySumEqualsK/560SubarraySumEqualsKWithLoop.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory">
+      <PhpTestInterpreterSettings>
+        <option name="interpreterName" value="php80" />
+      </PhpTestInterpreterSettings>
+    </CommandLine>
+    <method v="2" />
+  </configuration>
+</component>
