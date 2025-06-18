@@ -1,5 +1,7 @@
 <?php
 
+# 560. 和为 K 的子数组 https://leetcode.cn/problems/subarray-sum-equals-k
+
 class SubarraySumWithLoopSolution
 {
 

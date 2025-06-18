@@ -1,5 +1,7 @@
 <?php
 
+# 560. 和为 K 的子数组 https://leetcode.cn/problems/subarray-sum-equals-k
+
 class SubarraySumWithPrefixSumSolution
 {
     /**
@@ -7,25 +9,28 @@ class SubarraySumWithPrefixSumSolution
      * @param Integer $k
      * @return Integer
      */
-    function subarraySum(array $nums, int $k): int
-    {
-        $ans = 0;
+    function subarraySum(array $nums, int $k): int {
+        $count = 0;
+        $pre = 0;
+        $mp = [0 => 1]; // 初始化哈希表，前缀和0出现1次
 
-        $len = count($nums);
-        for ($i = 0; $i < $len; $i++) {
-            $tmpAns = $nums[$i];
-            if ($tmpAns === $k) {
-                $ans++;
+        foreach ($nums as $num) {
+            $pre += $num; // 计算当前前缀和
+            $target = $pre - $k;
+
+            // 检查是否存在符合条件的前缀和
+            if (isset($mp[$target])) {
+                $count += $mp[$target];
             }
-            for ($j = $i + 1; $j < $len; $j++) {
-                $tmpAns += $nums[$j];
-                if ($tmpAns == $k) {
-                    $ans++;
-                }
+
+            // 更新当前前缀和的出现次数
+            if (!isset($mp[$pre])) {
+                $mp[$pre] = 0;
             }
+            $mp[$pre]++;
         }
 
-        return $ans;
+        return $count;
     }
 }
 
