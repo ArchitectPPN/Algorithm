@@ -32,19 +32,7 @@ class MaximumSubarraySolution
 }
 
 $svc = new MaximumSubarraySolution();
-echo $svc->maxSubArray(
-        [
-            -2,
-            1,
-            -3,
-            4,
-            -1,
-            2,
-            1,
-            -5,
-            4,
-        ]
-    ) . PHP_EOL;
+echo $svc->maxSubArray([-2,1,-3,4,-1,2,1,-5,4,]) . PHP_EOL;
 
 class MaximumSubarraySolutionReviewOne
 {
