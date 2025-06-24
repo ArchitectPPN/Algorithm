@@ -4,7 +4,7 @@ namespace AlgorithmCategory\Array;
 
 # 54. 螺旋矩阵 https://leetcode.cn/problems/spiral-matrix/
 
-class Solution
+class spiralOrderSolution
 {
     /**
      * @param Integer[][] $matrix
