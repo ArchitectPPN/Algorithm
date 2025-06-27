@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="74SearchMatrixWithBruteForce" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="BruteForce" path="$PROJECT_DIR$/AlgorithmCategory/Array/74SearchMatrix/74SearchMatrixWithBruteForce.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory/Array" />
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="74SearchMatrixWithBruteForce" type="PhpLocalRunConfigurationType" factoryName="PHP Console" folderName="BruteForce" path="$PROJECT_DIR$/AlgorithmCategory/Array/74SearchMatrix/74SearchMatrixWithBruteForce.php">
+    <CommandLine workingDirectory="$PROJECT_DIR$/AlgorithmCategory/Array/74SearchMatrix">
+      <PhpTestInterpreterSettings>
+        <option name="interpreterName" value="php80" />
+      </PhpTestInterpreterSettings>
+    </CommandLine>
+    <method v="2" />
+  </configuration>
+</component>
