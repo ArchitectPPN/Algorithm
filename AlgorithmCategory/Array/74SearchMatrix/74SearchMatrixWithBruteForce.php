@@ -1,6 +1,12 @@
 <?php
 
-class BruteForceSearchMatrixSolution
+# 240. 搜索二维矩阵 II https://leetcode.cn/problems/search-a-2d-matrix-ii/description
+
+/**
+ * 暴力循环
+ * @author niujunqing
+ */
+class SearchMatrixWithBruteForce
 {
     /**
      * @param array $matrix
@@ -40,7 +46,7 @@ $questions = [
         9,
     ],
 ];
-$svc = new BruteForceSearchMatrixSolution();
+$svc = new SearchMatrixWithBruteForce();
 foreach ($questions as $question) {
     $res = $svc->searchMatrix($question[0], $question[1]);
     echo $res ? 'true' : 'false';

@@ -1,5 +1,11 @@
 <?php
 
+# 240. 搜索二维矩阵 II https://leetcode.cn/problems/search-a-2d-matrix-ii/description
+
+/**
+ * 右上角开始搜索
+ * @author niujunqing
+ */
 class SearchMatrixWithRightOfFind
 {
     /**
