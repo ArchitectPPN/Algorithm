@@ -2,21 +2,14 @@
 
 # [19. 删除链表的倒数第N个节点 ](https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list)
 
-namespace RemoveNthFromEndSolution;
+namespace RemoveNthNodeFromEndOfList;
 
-class ListNode
-{
-    public int $val = 0;
-    public ?ListNode $next = null;
-
-    function __construct(int $val = 0, ?ListNode $next = null)
-    {
-        $this->val = $val;
-        $this->next = $next;
-    }
-}
-
-class Solution
+/**
+ * 将链表放到数组中, 这样就能根据下标去操作链表
+ *
+ * @author niujunqing
+ */
+class RemoveNthNodeFromEndOfListWithArrayIndex
 {
 
     /**
