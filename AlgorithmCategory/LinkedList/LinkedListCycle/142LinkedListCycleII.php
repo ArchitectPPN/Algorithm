@@ -2,19 +2,8 @@
 
 # [142. 环形链表 II](https://leetcode-cn.com/problems/linked-list-cycle-ii)
 
-namespace HasCycleIISolution;
+namespace HasCycleSolution;
 
-class ListNode
-{
-    public int $val = 0;
-
-    public ?ListNode $next = null;
-
-    function __construct($val)
-    {
-        $this->val = $val;
-    }
-}
 
 class HashSetSolution
 {
