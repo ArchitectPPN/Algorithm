@@ -25,7 +25,8 @@ class RemoveNthNodeFromEndOfListWithStack
         }
 
         // n大于链表长度, 说明要删除的节点不在数组中, 直接返回头节点
-        if ($n > count($stack)) {
+        // count($stack) - 1 去掉哑节点
+        if ($n > count($stack) - 1) {
             return $dummy->next;
         }
 

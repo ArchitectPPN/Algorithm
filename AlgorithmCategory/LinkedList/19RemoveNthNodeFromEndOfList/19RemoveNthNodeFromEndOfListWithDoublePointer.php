@@ -2,6 +2,8 @@
 
 namespace RemoveNthNodeFromEndOfList;
 
+require_once "ListNode.php";
+
 /**
  * 1. 核心思想
  *  使用双指针法（快慢指针）从链表末尾删除第 n 个节点，关键步骤如下：
@@ -36,17 +38,24 @@ class RemoveNthNodeFromEndOfListWithDoublePointer
         $first = $head;
         $second = $dummy;
 
+        $likedLen = 0;
         // 让first指针先移动n步
         for ($i = 0; $i < $n; $i++) {
             if ($first !== null) {
+                $likedLen++;
                 $first = $first->next;
             }
         }
 
         // 同时移动first和second指针，直到first指向null
         while ($first !== null) {
+            $likedLen++;
             $first = $first->next;
             $second = $second->next;
+        }
+        // 删除的节点在原本的链表中，直接返回原本的链表
+        if ($n > $likedLen) {
+            return $dummy->next;
         }
 
         // 删除目标节点
@@ -56,4 +65,19 @@ class RemoveNthNodeFromEndOfListWithDoublePointer
         // PHP无需手动释放内存，此处省略删除操作
         return $dummy->next;
     }
+}
+
+$linkedListArray = [
+//    ['linkedList' => [1, 2, 3], 'deletedNum' => 2],
+//    ['linkedList' => [1, 2], 'deletedNum' => 1],
+//    ['linkedList' => [1, 2], 'deletedNum' => 2],
+//    ['linkedList' => [1], 'deletedNum' => 1],
+    ['linkedList' => [1], 'deletedNum' => 2],
+];
+$linkedBuilder = new BuildLinkedList();
+$svc = new RemoveNthNodeFromEndOfListWithDoublePointer();
+foreach ($linkedListArray as $linkedArr) {
+    $linkedList = $linkedBuilder->buildLinkedList($linkedArr['linkedList']);
+    $delLinkedList = $svc->removeNthFromEnd($linkedList, $linkedArr['deletedNum']);
+    var_dump($delLinkedList);
 }
