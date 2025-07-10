@@ -4,6 +4,8 @@
 
 namespace SwapPairsSolution;
 
+require_once "ListNode.php";
+
 /**
  * 递归解法: 思路与算法
  * 可以通过递归的方式实现两两交换链表中的节点。
@@ -29,12 +31,15 @@ class SwapNodesInPairsWithRecursionSolution
         }
 
         // 将下一个节点赋值给newHead
+        // newHead = 2
         $newHead = $head->next;
 
         // 将当前节点的下一个节点赋值给newHead
         $head->next = $this->swapPairs($newHead->next);
 
         // 将newHead的下一个节点赋值给当前节点
+        // head = 1
+        // 2 -> 1
         $newHead->next = $head;
 
         return $newHead;
