@@ -1,32 +1,22 @@
 <?php
 
-namespace RightSideView;
+require_once "BuildBinaryTree.php";
 
-class TreeNode
+use BinaryTreeRightSideView\BuildBinaryTree;
+use BinaryTreeRightSideView\TreeNode;
+
+class BinaryTreeRightSideViewWithDfs
 {
-    public int $val;
-    public TreeNode $left;
-    public TreeNode $right;
-
-    function __construct(int $val = 0, TreeNode $left = null, TreeNode $right = null)
-    {
-        $this->val = $val;
-        $this->left = $left;
-        $this->right = $right;
-    }
-}
-
-class Solution {
     /** @var array */
     private array $ans = [];
 
     /**
      * 二叉树的右视图
      *
-     * @param TreeNode $root
+     * @param TreeNode|null $root
      * @return Integer[]
      */
-    function rightSideView(TreeNode $root): array
+    function rightSideView(?TreeNode $root): array
     {
         $this->dfs($root, 0);
 
@@ -41,8 +31,8 @@ class Solution {
     private function dfs(?TreeNode $root, $index): void
     {
         // 下一节点不存在时退出
-        if(is_null($root)) {
-            return ;
+        if (is_null($root)) {
+            return;
         }
         // 将当前节点写入ans
         $this->ans[$index] = $root->val;
@@ -52,3 +42,11 @@ class Solution {
         $this->dfs($root->right, $index + 1);
     }
 }
+
+$buildBinaryTree = new BuildBinaryTree();
+$tree = $buildBinaryTree->buildBinaryTree([1, 2, 3, null, 5, null, 4]);
+
+$svc = new BinaryTreeRightSideViewWithDfs();
+$rightSide = $svc->rightSideView($tree);
+
+var_dump($rightSide);
