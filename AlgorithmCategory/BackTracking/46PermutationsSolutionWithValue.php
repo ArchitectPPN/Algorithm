@@ -4,7 +4,7 @@
 
 namespace BackTrackingPermuteSolution;
 
-class PermutationsSolution
+class PermutationsSolutionWithValue
 {
     /** @var array 元素是否使用的数组 */
     private array $inUseFlag = [];
@@ -91,7 +91,7 @@ $nums = [
     1, 2, 3,
 ];
 
-$solution = new PermutationsSolution();
+$solution = new PermutationsSolutionWithValue();
 $arr = $solution->permute($nums);
 
 echo json_encode($arr);
