@@ -4,7 +4,7 @@
 
 namespace SubsetsSolution;
 
-class Solution
+class SubSetsWithBackTracingSolution
 {
     /** @var array 最终的答案 */
     private array $ans = [];
@@ -52,10 +52,6 @@ class Solution
     }
 }
 
-$solution = new Solution();
-$ans = $solution->subsets(
-    [
-        1,0
-    ]
-);
+$solution = new SubSetsWithBackTracingSolution();
+$ans = $solution->subsets([1, 0]);
 var_dump($ans);
