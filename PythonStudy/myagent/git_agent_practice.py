@@ -9,8 +9,13 @@ Agent 封装 Git 工具
 """
 import os
 import subprocess
-import requests
 import json
+
+# 忽略 urllib3 SSL 警告（macOS LibreSSL 兼容性）
+import warnings
+warnings.filterwarnings("ignore", category=Warning)
+
+import requests
 
 DASH = "-" * 50
 
@@ -28,7 +33,7 @@ if os.path.exists(env_file):
 
 # 使用 .env 中的配置
 API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
-URL = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1/chat/completions")
+URL = os.environ.get("DEEPSEEK_BASE_URL", "")
 MODEL_NAME = os.environ.get("DEEPSEEK_MODEL", "deepseek-chat")
 CONTEXT_WINDOW = int(os.environ.get("DEEPSEEK_CONTEXT_WINDOW", "128000"))
 COMPRESSION_THRESHOLD = float(os.environ.get("COMPRESSION_THRESHOLD", "70"))
@@ -46,8 +51,10 @@ HEADERS = {
 if not API_KEY:
     raise SystemExit("DEEPSEEK_API_KEY 未设置，请在 .env 中配置")
 
-if not API_KEY:
-    raise SystemExit("DEEPSEEK_API_KEY 未设置，请在 .env 中配置")
+# 打印当前配置（用于调试）
+print(f"API URL: {URL}")
+print(f"Model: {MODEL_NAME}")
+print(f"API Key: {API_KEY[:10]}...{API_KEY[-10:]}")
 
 # 工具定义
 TOOLS = [
