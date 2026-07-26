@@ -33,7 +33,7 @@ if os.path.exists(env_file):
 
 # 使用 .env 中的配置
 API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
-URL = os.environ.get("DEEPSEEK_BASE_URL", "")
+URL = os.environ.get("DEEPSEEK_BASE_URL", "") + "/chat/completions"
 MODEL_NAME = os.environ.get("DEEPSEEK_MODEL", "deepseek-chat")
 CONTEXT_WINDOW = int(os.environ.get("DEEPSEEK_CONTEXT_WINDOW", "128000"))
 COMPRESSION_THRESHOLD = float(os.environ.get("COMPRESSION_THRESHOLD", "70"))
@@ -197,13 +197,13 @@ def execute_tool(func_name: str, func_args: dict) -> str:
         return f"工具执行失败：{e}"
     return result
 
-# 调用 chat API
+# 调用 chat API（非流式，用于工具调用）
 def call_model(messages, max_retries=3):
     """调用 chat API，带重试机制"""
     for attempt in range(max_retries):
         try:
             body = {
-                "model": os.environ.get("DEEPSEEK_MODEL", "deepseek-chat"),  # 从 .env 读取模型名
+                "model": os.environ.get("DEEPSEEK_MODEL", "deepseek-chat"),
                 "messages": messages,
                 "tools": TOOLS,
                 "temperature": 0,
@@ -218,18 +218,15 @@ def call_model(messages, max_retries=3):
             raise
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 429:
-                # 限流，等待后重试
                 print(f"  ⚠️ 限流，等待后重试 {attempt + 1}/{max_retries}")
                 if attempt < max_retries - 1:
                     import time
-                    time.sleep(2 ** attempt)  # 指数退避
+                    time.sleep(2 ** attempt)
                     continue
             elif e.response.status_code == 401:
-                # 认证失败，打印错误并返回空响应
                 print(f"  ❌ 认证失败，请检查 API Key")
                 return {"error": "authentication_failed", "message": "API Key 无效"}
             elif e.response.status_code == 400:
-                # 可能是模型名错误或参数问题
                 error_text = e.response.text
                 print(f"  ⚠️ 400 错误: {error_text[:200]}")
                 if attempt < max_retries - 1:
@@ -242,6 +239,41 @@ def call_model(messages, max_retries=3):
             raise
 
     raise Exception("请求重试次数用尽")
+
+# 流式调用 chat API（用于最终回答，逐字显示）
+def call_model_stream(messages):
+    """流式调用 chat API，逐字打印回答"""
+    import sys
+    body = {
+        "model": os.environ.get("DEEPSEEK_MODEL", "deepseek-chat"),
+        "messages": messages,
+        "tools": TOOLS,
+        "temperature": 0,
+        "stream": True,
+    }
+    resp = requests.post(URL, headers=HEADERS, json=body, stream=True)
+    resp.raise_for_status()
+
+    full_content = ""
+    for line in resp.iter_lines():
+        if line:
+            line = line.decode('utf-8')
+            if line.startswith("data: "):
+                data_str = line[6:]
+                if data_str == "[DONE]":
+                    break
+                try:
+                    data = json.loads(data_str)
+                    delta = data.get("choices", [{}])[0].get("delta", {})
+                    content = delta.get("content", "")
+                    if content:
+                        full_content += content
+                        sys.stdout.write(content)
+                        sys.stdout.flush()
+                except json.JSONDecodeError:
+                    continue
+    print()  # 换行
+    return full_content
 
 # 主循环
 
@@ -282,7 +314,10 @@ try:
             print(f"【第 {loop_count} 轮】")
             print(DASH)
 
+            # 显示 loading
+            print("  思考中...", end="", flush=True)
             resp = call_model(messages)
+            print("\r" + " " * 20 + "\r", end="")  # 清除 loading
 
             # 处理 API 错误
             if resp.get("error"):
@@ -293,15 +328,16 @@ try:
             msg = resp["choices"][0]["message"]
 
             if not msg.get("tool_calls"):
-                # 没有工具调用 → 最终回答 → break
-                print(f"\n✅ 最终回答:")
-                print(f"   {msg.get('content', '(无文字)')}")
-                messages.append(msg)  # 记进历史，下一轮能看到
+                # 没有工具调用 → 最终回答 → 流式输出
+                print("\n✅ 最终回答:")
+                print("   ", end="")
+                content = call_model_stream(messages)
+                messages.append({"role": "assistant", "content": content})
                 break
 
             # 有工具调用 → 执行工具
-            messages.append(msg)
-
+            # 记录模型的 tool_calls 意图
+            tool_uses = []
             for tool_call in msg["tool_calls"]:
                 func_name = tool_call["function"]["name"]
                 try:
@@ -315,9 +351,15 @@ try:
                 preview = result[:200] + ("..." if len(result) > 200 else "")
                 print(f"  结果: {preview}")
 
+                tool_uses.append((tool_call["id"], func_name, result))
+
+            # Create assistant message with tool_calls for history
+            messages.append(msg)
+            # Add tool results
+            for tool_id, func_name, result in tool_uses:
                 messages.append({
                     "role": "tool",
-                    "tool_call_id": tool_call["id"],
+                    "tool_call_id": tool_id,
                     "content": result
                 })
         else:
