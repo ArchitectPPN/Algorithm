@@ -17,7 +17,10 @@ import subprocess
 DASH = "-" * 50
 
 # ── 读 .env ──
+# 支持从 myagent/ 或项目根目录运行
 env_file = ".env"
+if not os.path.exists(env_file):
+    env_file = "../.env"
 if os.path.exists(env_file):
     with open(env_file, encoding="utf-8") as f:
         for line in f:
@@ -153,7 +156,7 @@ def execute_tool(func_name: str, func_args: dict) -> str:
 # ── 3. 调 chat API ──
 def call_model(messages):
     body = {
-        "model": "deepseek-chat",
+        "model": "deepseek-v4-flash",  # DeepSeek 当前模型名
         "messages": messages,
         "tools": TOOLS,
         "temperature": 0,

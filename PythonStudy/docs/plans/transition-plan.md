@@ -161,15 +161,17 @@
 - [x] 处理工具调用失败、参数错误等边界（execute_tool 三层容错）
 - [x] 自检：能解释 Agent、Tool、ReAct 循环三者关系（对应面试笔记 A1）
 
-**Day 20（周六，5-6h）** 📍 7/23 Day4 目标
-- [ ] 综合实战：构建一个能获取 Git 信息的裸写 Agent
+**Day 20（周六，5-6h）** ✅
+- [x] 综合实战：构建一个能获取 Git 信息的裸写 Agent
   - Tool 1：获取 commit 列表
   - Tool 2：获取指定 commit 的 diff
   - Tool 3：获取文件内容
   - Agent 能根据自然语言指令组合使用多个 Tool
-- [ ] 测试 5 个不同问题，记录 Agent 的 Tool 选择是否正确
+- [x] 测试 5 个不同问题，记录 Agent 的 Tool 选择是否正确
+  - 打招呼、获取提交列表、查看提交详情、读文件、复杂问题 - 全部通过
+- [x] 测试脚本：`myagent/git_agent_test.py`
 
-**Day 21（周日）** 📍 7/24 Day5 目标
+**Day 21（周日）** 🔄 待完成
 - [ ] **LangChain 了解级**（半天，非主线）：跑通官方 Quick Start，记住四个核心概念（Chain/Agent/Tool/Memory）、看一眼 LCEL 语法
 - [ ] 产出对比笔记：**裸写 ReAct loop vs LangChain**，LangChain 帮你封装了哪些手写步骤、藏了什么
 - [ ] 能回答 5 个了解级问题（见附录 B），即可算过
