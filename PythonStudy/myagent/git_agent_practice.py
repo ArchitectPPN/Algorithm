@@ -22,12 +22,16 @@ if os.path.exists(env_file):
     with open(env_file, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
-            if line.startswith("DEEPSEEK_API_KEY=") and "=" in line:
-                os.environ["DEEPSEEK_API_KEY"] = line.split("=", 1)[1].strip().strip('"').strip("'")
+            if "=" in line and not line.startswith("#"):
+                key, value = line.split("=", 1)
+                os.environ[key.strip()] = value.strip().strip('"').strip("'")
 
-# 使用 xunfei 中转站 API
+# 使用 .env 中的配置
 API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
-URL = "https://maas-coding-api.cn-huabei-1.xf-yun.com/v2/chat/completions"
+URL = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1/chat/completions")
+MODEL_NAME = os.environ.get("DEEPSEEK_MODEL", "deepseek-chat")
+CONTEXT_WINDOW = int(os.environ.get("DEEPSEEK_CONTEXT_WINDOW", "128000"))
+COMPRESSION_THRESHOLD = float(os.environ.get("COMPRESSION_THRESHOLD", "70"))
 
 # xunfei API 使用 Basic Auth 格式: apiKey:secretKey
 # 需要 base64 编码
@@ -38,6 +42,9 @@ HEADERS = {
     "Authorization": f"Basic {auth_base64}",
     "Content-Type": "application/json"
 }
+
+if not API_KEY:
+    raise SystemExit("DEEPSEEK_API_KEY 未设置，请在 .env 中配置")
 
 if not API_KEY:
     raise SystemExit("DEEPSEEK_API_KEY 未设置，请在 .env 中配置")
@@ -193,7 +200,7 @@ def call_model(messages, max_retries=3):
     for attempt in range(max_retries):
         try:
             body = {
-                "model": "xopdeepseekv4pro",  # xunfei 中转站的模型名
+                "model": os.environ.get("DEEPSEEK_MODEL", "deepseek-chat"),  # 从 .env 读取模型名
                 "messages": messages,
                 "tools": TOOLS,
                 "temperature": 0,
