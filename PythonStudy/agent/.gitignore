@@ -1,0 +1,20 @@
+# Agent 项目 - 运行时文件（不提交）
+config/chat_history/
+config/chat_memory.json
+
+# IDE
+.idea/
+.vscode/
+.qoder/
+
+# 虚拟环境
+.venv/
+venv/
+
+# Claude CLI
+.claude/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo

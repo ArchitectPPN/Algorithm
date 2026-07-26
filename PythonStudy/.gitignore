@@ -1,0 +1,29 @@
+# 敏感信息 —— 绝不进 git
+.env
+*.env
+*_env
+deepseek_env
+**/credentials*
+**/secrets*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+
+# 系统
+.DS_Store
+
+# Agent 项目 - 运行时文件
+config/
+.qoder/
+.vscode/
+.idea/
+
+# myagent - 练习目录（可选，根据需求决定）
+# 如果你希望练习文件也提交到 git，就注释掉下面这行
+# myagent/

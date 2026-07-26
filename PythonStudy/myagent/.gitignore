@@ -1,0 +1,11 @@
+# 练习文件 - 可选提交
+# 如果你希望练习文件也提交到 git，可以注释掉下面这行
+memory/
+session/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
