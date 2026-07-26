@@ -209,8 +209,9 @@ def call_model(messages, max_retries=3):
                     time.sleep(2 ** attempt)  # 指数退避
                     continue
             elif e.response.status_code == 401:
-                # 认证失败，直接抛出
+                # 认证失败，打印错误并返回空响应
                 print(f"  ❌ 认证失败，请检查 API Key")
+                return {"error": "authentication_failed", "message": "API Key 无效"}
             elif e.response.status_code == 400:
                 # 可能是模型名错误或参数问题
                 error_text = e.response.text
@@ -265,6 +266,13 @@ while True:
         print(DASH)
 
         resp = call_model(messages)
+
+        # 处理 API 错误
+        if resp.get("error"):
+            print(f"  API 错误: {resp.get('message')}")
+            print("  请检查 API Key 或模型配置")
+            break
+
         msg = resp["choices"][0]["message"]
 
         if not msg.get("tool_calls"):
