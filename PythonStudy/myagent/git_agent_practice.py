@@ -2,9 +2,9 @@
 Agent 封装 Git 工具
 
 工具列表：
-- git status 
-- git branch 
-- git diff 
+- git status
+- git branch
+- git diff
 - read_file
 """
 import os
@@ -12,18 +12,21 @@ import subprocess
 import requests
 import json
 
-DASH = "-" * 50 
+DASH = "-" * 50
 
+# 读取 .env - 支持从 myagent/ 或项目根目录运行
 env_file = ".env"
+if not os.path.exists(env_file):
+    env_file = "../.env"
 if os.path.exists(env_file):
     with open(env_file, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line.startswith("DEEPSEEK_API_KEY=") and "=" in line:
-                os.environ["DEEPSEEK_API_KEY"] = line.split("=", 1)[1].strip()
+                os.environ["DEEPSEEK_API_KEY"] = line.split("=", 1)[1].strip().strip('"').strip("'")
 
-API_KEY = os.environ.get("DEEPSEEK_API_KEY")
-URL = "https://api.deepseek.com/chat/completions"
+API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
+URL = "https://api.deepseek.com/v1/chat/completions"
 HEADERS = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
 
 if not API_KEY:
@@ -175,16 +178,49 @@ def execute_tool(func_name: str, func_args: dict) -> str:
     return result
 
 # 调用 chat API
-def call_model(messages):
-    body = {
-        "model": "deepseek-chat",
-        "messages": messages,
-        "tools": TOOLS,
-        "temperature": 0,
-    }
-    resp = requests.post(URL, headers=HEADERS, json=body)
-    resp.raise_for_status()
-    return resp.json()
+def call_model(messages, max_retries=3):
+    """调用 chat API，带重试机制"""
+    for attempt in range(max_retries):
+        try:
+            body = {
+                "model": "deepseek-v4-flash",  # 使用正确的模型名
+                "messages": messages,
+                "tools": TOOLS,
+                "temperature": 0,
+            }
+            resp = requests.post(URL, headers=HEADERS, json=body, timeout=30)
+            resp.raise_for_status()
+            return resp.json()
+        except requests.exceptions.Timeout:
+            print(f"  ⚠️ 请求超时，重试 {attempt + 1}/{max_retries}")
+            if attempt < max_retries - 1:
+                continue
+            raise
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 429:
+                # 限流，等待后重试
+                print(f"  ⚠️ 限流，等待后重试 {attempt + 1}/{max_retries}")
+                if attempt < max_retries - 1:
+                    import time
+                    time.sleep(2 ** attempt)  # 指数退避
+                    continue
+            elif e.response.status_code == 401:
+                # 认证失败，直接抛出
+                print(f"  ❌ 认证失败，请检查 API Key")
+            elif e.response.status_code == 400:
+                # 可能是模型名错误或参数问题
+                error_text = e.response.text
+                print(f"  ⚠️ 400 错误: {error_text[:200]}")
+                if attempt < max_retries - 1:
+                    continue
+            raise
+        except Exception as e:
+            print(f"  ⚠️ 请求失败: {e}")
+            if attempt < max_retries - 1:
+                continue
+            raise
+
+    raise Exception("请求重试次数用尽")
 
 # 主循环
 
