@@ -25,9 +25,13 @@ if os.path.exists(env_file):
             if line.startswith("DEEPSEEK_API_KEY=") and "=" in line:
                 os.environ["DEEPSEEK_API_KEY"] = line.split("=", 1)[1].strip().strip('"').strip("'")
 
+# 使用 xunfei 中转站 API
 API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
-URL = "https://api.deepseek.com/v1/chat/completions"
-HEADERS = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
+URL = "https://maas-coding-api.cn-huabei-1.xf-yun.com/v2/chat/completions"
+HEADERS = {
+    "Authorization": f"Bearer {API_KEY}",
+    "Content-Type": "application/json"
+}
 
 if not API_KEY:
     raise SystemExit("DEEPSEEK_API_KEY 未设置，请在 .env 中配置")
@@ -183,7 +187,7 @@ def call_model(messages, max_retries=3):
     for attempt in range(max_retries):
         try:
             body = {
-                "model": "deepseek-v4-flash",  # 使用正确的模型名
+                "model": "xopdeepseekv4pro",  # xunfei 中转站的模型名
                 "messages": messages,
                 "tools": TOOLS,
                 "temperature": 0,
