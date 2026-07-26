@@ -260,64 +260,67 @@ print("=" * 50)
 print("【Git Agent 启动】（输入 quit 或 exit 退出）")
 print("=" * 50)
 
-while True:
-    userMsg = input("You: ").strip()
+try:
+    while True:
+        userMsg = input("You: ").strip()
 
-    if not userMsg:
-        continue
-    if userMsg.lower() in ("exit", "quit", "q"):
-        print("See You Later")
-        break
-
-    messages.append({"role": "user", "content": userMsg})
-
-    loop_count = 0
-    while loop_count < MAX_LOOPS:
-        loop_count += 1
-        print(f"\n{DASH}")
-        print(f"【第 {loop_count} 轮】")
-        print(DASH)
-
-        resp = call_model(messages)
-
-        # 处理 API 错误
-        if resp.get("error"):
-            print(f"  API 错误: {resp.get('message')}")
-            print("  请检查 API Key 或模型配置")
+        if not userMsg:
+            continue
+        if userMsg.lower() in ("exit", "quit", "q"):
+            print("See You Later")
             break
 
-        msg = resp["choices"][0]["message"]
+        messages.append({"role": "user", "content": userMsg})
 
-        if not msg.get("tool_calls"):
-            # 没有工具调用 → 最终回答 → break
-            print(f"\n✅ 最终回答:")
-            print(f"   {msg.get('content', '(无文字)')}")
-            messages.append(msg)  # 记进历史，下一轮能看到
-            break
+        loop_count = 0
+        while loop_count < MAX_LOOPS:
+            loop_count += 1
+            print(f"\n{DASH}")
+            print(f"【第 {loop_count} 轮】")
+            print(DASH)
 
-        # 有工具调用 → 执行工具
-        messages.append(msg)
+            resp = call_model(messages)
 
-        for tool_call in msg["tool_calls"]:
-            func_name = tool_call["function"]["name"]
-            try:
-                func_args = json.loads(tool_call["function"]["arguments"])
-            except json.JSONDecodeError:
-                func_args = {}
-                print(f" arguments 不是合法 JSON，已降级为空参数")
+            # 处理 API 错误
+            if resp.get("error"):
+                print(f"  API 错误: {resp.get('message')}")
+                print("  请检查 API Key 或模型配置")
+                break
 
-            print(f"  调工具: {func_name}({func_args})")
-            result = execute_tool(func_name, func_args)
-            preview = result[:200] + ("..." if len(result) > 200 else "")
-            print(f"  结果: {preview}")
+            msg = resp["choices"][0]["message"]
 
-            messages.append({
-                "role": "tool",
-                "tool_call_id": tool_call["id"],
-                "content": result
-            })
-    else:
-        print(f"\n已达最大循环次数 ({MAX_LOOPS})，强制终止")
+            if not msg.get("tool_calls"):
+                # 没有工具调用 → 最终回答 → break
+                print(f"\n✅ 最终回答:")
+                print(f"   {msg.get('content', '(无文字)')}")
+                messages.append(msg)  # 记进历史，下一轮能看到
+                break
 
-    print(f"\n{'='*50}")
-    print(f"循环总轮数: {loop_count}")
+            # 有工具调用 → 执行工具
+            messages.append(msg)
+
+            for tool_call in msg["tool_calls"]:
+                func_name = tool_call["function"]["name"]
+                try:
+                    func_args = json.loads(tool_call["function"]["arguments"])
+                except json.JSONDecodeError:
+                    func_args = {}
+                    print(f" arguments 不是合法 JSON，已降级为空参数")
+
+                print(f"  调工具: {func_name}({func_args})")
+                result = execute_tool(func_name, func_args)
+                preview = result[:200] + ("..." if len(result) > 200 else "")
+                print(f"  结果: {preview}")
+
+                messages.append({
+                    "role": "tool",
+                    "tool_call_id": tool_call["id"],
+                    "content": result
+                })
+        else:
+            print(f"\n已达最大循环次数 ({MAX_LOOPS})，强制终止")
+
+        print(f"\n{'='*50}")
+        print(f"循环总轮数: {loop_count}")
+except KeyboardInterrupt:
+    print("\n\n👋 再见！")
