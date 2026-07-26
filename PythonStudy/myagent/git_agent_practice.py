@@ -10,6 +10,9 @@ Agent 封装 Git 工具
 import os
 import subprocess
 import json
+import threading
+import time
+import sys
 
 # 忽略 urllib3 SSL 警告（macOS LibreSSL 兼容性）
 import warnings
@@ -47,7 +50,35 @@ HEADERS = {
 if not API_KEY:
     raise SystemExit("DEEPSEEK_API_KEY 未设置，请在 .env 中配置")
 
-# 打印当前配置（用于调试）
+# ── Loading 动画 ──
+_spinner_running = False
+_spinner_chars = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
+
+def _spinner():
+    """旋转动画线程"""
+    i = 0
+    while _spinner_running:
+        sys.stdout.write(f"\r  {_spinner_chars[i]} 思考中...")
+        sys.stdout.flush()
+        i = (i + 1) % len(_spinner_chars)
+        time.sleep(0.1)
+
+def start_loading():
+    """开始 loading 动画"""
+    global _spinner_running
+    _spinner_running = True
+    t = threading.Thread(target=_spinner, daemon=True)
+    t.start()
+    return t
+
+def stop_loading():
+    """停止 loading 动画"""
+    global _spinner_running
+    _spinner_running = False
+    sys.stdout.write("\r" + " " * 20 + "\r")
+    sys.stdout.flush()
+
+# ── 打印当前配置（用于调试）──
 print(f"API URL: {URL}")
 print(f"Model: {MODEL_NAME}")
 print(f"API Key: {API_KEY[:10]}...{API_KEY[-10:]}")
@@ -314,10 +345,10 @@ try:
             print(f"【第 {loop_count} 轮】")
             print(DASH)
 
-            # 显示 loading
-            print("  思考中...", end="", flush=True)
+            # 显示旋转 loading 动画
+            start_loading()
             resp = call_model(messages)
-            print("\r" + " " * 20 + "\r", end="")  # 清除 loading
+            stop_loading()
 
             # 处理 API 错误
             if resp.get("error"):
