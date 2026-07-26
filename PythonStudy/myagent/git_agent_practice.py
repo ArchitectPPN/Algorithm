@@ -28,8 +28,14 @@ if os.path.exists(env_file):
 # 使用 xunfei 中转站 API
 API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 URL = "https://maas-coding-api.cn-huabei-1.xf-yun.com/v2/chat/completions"
+
+# xunfei API 使用 Basic Auth 格式: apiKey:secretKey
+# 需要 base64 编码
+import base64
+auth_bytes = API_KEY.encode('utf-8')
+auth_base64 = base64.b64encode(auth_bytes).decode('utf-8')
 HEADERS = {
-    "Authorization": f"Bearer {API_KEY}",
+    "Authorization": f"Basic {auth_base64}",
     "Content-Type": "application/json"
 }
 
