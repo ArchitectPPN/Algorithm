@@ -38,13 +38,9 @@ MODEL_NAME = os.environ.get("DEEPSEEK_MODEL", "deepseek-chat")
 CONTEXT_WINDOW = int(os.environ.get("DEEPSEEK_CONTEXT_WINDOW", "128000"))
 COMPRESSION_THRESHOLD = float(os.environ.get("COMPRESSION_THRESHOLD", "70"))
 
-# xunfei API 使用 Basic Auth 格式: apiKey:secretKey
-# 需要 base64 编码
-import base64
-auth_bytes = API_KEY.encode('utf-8')
-auth_base64 = base64.b64encode(auth_bytes).decode('utf-8')
+# xunfei API 使用 Bearer Auth 格式
 HEADERS = {
-    "Authorization": f"Basic {auth_base64}",
+    "Authorization": f"Bearer {API_KEY}",
     "Content-Type": "application/json"
 }
 
