@@ -11,12 +11,13 @@
 
 ## 题目索引
 
-| 题号 | 题目 | 分类 | 难度 | 状态 |
-|------|------|------|------|------|
-| Q1 | 如何保证大模型输出可以解析的 JSON | 工程认知 | ⭐⭐ | ✅ 已整理 |
-| Q2 | JSON 解析失败时的重试上限怎么定 | 工程认知 | ⭐⭐ | ✅ 已整理 |
-| Q3 | 为什么上下文不是越长越好 | 上下文管理 | ⭐⭐ | ✅ 已整理 |
-| Q4 | 何时应该压缩？Cursor 和 Claude Code 怎么限制上下文窗口 | 上下文管理 | ⭐⭐⭐ | ✅ 已整理 |
+| 题号 | 题目 | 分类 | 难度 | 状态 | 文件 |
+|------|------|------|------|------|------|
+| Q1 | 如何保证大模型输出可以解析的 JSON | 工程认知 | ⭐⭐ | ✅ 已整理 | [q1-json-parsing.md](q1-json-parsing.md) |
+| Q2 | JSON 解析失败时的重试上限怎么定 | 工程认知 | ⭐⭐ | ✅ 已整理 | [q2-retry-strategy.md](q2-retry-strategy.md) |
+| Q3 | 为什么上下文不是越长越好 | 上下文管理 | ⭐⭐ | ✅ 已整理 | [q3-context-length.md](q3-context-length.md) |
+| Q4 | 何时应该压缩？Claude Code 和 Cursor 怎么限制上下文窗口 | 上下文管理 | ⭐⭐⭐ | ✅ 已整理 | [q4-context-compression.md](q4-context-compression.md) |
+| Q5 | LangChain 帮你做了什么 vs LLM 本身做的 | 工程认知 | ⭐⭐ | ✅ 已整理 | [q5-langchain-vs-naked.md](q5-langchain-vs-naked.md) |
 
 ## 专题文档
 
