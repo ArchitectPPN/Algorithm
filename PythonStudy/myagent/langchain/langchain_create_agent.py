@@ -1,8 +1,11 @@
+import os
+import warnings
+warnings.filterwarnings("ignore")
+
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_core.tools import tool
 from langchain_core.prompts import ChatPromptTemplate
-import os
 
 # 读取配置
 env_file = "../../.env" if not os.path.exists(".env") else ".env"
