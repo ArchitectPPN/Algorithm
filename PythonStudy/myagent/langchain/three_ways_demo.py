@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore")
 from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
 from langchain_core.prompts import ChatPromptTemplate
-from langchain.agents import create_tool_calling_agent, AgentExecutor
+from langchain.agents import create_agent
 
 # ── 读 .env ──
 env_file = "../../.env" if not os.path.exists(".env") else ".env"
@@ -75,17 +75,16 @@ def calculate(expression: str) -> str:
     except:
         return "计算失败"
 
-agent_prompt = ChatPromptTemplate.from_messages([
-    ("system", "你是一个数学助手。用户问计算问题时使用 calculate 工具。"),
-    ("human", "{input}"),
-    ("placeholder", "{agent_scratchpad}")
-])
+agent = create_agent(
+    model,
+    tools=[calculate],
+    system_prompt="你是一个数学助手。用户问计算问题时使用 calculate 工具。"
+)
 
-agent = create_tool_calling_agent(model, [calculate], agent_prompt)
-executor = AgentExecutor(agent=agent, tools=[calculate])
-
-result = executor.invoke({"input": "3 乘以 15 等于多少？"})
-print(f"Agent: {result['output']}")
+result = agent.invoke({"messages": [("user", "3 乘以 15 等于多少？")]})
+# agent 返回的是 state graph，最终消息在 messages 列表中
+last_message = result["messages"][-1]
+print(f"Agent: {last_message.content}")
 
 # 裸写版等价于 30 行 ReAct loop：
 # while True:
