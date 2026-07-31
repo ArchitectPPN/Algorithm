@@ -99,6 +99,45 @@ def delete_todo(todo_id: int):
     raise HTTPException(status_code=404, detail=f"待办事项 {todo_id} 不存在")
 
 # ══════════════════════════════════════════════════════════
+# 4. Agent 端点 —— 把 Git Agent 包装成 API
+# ══════════════════════════════════════════════════════════
+
+from .agent_service import run_agent
+
+class ReviewRequest(BaseModel):
+    """Agent 请求"""
+    question: str = Field(..., description="用户问题", min_length=1, max_length=1000)
+    repo_path: str = Field(default=".", description="仓库路径，默认当前目录")
+
+class ToolCallRecord(BaseModel):
+    """单次工具调用记录"""
+    tool: str
+    args: dict
+    result_preview: str
+
+class ReviewResponse(BaseModel):
+    """Agent 响应"""
+    answer: str
+    tool_calls: list[ToolCallRecord] = []
+    loops: int
+    error: Optional[str] = None
+
+@app.post("/review", response_model=ReviewResponse)
+def review_code(req: ReviewRequest):
+    """
+    Git Agent 代码审查。
+
+    调用 ReAct Agent 分析仓库：git status / git log / git diff / read_file。
+    """
+    result = run_agent(question=req.question, repo_path=req.repo_path)
+    return ReviewResponse(**result)
+
+@app.get("/health")
+def health():
+    """健康检查"""
+    return {"status": "ok", "time": datetime.now().isoformat()}
+
+# ══════════════════════════════════════════════════════════
 # 启动：uvicorn api.main:app --reload --port 8000
 # 文档：http://localhost:8000/docs
 # ══════════════════════════════════════════════════════════
