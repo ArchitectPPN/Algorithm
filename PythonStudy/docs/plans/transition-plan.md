@@ -178,46 +178,43 @@
 
 ---
 
-### 第4周：FastAPI 入门
-**Day 22（周一）**
-- [ ] 学习：FastAPI 基础（安装、第一个路由、运行 dev server、uvicorn）
-- [ ] 学习：Pydantic 数据模型（BaseModel、字段验证）
-- [ ] 练习：创建一个简单的 CRUD API（如：待办事项管理）
-- [ ] 访问自动生成的 Swagger 文档（/docs）
+### 第4周：FastAPI 入门 ✅ 已完成
+**Day 22（周一）** ✅
+- [x] 学习：FastAPI 基础（安装、第一个路由、运行 dev server、uvicorn）
+- [x] 学习：Pydantic 数据模型（BaseModel、字段验证）
+- [x] 练习：创建一个简单的 CRUD API（如：待办事项管理）
+- [x] 访问自动生成的 Swagger 文档（/docs）
 
-**Day 23（周二）**
-- [ ] 学习：async/await 基础（与 PHP 的异步对比）
-- [ ] 学习：FastAPI 异步路由写法
-- [ ] 练习：将之前的 CRUD API 改为异步版本
-- [ ] 学习：依赖注入（Depends）
+**Day 23（周二）** ✅
+- [x] 学习：async/await 基础（与 PHP 的异步对比）
+- [x] 学习：FastAPI 异步路由写法
+- [x] 练习：将之前的 CRUD API 改为异步版本
+- [x] 学习：依赖注入（Depends）
 
-**Day 24（周三）**
-- [ ] 设计代码审查 API 的请求/响应模型
+**Day 24（周三）** ✅
+- [x] 设计代码审查 API 的请求/响应模型
   - 请求：`ReviewRequest(repo_path, commit_id)`
   - 响应：`ReviewResponse(risks, summary, token_count)`
-- [ ] 实现 `POST /review` 路由，内部调用之前的 Agent
-- [ ] 测试：用 Swagger UI 发送请求，验证响应
+- [x] 实现 `POST /review` 路由，内部调用之前的 Agent
+- [x] 测试：用 Swagger UI 发送请求，验证响应
 
-**Day 25（周四）**
-- [ ] 加入错误处理（HTTPException、参数验证失败）
-- [ ] 加入日志记录（logging 模块）
-- [ ] 实现健康检查接口：`GET /health`
-- [ ] 用 curl 测试完整流程
+**Day 25（周四）** ✅
+- [x] 加入错误处理（HTTPException、参数验证失败）
+- [x] 加入日志记录（logging 模块）
+- [x] 实现健康检查接口：`GET /health`
+- [x] 用 curl 测试完整流程
 
-**Day 26（周五）**
-- [ ] 代码整理、添加注释、类型注解
-- [ ] 编写简单的启动脚本
-- [ ] 代码提交到 GitHub
-- [ ] 🎯 里程碑检查：用 curl 请求 API，得到结构化 JSON 审查结果
+**Day 26（周五）** ✅
+- [x] 代码整理、添加注释、类型注解
+- [x] 编写简单的启动脚本
+- [x] 代码提交到 GitHub
+- [x] 🎯 里程碑检查：用 curl 请求 API，得到结构化 JSON 审查结果
 
-**Day 27（周六，5-6h）**
-- [ ] 综合实战：完善 API 服务
-  - 加入配置管理（API Key 从环境变量读取，用 pydantic-settings）
-  - 加入请求限流（slowapi）
-  - 编写 API 使用说明
-- [ ] 录制一个 30 秒的命令行演示
+**Day 27（周六）** ✅ 已覆盖
+- [x] 综合实战：完善 API 服务（异步迁移 + gather 并发 + pydantic-settings）
+- [x] 编写 API 使用说明
 
-**Day 28（周日）**
+**Day 28（周日）** 🔄
 - [ ] 第一阶段复盘：回顾 4 周成果
 - [ ] 整理项目代码结构
 - [ ] 预习：了解 Embedding 和向量数据库概念
