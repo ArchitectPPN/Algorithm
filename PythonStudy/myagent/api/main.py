@@ -123,13 +123,13 @@ class ReviewResponse(BaseModel):
     error: Optional[str] = None
 
 @app.post("/review", response_model=ReviewResponse)
-def review_code(req: ReviewRequest):
+async def review_code(req: ReviewRequest):
     """
     Git Agent 代码审查。
 
     调用 ReAct Agent 分析仓库：git status / git log / git diff / read_file。
     """
-    result = run_agent(question=req.question, repo_path=req.repo_path)
+    result = await run_agent(question=req.question, repo_path=req.repo_path)
     return ReviewResponse(**result)
 
 @app.get("/health")

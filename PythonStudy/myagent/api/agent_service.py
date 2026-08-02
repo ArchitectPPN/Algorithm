@@ -4,11 +4,12 @@ Git Agent Service —— 从 git_agent_practice.py 抽取的 ReAct 核心逻辑
 纯函数，不依赖 input/print，可被 API/CLI 复用。
 """
 import os
+import asyncio
 import subprocess
 import json
 import warnings
 warnings.filterwarnings("ignore", category=Warning)
-import requests
+import httpx
 
 
 # ══════════════════════════════════════════════════════════
@@ -95,59 +96,79 @@ TOOLS_SCHEMA = [
 ]
 
 
-def tool_get_status(repo_path: str) -> str:
-    """执行 git status"""
-    try:
-        result = subprocess.run(
-            ["git", "status"], capture_output=True, text=True, cwd=repo_path
-        )
-        if result.returncode != 0:
-            return f"git status 执行失败: {result.stderr}"
-        return result.stdout.strip() or "(无输出)"
-    except Exception as e:
-        return f"执行出错: {e}"
+def _tool_get_status(repo_path: str) -> str:
+    """执行 git status（同步版本）"""
+    result = subprocess.run(
+        ["git", "status"], capture_output=True, text=True, cwd=repo_path
+    )
+    if result.returncode != 0:
+        return f"git status 执行失败: {result.stderr}"
+    return result.stdout.strip() or "(无输出)"
 
 
-def tool_get_commits(repo_path: str, count: int = 5) -> str:
-    """获取最近 N 条提交记录"""
-    try:
-        result = subprocess.run(
-            ["git", "log", "--oneline", f"-{count}"],
-            capture_output=True, text=True, cwd=repo_path
-        )
-        if result.returncode != 0:
-            return f"git log 执行失败: {result.stderr}"
-        return result.stdout.strip() or "(无提交记录)"
-    except Exception as e:
-        return f"执行出错: {e}"
+def _tool_get_commits(repo_path: str, count: int = 5) -> str:
+    """获取最近 N 条提交记录（同步版本）"""
+    result = subprocess.run(
+        ["git", "log", "--oneline", f"-{count}"],
+        capture_output=True, text=True, cwd=repo_path
+    )
+    if result.returncode != 0:
+        return f"git log 执行失败: {result.stderr}"
+    return result.stdout.strip() or "(无提交记录)"
 
 
-def tool_get_diff(repo_path: str, commit: str) -> str:
-    """查看提交的 --stat 摘要"""
-    try:
-        result = subprocess.run(
-            ["git", "show", "--stat", commit],
-            capture_output=True, text=True, cwd=repo_path
-        )
-        if result.returncode != 0:
-            return f"git show --stat 执行失败: {result.stderr}"
-        return result.stdout.strip()
-    except Exception as e:
-        return f"执行出错: {e}"
+def _tool_get_diff(repo_path: str, commit: str) -> str:
+    """查看提交的 --stat 摘要（同步版本）"""
+    result = subprocess.run(
+        ["git", "show", "--stat", commit],
+        capture_output=True, text=True, cwd=repo_path
+    )
+    if result.returncode != 0:
+        return f"git show --stat 执行失败: {result.stderr}"
+    return result.stdout.strip()
 
 
-def tool_read_file(repo_path: str, file_path: str) -> str:
-    """读取文件内容（相对于 repo_path）"""
+def _tool_read_file(repo_path: str, file_path: str) -> str:
+    """读取文件内容（同步版本）"""
     if file_path.endswith(".env") or "env" in os.path.basename(file_path):
         return "安全限制：不允许读取 .env 文件"
     full_path = os.path.join(repo_path, file_path)
+    with open(full_path, encoding="utf-8") as f:
+        content = f.read()
+    max_chars = 3000
+    if len(content) > max_chars:
+        return content[:max_chars] + f"\n\n... (文件过长，已截断，完整文件共 {len(content)} 字符)"
+    return content
+
+
+async def tool_get_status(repo_path: str) -> str:
+    """执行 git status（异步包装）"""
     try:
-        with open(full_path, encoding="utf-8") as f:
-            content = f.read()
-        max_chars = 3000
-        if len(content) > max_chars:
-            return content[:max_chars] + f"\n\n... (文件过长，已截断，完整文件共 {len(content)} 字符)"
-        return content
+        return await asyncio.to_thread(_tool_get_status, repo_path)
+    except Exception as e:
+        return f"执行出错: {e}"
+
+
+async def tool_get_commits(repo_path: str, count: int = 5) -> str:
+    """获取最近 N 条提交记录（异步包装）"""
+    try:
+        return await asyncio.to_thread(_tool_get_commits, repo_path, count)
+    except Exception as e:
+        return f"执行出错: {e}"
+
+
+async def tool_get_diff(repo_path: str, commit: str) -> str:
+    """查看提交的 --stat 摘要（异步包装）"""
+    try:
+        return await asyncio.to_thread(_tool_get_diff, repo_path, commit)
+    except Exception as e:
+        return f"执行出错: {e}"
+
+
+async def tool_read_file(repo_path: str, file_path: str) -> str:
+    """读取文件内容（异步包装）"""
+    try:
+        return await asyncio.to_thread(_tool_read_file, repo_path, file_path)
     except FileNotFoundError:
         return f"文件不存在: {file_path}"
     except Exception as e:
@@ -162,12 +183,12 @@ TOOL_FUNCTIONS = {
 }
 
 
-def execute_tool(func_name: str, func_args: dict, repo_path: str) -> str:
+async def execute_tool(func_name: str, func_args: dict, repo_path: str) -> str:
     """执行工具，带容错"""
     if func_name not in TOOL_FUNCTIONS:
         return f"没有名为 {func_name} 的工具，可用工具: {list(TOOL_FUNCTIONS.keys())}"
     try:
-        result = TOOL_FUNCTIONS[func_name](repo_path=repo_path, **func_args)
+        result = await TOOL_FUNCTIONS[func_name](repo_path=repo_path, **func_args)
     except TypeError as e:
         return f"参数错误: {e}。你传的参数是: {func_args}"
     except Exception as e:
@@ -179,8 +200,8 @@ def execute_tool(func_name: str, func_args: dict, repo_path: str) -> str:
 # LLM 调用
 # ══════════════════════════════════════════════════════════
 
-def call_llm(messages: list, config: dict) -> dict:
-    """调用 LLM API（非流式，用于工具调用决策）"""
+async def call_llm(messages: list, config: dict) -> dict:
+    """调用 LLM API（异步，用于工具调用决策）"""
     url = config["base_url"] + "/chat/completions"
     headers = {
         "Authorization": f"Bearer {config['api_key']}",
@@ -193,63 +214,27 @@ def call_llm(messages: list, config: dict) -> dict:
         "temperature": 0,
     }
 
-    for attempt in range(3):
-        try:
-            resp = requests.post(url, headers=headers, json=body, timeout=30)
-            resp.raise_for_status()
-            return resp.json()
-        except requests.exceptions.Timeout:
-            if attempt == 2:
-                raise
-        except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 401:
-                return {"error": "authentication_failed", "message": "API Key 无效"}
-            if e.response.status_code == 429 and attempt < 2:
-                import time
-                time.sleep(2 ** attempt)
-                continue
-            if attempt == 2:
-                return {"error": "api_error", "message": str(e)}
-        except Exception as e:
-            if attempt == 2:
-                return {"error": "network_error", "message": str(e)}
-    return {"error": "unknown", "message": "重试次数用尽"}
-
-
-def call_llm_stream(messages: list, config: dict) -> str:
-    """调用 LLM API（流式），返回完整回答文本"""
-    url = config["base_url"] + "/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {config['api_key']}",
-        "Content-Type": "application/json"
-    }
-    body = {
-        "model": config["model"],
-        "messages": messages,
-        "tools": TOOLS_SCHEMA,
-        "temperature": 0,
-        "stream": True,
-    }
-    resp = requests.post(url, headers=headers, json=body, stream=True)
-    resp.raise_for_status()
-
-    full_content = ""
-    for line in resp.iter_lines():
-        if line:
-            line = line.decode("utf-8")
-            if line.startswith("data: "):
-                data_str = line[6:]
-                if data_str == "[DONE]":
-                    break
-                try:
-                    data = json.loads(data_str)
-                    delta = data.get("choices", [{}])[0].get("delta", {})
-                    content = delta.get("content", "")
-                    if content:
-                        full_content += content
-                except json.JSONDecodeError:
+    async with httpx.AsyncClient(timeout=30) as client:
+        for attempt in range(3):
+            try:
+                resp = await client.post(url, headers=headers, json=body)
+                resp.raise_for_status()
+                return resp.json()
+            except httpx.TimeoutException:
+                if attempt == 2:
+                    raise
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 401:
+                    return {"error": "authentication_failed", "message": "API Key 无效"}
+                if e.response.status_code == 429 and attempt < 2:
+                    await asyncio.sleep(2 ** attempt)
                     continue
-    return full_content
+                if attempt == 2:
+                    return {"error": "api_error", "message": str(e)}
+            except Exception as e:
+                if attempt == 2:
+                    return {"error": "network_error", "message": str(e)}
+    return {"error": "unknown", "message": "重试次数用尽"}
 
 
 # ══════════════════════════════════════════════════════════
@@ -266,7 +251,7 @@ SYSTEM_PROMPT = """你是一个 Git 仓库助手。你可以帮助用户查看 g
 MAX_LOOPS = 10
 
 
-def run_agent(question: str, repo_path: str = ".", max_loops: int = MAX_LOOPS) -> dict:
+async def run_agent(question: str, repo_path: str = ".", max_loops: int = MAX_LOOPS) -> dict:
     """
     执行一次 Agent 对话，返回结构化结果。
 
@@ -295,7 +280,7 @@ def run_agent(question: str, repo_path: str = ".", max_loops: int = MAX_LOOPS) -
     tool_calls_log = []
 
     for loop in range(1, max_loops + 1):
-        resp = call_llm(messages, config)
+        resp = await call_llm(messages, config)
 
         if resp.get("error"):
             return {
@@ -327,7 +312,7 @@ def run_agent(question: str, repo_path: str = ".", max_loops: int = MAX_LOOPS) -
             except json.JSONDecodeError:
                 func_args = {}
 
-            result = execute_tool(func_name, func_args, repo_path)
+            result = await execute_tool(func_name, func_args, repo_path)
 
             tool_calls_log.append({
                 "tool": func_name,
