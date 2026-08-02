@@ -183,6 +183,14 @@ TOOL_FUNCTIONS = {
 }
 
 
+def _parse_tool_args(tc: dict) -> dict:
+    """解析 tool_call 的 arguments，容错"""
+    try:
+        return json.loads(tc["function"]["arguments"])
+    except json.JSONDecodeError:
+        return {}
+
+
 async def execute_tool(func_name: str, func_args: dict, repo_path: str) -> str:
     """执行工具，带容错"""
     if func_name not in TOOL_FUNCTIONS:
@@ -302,27 +310,28 @@ async def run_agent(question: str, repo_path: str = ".", max_loops: int = MAX_LO
                 "error": None,
             }
 
-        # 有工具调用 → 执行并记录
-        messages.append(msg)  # assistant message (含 tool_calls)
+        # 有工具调用 → 并发执行
+        messages.append(msg)
 
-        for tc in msg["tool_calls"]:
-            func_name = tc["function"]["name"]
-            try:
-                func_args = json.loads(tc["function"]["arguments"])
-            except json.JSONDecodeError:
-                func_args = {}
+        # 1. 解析参数 + 创建任务（列表推导式）
+        parsed = [(tc["id"], tc["function"]["name"], _parse_tool_args(tc))
+                  for tc in msg["tool_calls"]]
+        tasks = [execute_tool(func_name, args, repo_path)
+                 for _, func_name, args in parsed]
 
-            result = await execute_tool(func_name, func_args, repo_path)
+        # 2. 并发执行所有工具
+        results = await asyncio.gather(*tasks)
 
+        # 3. 记录结果
+        for (tool_id, func_name, func_args), result in zip(parsed, results):
             tool_calls_log.append({
                 "tool": func_name,
                 "args": func_args,
                 "result_preview": result[:200],
             })
-
             messages.append({
                 "role": "tool",
-                "tool_call_id": tc["id"],
+                "tool_call_id": tool_id,
                 "content": result,
             })
 
