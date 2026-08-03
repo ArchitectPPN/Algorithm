@@ -159,55 +159,217 @@ scenarios:
 
 将场景列表 + 用户消息组合成 prompt，要求小模型输出结构化 JSON。
 
-**Prompt 模板**：
+**选定模型**：`qwen2.5:3b`（1-2秒响应，适合实时交互场景）
+
+**最终 Prompt 模板**（few-shot 格式，3b 小模型必须用示例引导）：
 
 ```
-你是一个意图识别助手。根据用户消息，从以下场景中选择最匹配的：
+根据用户消息选择场景并提取病例号。
 
-{scenario_list}
+场景：
+1. bite_alignment - 对咬合
+2. clinical_design_confirm - 临床确认设计
+3. qc_process - 质检流程
+4. unknown - 不匹配
 
-0. unknown - 不属于以上任何场景
+示例：
+输入：病例A1B2C3 需要临床确认设计方案
+输出：{"scenario_id":"clinical_design_confirm","case_id":"A1B2C3","confidence":0.9}
 
-请严格输出以下JSON格式，不要输出其他内容：
-{{
-  "scenario_id": "场景ID或unknown",
-  "parameters": {{参数键值对}},
-  "confidence": 0到1的置信度,
-  "reason": "匹配理由简述"
-}}
+输入：A1B2C3 质检流程有问题
+输出：{"scenario_id":"qc_process","case_id":"A1B2C3","confidence":0.9}
 
-用户消息：{user_message}
+输入：A1B2C3 需要对咬合
+输出：{"scenario_id":"bite_alignment","case_id":"A1B2C3","confidence":0.9}
+
+输入：{user_message}
+输出：
 ```
 
-**匹配成功输出示例**：
+**Ollama 调用参数**：
 ```json
 {
-  "scenario_id": "bite_alignment",
-  "parameters": {"case_id": "22P6X3"},
-  "confidence": 0.95,
-  "reason": "用户提到需要对咬合"
+  "model": "qwen2.5:3b",
+  "prompt": "...",
+  "stream": false,
+  "format": "json",
+  "options": {"temperature": 0.1}
 }
 ```
 
-**未匹配输出示例**：
+**输出格式**：
 ```json
-{
-  "scenario_id": "unknown",
-  "parameters": {},
-  "confidence": 0.3,
-  "reason": "无法匹配到已知场景"
-}
+{"scenario_id": "场景ID", "case_id": "病例号", "confidence": 0.0-1.0}
 ```
 
 **技术要点**：
 - 使用 Ollama `format: json` 参数约束输出为合法 JSON
+- `temperature: 0.1` 降低随机性，提高稳定性
 - 场景列表动态从 YAML 加载，拼入 prompt
-- confidence 低于阈值时也走"未识别"分支
+- few-shot 示例也动态生成（每个场景一个示例）
+- confidence 低于阈值时走"未识别"分支
 
-**待验证**：
-- qwen3:8b 配合 `format: json` 是否能稳定输出合法 JSON
-- 场景数量增多后（20+）小模型匹配准确率是否下降
-- confidence 阈值设多少合适
+### 4.5 Prompt 调优记录
+
+#### 测试用例
+
+| # | 用户消息 | 期望场景 |
+|---|---------|---------|
+| 1 | 22P6X3 需要对咬合，麻烦处理下 | bite_alignment |
+| 2 | 22P6X3 这个不用新模型出设计了，临床需要确认设计 | clinical_design_confirm |
+| 3 | 病例 22P6X3 ...质检任务单的流程如何处理呢 | qc_process |
+
+#### qwen3:8b 测试
+
+**Prompt V1**（描述式，无示例）：
+```
+你是一个意图识别助手。根据用户消息，从以下场景中选择最匹配的：
+1. bite_alignment - 病例需要对咬合处理
+2. clinical_design_confirm - 需要临床确认设计方案
+3. qc_process - 质检任务单的流程处理
+0. unknown - 不属于以上任何场景
+请严格输出以下JSON格式，不要输出其他内容：
+{"scenario_id": "场景ID或unknown", "parameters": {参数键值对}, "confidence": 0到1的置信度, "reason": "匹配理由简述"}
+用户消息：22P6X3 需要对咬合，麻烦处理下
+```
+→ 输出：`{"scenario_id": "unknown", "parameters": {"bite_alignment": "required"}, "confidence": 0.7}`
+→ **问题**：scenario_id 输出 unknown，但 reason 里又识别出了 bite_alignment，自相矛盾
+→ 耗时：44秒
+
+**Prompt V2**（简化描述式）：
+```
+从以下场景中选一个匹配用户消息的，只输出JSON：
+场景：
+1. bite_alignment - 对咬合
+2. clinical_design_confirm - 临床确认设计
+3. qc_process - 质检流程处理
+0. unknown
+输出格式：{"scenario_id":"ID","parameters":{},"confidence":0.0}
+用户消息：22P6X3 需要对咬合，麻烦处理下
+```
+→ 输出：`{"scenario_id":"22P6X3","parameters":{"bite_alignment":"corrected"},"confidence":0.0}`
+→ **问题**：把病例号当成了 scenario_id
+→ 耗时：4.7秒
+
+**Prompt V3**（强调"从列表选择"）：
+```
+根据用户消息，从场景列表中选择最匹配的场景ID，并提取参数。
+场景列表：
+- bite_alignment: 对咬合处理
+- clinical_design_confirm: 临床确认设计
+- qc_process: 质检流程处理
+- unknown: 无法匹配以上任何场景
+注意：scenario_id必须从上面的列表中选择，不能自己编造。
+用户消息：22P6X3 需要对咬合，麻烦处理下
+输出JSON：{"scenario_id": "", "parameters": {"case_id": ""}, "confidence": 0.0}
+```
+→ 输出：`{"scenario_id": "bite_alignment", "parameters": {"case_id": "22P6X3"}, "confidence": 1.0}`
+→ **结果**：正确！
+→ 耗时：6.1秒
+
+**Prompt V3 测试用例2**：
+→ 输出：`{"scenario_id": "clinical_design_confirm", "parameters": {"case_id": "22P6X3"}, "confidence": 1.0}`
+→ **结果**：正确！
+→ 耗时：4.8秒
+
+**Prompt V3 测试用例3**（复杂消息）：
+→ 输出：`{"scenario_id": "bite_alignment", "parameters": {"case_id": "22P6X3"}, "confidence": 0.85}`
+→ **问题**：被"咬合"关键词干扰，应该是 qc_process
+→ 耗时：40.8秒
+
+**qwen3:8b 结论**：简单消息准确，但复杂消息容易被干扰；速度不稳定（4-44秒），不适合实时交互。
+
+#### qwen2.5:3b 测试
+
+**Prompt V1**（同 qwen3:8b 的描述式）：
+→ 输出：`{"scenario_id": "22P6X3", "parameters": {"case_id": ""}, "confidence": 0.5}`
+→ **问题**：把病例号当成了 scenario_id
+→ 耗时：1.9秒
+
+**Prompt V2**（极简格式）：
+```
+选择最匹配的场景ID。
+场景：bite_alignment=对咬合 clinical_design_confirm=临床确认设计 qc_process=质检流程 unknown=不匹配
+用户消息：22P6X3 需要对咬合，麻烦处理下
+只输出JSON：{"id":"场景ID","case_id":"病例号","conf":0.0}
+```
+→ 输出：`{"id": "22P6X3", "case_id": "", "conf": 0.0}`
+→ **问题**：仍然把病例号当 id
+→ 耗时：1.4秒
+
+**Prompt V3**（few-shot 示例，关键突破）：
+```
+根据用户消息选择场景并提取病例号。
+场景：
+1. bite_alignment - 对咬合
+2. clinical_design_confirm - 临床确认设计
+3. qc_process - 质检流程
+4. unknown - 不匹配
+示例：
+输入：病例A1B2C3 需要临床确认设计方案
+输出：{"scenario_id":"clinical_design_confirm","case_id":"A1B2C3","confidence":0.9}
+输入：A1B2C3 质检流程有问题
+输出：{"scenario_id":"qc_process","case_id":"A1B2C3","confidence":0.9}
+输入：22P6X3 需要对咬合，麻烦处理下
+输出：
+```
+→ 输出：`{"scenario_id": "bite_alignment", "case_id": "", "confidence": 0.8}`
+→ **结果**：场景正确，但 case_id 未提取
+→ 耗时：1.7秒
+
+**Prompt V4**（few-shot + 每个场景都有示例 + temperature=0.1）：
+```
+根据用户消息选择场景并提取病例号。
+场景：
+1. bite_alignment - 对咬合
+2. clinical_design_confirm - 临床确认设计
+3. qc_process - 质检流程
+4. unknown - 不匹配
+示例：
+输入：病例A1B2C3 需要临床确认设计方案
+输出：{"scenario_id":"clinical_design_confirm","case_id":"A1B2C3","confidence":0.9}
+输入：A1B2C3 质检流程有问题
+输出：{"scenario_id":"qc_process","case_id":"A1B2C3","confidence":0.9}
+输入：A1B2C3 需要对咬合
+输出：{"scenario_id":"bite_alignment","case_id":"A1B2C3","confidence":0.9}
+输入：22P6X3 需要对咬合，麻烦处理下
+输出：
+```
+→ 输出：`{"scenario_id": "bite_alignment", "case_id": "22P6X3", "confidence": 0.9}`
+→ **结果**：完全正确！
+→ 耗时：1.9秒
+
+**Prompt V4 测试用例2**（临床确认设计）：
+→ 输出：`{"scenario_id": "clinical_design_confirm", "case_id": "A1B2C3", "confidence": 0.9, "action": "confirm"}`
+→ **问题**：场景正确，但 case_id 用了示例中的 A1B2C3 而非实际的 22P6X3；多了额外字段 action
+→ 耗时：1.3秒
+
+**Prompt V4 测试用例3**（质检流程，简化版）：
+输入：22P6X3 质检任务单的流程如何处理呢
+→ 输出：`{"scenario_id": "qc_process", "case_id": "22P6X3", "confidence": 0.9}`
+→ **结果**：完全正确！
+→ 耗时：1.1秒
+
+**qwen2.5:3b 结论**：
+- 速度稳定在 1-2 秒，适合实时交互
+- few-shot 是必须的，3b 模型没有示例就无法正确理解输出格式
+- 每个场景都需要一个示例，否则模型可能混淆
+- 复杂消息（含多个关键词）需要进一步优化，可能需要拆分为"先提取关键词，再匹配场景"两步
+- 偶尔输出额外字段（如 action），代码侧需要做字段过滤
+
+#### 模型对比总结
+
+| 模型 | 速度 | 简单消息准确率 | 复杂消息准确率 | 结论 |
+|------|------|--------------|--------------|------|
+| qwen3:8b | 4-44秒 | 高 | 低（被关键词干扰） | 太慢，不适合实时交互 |
+| qwen2.5:3b | 1-2秒 | 高 | 中（需优化） | 速度快，few-shot 后基本可用 |
+
+**最终选择**：qwen2.5:3b + few-shot prompt + temperature=0.1
+
+**待优化**：
+- 复杂消息（含多个场景关键词）的识别策略
+- case_id 偶尔被示例值污染的问题
+- 输出额外字段的过滤
 
 ## 5. 消息交互设计
 
@@ -303,42 +465,63 @@ dingtalk-workflow/
 ```python
 import requests
 import yaml
+import json
+
+OLLAMA_URL = "http://localhost:11434/api/generate"
+MODEL = "qwen2.5:3b"
 
 def load_scenarios(path="scenarios.yaml"):
     with open(path) as f:
         return yaml.safe_load(f)["scenarios"]
 
+def build_prompt(user_message, scenarios):
+    # 场景列表
+    scenario_lines = []
+    for i, s in enumerate(scenarios, 1):
+        scenario_lines.append(f"{i}. {s['id']} - {s['name']}")
+    scenario_lines.append(f"{len(scenarios)+1}. unknown - 不匹配")
+
+    # few-shot 示例（每个场景一个）
+    examples = []
+    for s in scenarios:
+        example_case = s["parameters"][0]["examples"][0] if s["parameters"][0].get("examples") else "XXX"
+        examples.append(
+            f'输入：{example_case} {s["keywords"][0]}\n'
+            f'输出：{{"scenario_id":"{s["id"]}","case_id":"{example_case}","confidence":0.9}}'
+        )
+
+    prompt = f"""根据用户消息选择场景并提取病例号。
+
+场景：
+{chr(10).join(scenario_lines)}
+
+示例：
+{chr(10).join(examples)}
+
+输入：{user_message}
+输出："""
+
+    return prompt
+
 def identify_intent(user_message, scenarios):
-    # 把场景列表拼进 prompt
-    scenario_list = "\n".join(
-        f"{i+1}. {s['id']} - {s['description']}"
-        for i, s in enumerate(scenarios)
-    )
+    prompt = build_prompt(user_message, scenarios)
 
-    prompt = f"""根据用户消息，从以下场景中选择最匹配的：
-
-{scenario_list}
-
-0. unknown - 不属于以上任何场景
-
-请严格输出以下JSON格式，不要输出其他内容：
-{{
-  "scenario_id": "场景ID或unknown",
-  "parameters": {{参数键值对}},
-  "confidence": 0到1的置信度,
-  "reason": "匹配理由简述"
-}}
-
-用户消息：{user_message}"""
-
-    resp = requests.post("http://localhost:11434/api/generate", json={
-        "model": "qwen3:8b",
+    resp = requests.post(OLLAMA_URL, json={
+        "model": MODEL,
         "prompt": prompt,
         "stream": False,
-        "format": "json"
+        "format": "json",
+        "options": {"temperature": 0.1}
     })
 
-    return json.loads(resp.json()["response"])
+    result = json.loads(resp.json()["response"])
+
+    # 过滤额外字段，只保留需要的
+    return {
+        "scenario_id": result.get("scenario_id", "unknown"),
+        "case_id": result.get("case_id", ""),
+        "confidence": result.get("confidence", 0.0)
+    }
 ```
 
 ### 6.3 消息监听与发送（messenger.py）
@@ -541,10 +724,11 @@ def run(parameters):
 
 | # | 验证项 | 方法 | 状态 |
 |---|--------|------|------|
-| 1 | qwen3:8b + `format: json` 能否稳定输出合法 JSON | 本地测试 | 待验证 |
-| 2 | 两个 dws event consume 能否同时运行 | 本地测试 | 待验证 |
-| 3 | dws event consume `--duration` 参数是否支持 | `dws schema "event consume"` | 待验证 |
-| 4 | 群消息监听能否按 `--group` 过滤 | `dws event consume --help` | 待验证 |
+| 1 | qwen2.5:3b + `format: json` 能否稳定输出合法 JSON | 本地测试 | ✅ 已验证，需 few-shot |
+| 2 | qwen2.5:3b 复杂消息识别准确率 | 本地测试 | ⚠️ 部分通过，需优化 |
+| 3 | 两个 dws event consume 能否同时运行 | 本地测试 | 待验证 |
+| 4 | dws event consume `--duration` 参数是否支持 | `dws schema "event consume"` | 待验证 |
+| 5 | 群消息监听能否按 `--group` 过滤 | `dws event consume --help` | 待验证 |
 
 ## 8. 待讨论问题清单
 
