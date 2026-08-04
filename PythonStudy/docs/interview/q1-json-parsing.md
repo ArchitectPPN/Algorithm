@@ -82,6 +82,20 @@ def supports_function_calling(model: str, base_url: str) -> bool:
 
 Ollama / llama.cpp 支持 `grammar` 参数（GBNF 语法），在**解码阶段**就限制 token 生成——比 Pydantic 更前置，从根源上拦截不合法输出。
 
+**原理**：语言模型生成文本是逐 token 预测的，每一步模型输出所有 token 的概率分布，然后选概率最高的作为下一个 token。Grammar 在这个过程中插入一步**过滤**——把语法上不合法的 token 概率直接置零，模型只能在合法选项中选择。
+
+举个例子，假设当前已生成 `{"scenario_id": "`，下一个 token：
+
+| token    | prob | grammar check                            | result        |
+|----------|------|------------------------------------------|---------------|
+| `bite`   | 0.6  | ✅ `bite_alignment` starts with bite     | keep          |
+| `22P6X3` | 0.3  | ❌ not in any scenario enum              | **filtered**  |
+| `the`    | 0.05 | ❌ not in any scenario enum              | **filtered**  |
+
+没有 grammar 时，模型有 30% 概率选到 `22P6X3`（把病例号当 scenario_id）；有 grammar 后，这个选项直接被过滤，模型只能在合法选项中选。
+
+**类比**：没有 grammar 像给白纸让你自己写（可能写错）；`format: json` 像给模板要求写成 JSON（字段名随便填）；grammar 像**带下拉框的表单**——字段名只能从列表选，没有的字段根本不存在输入框。
+
 ```python
 # 动态生成 grammar，约束 scenario_id 只能是预定义值
 def build_grammar(scenario_ids: list[str]) -> str:
@@ -110,6 +124,21 @@ resp = requests.post(OLLAMA_URL, json={
 - `confidence` 只能是 `0.0`-`1.0` 格式
 
 **与 `format: json` 的区别**：`format: json` 只保证输出是合法 JSON；`grammar` 进一步约束 key 名、value 枚举、字段数量。
+
+**各约束手段对比**：
+
+1. **Prompt 提示词**（生成前，弱约束）：软约束，模型可能不遵守
+1. **`format: json`**（解码时，中约束）：保证合法 JSON，不限制内容
+1. **`grammar`**（解码时，强约束）：限制 key 名、value 枚举、字段数量
+1. **Pydantic 校验**（生成后，强约束）：校验类型/范围，但已经生成了，只能报错或降级
+
+Grammar 的独特价值：**错误在生成阶段就被阻止了，而不是生成完了再校验发现不对**。就像防患于未然 vs 事后检查。
+
+**局限性**：
+
+- 只适用于 llama.cpp / Ollama 等支持 grammar 的推理引擎，OpenAI API 不支持
+- grammar 写错了会导致模型输出异常（卡死、重复），需要仔细测试
+- 复杂嵌套结构的 grammar 写起来繁琐，维护成本高
 
 **第 3 层：Schema 强约束（Pydantic 校验）**
 
