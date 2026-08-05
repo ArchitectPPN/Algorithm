@@ -12,7 +12,31 @@
 
 ---
 
-## 第一步：调通 ollama Embedding API（10min）
+## 第一步：Embedding 模型选型（15min）
+
+### 主流 Embedding 模型对比
+
+| 模型 | 部署方式 | 维度 | 中文效果 | 价格 | 是否需要 GPU |
+|------|---------|------|---------|------|-------------|
+| nomic-embed-text | Ollama 本地 | 768 | 中等 | 免费 | 否 |
+| BAAI/bge-small-zh | 本地 HuggingFace | 512 | 好（中文专用） | 免费 | 否 |
+| 智谱 embedding-3 | 云端 API | 2048 | 好 | 0.5元/百万token | 否 |
+| 通义 text-embedding-v3 | 云端 API | 1024 | 好 | 0.7元/百万token | 否 |
+
+### 选型结论
+
+**当前阶段用 nomic-embed-text**：
+- 本地部署，零成本，无需 API Key
+- 768 维够用，学习阶段不需要更高维度
+- 中文效果中等，但足够验证 RAG 流程
+
+**后续生产环境考虑 bge-small-zh 或云端 API**：
+- bge-small-zh：中文专用，效果更好，仍然免费本地部署
+- 云端 API：维度更高、效果更好，但有成本和网络延迟
+
+---
+
+## 第二步：调通 ollama Embedding API（10min）
 
 ```python
 import requests
@@ -96,4 +120,4 @@ for a, b in pairs:
 
 ## 产出文件
 
-`learning/rag/embedding_demo.py`
+`rag/embedding_demo.py`
