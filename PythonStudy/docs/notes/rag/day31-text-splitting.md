@@ -112,4 +112,4 @@ for size in [200, 500, 1000]:
 
 ## 产出文件
 
-`learning/rag/text_splitter.py`
+`rag/text_splitter.py`

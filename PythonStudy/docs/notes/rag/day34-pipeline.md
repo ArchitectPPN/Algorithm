@@ -186,5 +186,5 @@ if __name__ == "__main__":
 
 ## 产出文件
 
-- `myagent/rag_pipeline.py` — 完整 Pipeline 类
-- `myagent/search.py` — CLI 检索入口
+- `rag/rag_pipeline.py` — 完整 Pipeline 类 + CLI 入口
+- `rag/chroma_demo.py` — Chroma 向量化 + 检索演示

@@ -158,4 +158,4 @@ for q in queries:
 
 ## 产出文件
 
-`learning/rag/chroma_demo.py`
+`rag/chroma_demo.py`

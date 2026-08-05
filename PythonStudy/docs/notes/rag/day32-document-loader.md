@@ -120,5 +120,5 @@ for chunk in chunks[:3]:
 
 ## 产出文件
 
-- `learning/rag/document_loader.py` — 加载 + 分片 + 统计脚本
-- `data/knowledge/` — 3-5 篇知识库 .md 文档
+- `rag/document_loader.py` — 加载 + 分片 + 统计脚本
+- `data/knowledge/` — 5 篇知识库 .md 文档
