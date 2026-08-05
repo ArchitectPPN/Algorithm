@@ -20,32 +20,41 @@
 ## 2. 整体流程
 
 ```
-业务 @助手 → 监听 @消息
+业务 @助手 → 监听 @消息（常驻线程1）
+    ↓
+[用户锁检查] 同一用户同一时间只能有一个活跃会话
+    ↓
+┌─ 有活跃会话 → 回复"您有正在处理的任务，请先完成或取消"
+└─ 无活跃会话 → 继续
     ↓
 [意图识别] Ollama 小模型提取意图 + 参数，匹配已知场景
     ↓
-┌─ 匹配到已知场景 → 进入确认流程
+┌─ 匹配到已知场景 → 创建会话，设置用户锁，进入确认流程
 └─ 未匹配到（新问题）→ 回复"暂无法自动处理"，记录到待审核队列
     ↓
 [第一轮确认] 回复："识别到需求：XXX，参数：YYY，是否正确？"
     ↓
-[监听群消息] 等待业务在同一群内回复
+[监听群消息]（常驻线程2，按群+发送人路由到对应会话）
     ↓
 ┌─ 确认 → 进入第二轮
 ├─ 修正 → 重新识别
-└─ 取消 → 结束
+└─ 取消 → 释放用户锁，结束
     ↓
 [第二轮确认] 回复："即将执行：XXX，是否执行？"
     ↓
-[监听群消息] 等待业务确认
+[监听群消息]（同上，状态机驱动）
     ↓
 ┌─ 确认 → 执行工作流
-├─ 取消 → 结束
-└─ 超时 → 提醒业务
+├─ 取消 → 释放用户锁，结束
+└─ 超时 → 提醒业务，释放用户锁
     ↓
 [执行工作流] 调用已注册的工作流
     ↓
-[反馈结果] 回复执行结果
+[反馈结果] 回复执行结果，释放用户锁
+
+注：多个用户可同时走流程，互不阻塞
+    每一步操作都记录到 Redis（状态）+ SQLite（日志）
+    聊天上下文保存在 Redis，会话结束后写入 SQLite 汇总
 ```
 
 ## 3. 系统架构
@@ -53,30 +62,43 @@
 ```
 ┌─────────────┐     ┌──────────────┐     ┌─────────────┐
 │  dws event  │────→│  编排脚本     │────→│   Ollama    │
-│  consume    │     │  (Python)    │     │  qwen3:8b   │
-└─────────────┘     └──────┬───────┘     └─────────────┘
-       ↑                   │                    ↑
-       │            ┌──────┴───────┐            │
-       │            │              │            │
-       │     ┌──────▼──────┐ ┌────▼─────┐      │
-       │     │  dws chat   │ │ 场景注册表 │      │
-       │     │  message    │ │ (YAML)   │──────┘
+│  consume    │     │  (Python)    │     │  qwen2.5:3b │
+│  (线程1:@)  │     │  事件驱动    │     └─────────────┘
+│  (线程2:群) │     │  状态机      │
+└─────────────┘     └──────┬───────┘
+       ↑                   │
+       │            ┌──────┴───────┐
+       │            │              │
+       │     ┌──────▼──────┐ ┌────▼─────┐
+       │     │  dws chat   │ │ 场景注册表 │
+       │     │  message    │ │ (YAML)   │
        │     │  send       │ └────┬─────┘
        │     └─────────────┘      │
        │                   ┌──────▼───────┐
-       └───────────────────│  工作流执行器  │
-                           └──────────────┘
+       │                   │  工作流执行器  │
+       │                   └──────┬───────┘
+       │                          │
+       │            ┌─────────────┴─────────────┐
+       │            │                           │
+       │     ┌──────▼──────┐           ┌────────▼───────┐
+       └────→│    Redis    │           │    SQLite      │
+             │ 会话状态     │           │ 操作日志       │
+             │ 聊天上下文   │           │ 会话汇总       │
+             │ 用户锁      │           │ 待审核队列     │
+             └─────────────┘           └────────────────┘
 ```
 
 ### 组件职责
 
 | 组件 | 职责 | 技术 |
 |------|------|------|
-| **dws event consume** | 监听 @消息、监听群消息 | dws CLI |
-| **编排脚本** | 流程控制、状态管理、消息收发 | Python |
-| **Ollama** | 意图提取 + 场景匹配 + 参数抽取 | qwen3:8b |
+| **dws event consume** | 监听 @消息（线程1）、监听群消息（线程2） | dws CLI |
+| **编排脚本** | 事件驱动、状态机、消息收发 | Python |
+| **Ollama** | 意图提取 + 场景匹配 + 参数抽取 | qwen2.5:3b |
 | **场景注册表** | 定义可处理场景、参数、工作流映射 | YAML |
 | **dws chat message send** | 向群内发送确认/结果消息 | dws CLI |
+| **Redis** | 会话状态、聊天上下文、用户锁（TTL 自动过期） | Redis |
+| **SQLite** | 操作日志、会话汇总、待审核队列（持久化查询） | SQLite |
 | **工作流执行器** | 调用具体工作流 | TBD |
 
 ## 4. 意图识别（Ollama 小模型）
@@ -441,18 +463,211 @@ scenarios:
 当前支持的场景：{场景列表}
 ```
 
-## 6. 代码实现方案
+## 6. 存储设计
 
-### 6.1 项目结构
+### 6.1 存储分工
+
+| 存储 | 职责 | 数据特点 |
+|------|------|---------|
+| **Redis** | 会话状态（进行中的）、聊天上下文、用户锁 | 高频读写、需要 TTL 自动过期、进程重启后仍可用 |
+| **SQLite** | 操作日志（持久化）、执行结果、历史查询 | 需要复杂查询、统计分析、长期保留 |
+
+### 6.2 Redis 数据结构
+
+```
+# 用户锁：同一用户同一时间只能有一个活跃会话
+user_lock:{sender_open_dingtalk_id} → session_id
+TTL: 30分钟（与会话同步过期）
+
+# 会话状态
+session:{session_id} → {
+    session_id, conversation_id, sender, sender_open_dingtalk_id,
+    original_message, scenario_id, scenario_name, parameters,
+    state, created_at, updated_at
+}
+TTL: 30分钟
+
+# 聊天上下文（消息链，按会话保存）
+context:{session_id} → [
+    {role: "user", content: "22P6X3 需要对咬合", timestamp: ...},
+    {role: "assistant", content: "📋 需求识别结果：...", timestamp: ...},
+    {role: "user", content: "确认", timestamp: ...},
+    ...
+]
+TTL: 30分钟
+```
+
+### 6.3 SQLite 表结构
+
+```sql
+-- 操作日志：记录每一步操作
+CREATE TABLE step_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id TEXT NOT NULL,
+    step_type TEXT NOT NULL,        -- intent / confirm1 / confirm2 / execute / result
+    status TEXT NOT NULL,           -- success / failed / timeout / cancelled
+    input TEXT,                     -- 输入内容（JSON）
+    output TEXT,                    -- 输出内容（JSON）
+    error TEXT,                     -- 错误信息
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 会话汇总：一个会话一条记录
+CREATE TABLE session_log (
+    session_id TEXT PRIMARY KEY,
+    conversation_id TEXT NOT NULL,
+    sender_id TEXT NOT NULL,
+    original_message TEXT NOT NULL,
+    scenario_id TEXT,
+    scenario_name TEXT,
+    parameters TEXT,                -- JSON
+    final_status TEXT NOT NULL,     -- completed / cancelled / failed / timeout
+    workflow_result TEXT,           -- JSON
+    started_at DATETIME NOT NULL,
+    finished_at DATETIME
+);
+
+-- 未识别消息：待审核队列
+CREATE TABLE unknown_message (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    conversation_id TEXT NOT NULL,
+    sender_id TEXT NOT NULL,
+    content TEXT NOT NULL,
+    reviewed INTEGER DEFAULT 0,     -- 0: 未审核, 1: 已审核
+    mapped_scenario TEXT,           -- 审核后映射的场景
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### 6.4 操作记录点
+
+每个步骤执行时，同时写入 Redis（更新状态）和 SQLite（记录日志）：
+
+```
+[意图识别]
+  → Redis: 创建 session + context
+  → SQLite step_log: {step_type: "intent", status: "success/failed", input: 用户消息, output: 识别结果}
+
+[第一轮确认发送]
+  → Redis: session.state = PENDING_CONFIRM1, context 追加助手消息
+  → SQLite step_log: {step_type: "confirm1", status: "pending"}
+
+[第一轮确认收到回复]
+  → Redis: session.state 更新, context 追加用户回复
+  → SQLite step_log: {step_type: "confirm1", status: "confirmed/cancelled/timeout", input: 用户回复}
+
+[第二轮确认发送]
+  → Redis: session.state = PENDING_CONFIRM2, context 追加助手消息
+  → SQLite step_log: {step_type: "confirm2", status: "pending"}
+
+[第二轮确认收到回复]
+  → Redis: session.state 更新, context 追加用户回复
+  → SQLite step_log: {step_type: "confirm2", status: "confirmed/cancelled/timeout", input: 用户回复}
+
+[执行工作流]
+  → Redis: session.state = EXECUTING
+  → SQLite step_log: {step_type: "execute", status: "success/failed", output: 执行结果}
+
+[会话结束]
+  → Redis: 删除 session + context + user_lock
+  → SQLite session_log: {final_status: "completed/cancelled/failed/timeout", workflow_result: ...}
+```
+
+## 7. 并发控制
+
+### 7.1 核心约束
+
+1. **多用户并发**：多个用户可以同时各自走流程
+2. **单用户串行**：同一用户同一时间只能有一个进行中的会话
+
+### 7.2 用户锁机制
+
+新消息进来时，先检查该用户是否有进行中的会话：
+
+```
+收到 @消息
+    ↓
+检查 Redis user_lock:{sender_id}
+    ↓
+├─ 有活跃会话 → 回复"您有正在处理的任务，请先完成或取消"
+└─ 无活跃会话 → 创建新会话，设置 user_lock
+```
+
+### 7.3 状态机
+
+```
+                    ┌──────────────────────────────────┐
+                    │ 修正（重新识别）                    │
+                    ▼                                  │
+  [IDLE] ──@消息──→ [PENDING_CONFIRM1] ──确认──→ [PENDING_CONFIRM2]
+                    │       │                           │       │
+                 取消/超时  │                        取消/超时  │
+                    │       │                           │       │
+                    ▼       │                           ▼       │
+              [CANCELLED]   │                     [EXECUTING]   │
+                    │       │                           │       │
+                    │       │                       失败/成功    │
+                    │       │                           │       │
+                    │       │                           ▼       ▼
+                    │       │                      [DONE]  [FAILED]
+                    │       │                           │       │
+                    └───────┴───────────────────────────┘       │
+                    释放用户锁                                   │
+                    释放用户锁 ◄────────────────────────────────┘
+```
+
+状态转换规则：
+
+| 当前状态 | 事件 | 目标状态 | 动作 |
+|---------|------|---------|------|
+| IDLE | 收到 @消息（识别成功） | PENDING_CONFIRM1 | 创建会话、设置用户锁、发送确认1 |
+| IDLE | 收到 @消息（识别失败） | IDLE | 回复未识别、记录到待审核队列 |
+| PENDING_CONFIRM1 | 用户确认 | PENDING_CONFIRM2 | 发送确认2 |
+| PENDING_CONFIRM1 | 用户修正 | PENDING_CONFIRM1 | 重新识别、重新发送确认1 |
+| PENDING_CONFIRM1 | 用户取消 | CANCELLED | 释放用户锁 |
+| PENDING_CONFIRM1 | 超时 | CANCELLED | 提醒用户、释放用户锁 |
+| PENDING_CONFIRM2 | 用户确认 | EXECUTING | 执行工作流 |
+| PENDING_CONFIRM2 | 用户取消 | CANCELLED | 释放用户锁 |
+| PENDING_CONFIRM2 | 超时 | CANCELLED | 提醒用户、释放用户锁 |
+| EXECUTING | 执行成功 | DONE | 反馈结果、释放用户锁 |
+| EXECUTING | 执行失败 | FAILED | 反馈错误、释放用户锁 |
+
+### 7.4 事件驱动架构
+
+原方案用 `wait_for_reply` 阻塞等待，无法支持多用户并发。改为**事件驱动**：
+
+```
+@消息监听（常驻进程）
+    ↓ 收到消息
+检查用户锁 → 有活跃会话 → 提示"请先完成当前任务"
+            → 无活跃会话 → 意图识别 → 创建会话 → 推进状态机
+
+群消息监听（常驻进程）
+    ↓ 收到消息
+查找该群+发送人对应的活跃会话
+    ↓
+根据会话当前状态 → 推进状态机（confirm1→confirm2→execute→done）
+```
+
+关键变化：
+- **不再用 `wait_for_reply` 阻塞等待**，改为常驻群消息监听 + 状态机驱动
+- 收到消息后，根据会话当前状态决定下一步动作
+- 多个用户的会话可以同时推进，互不阻塞
+
+## 8. 代码实现方案
+
+### 8.1 项目结构
 
 ```
 dingtalk-workflow/
-├── main.py              # 入口，启动 @消息监听
+├── main.py              # 入口，启动事件监听
 ├── intent.py            # Ollama 意图识别
-├── session.py           # 会话状态管理
+├── session.py           # 会话状态管理（Redis）
+├── store.py             # 持久化存储（SQLite）
 ├── messenger.py         # dws 消息收发
 ├── workflow.py          # 工作流执行器
-├── config.yaml          # 全局配置（超时、Ollama地址等）
+├── state_machine.py     # 状态机驱动
+├── config.yaml          # 全局配置（超时、Ollama地址、Redis地址等）
 ├── scenarios.yaml       # 场景注册表
 └── workflows/           # 工作流脚本目录
     ├── bite_alignment.py
@@ -460,7 +675,7 @@ dingtalk-workflow/
     └── qc_process.py
 ```
 
-### 6.2 意图识别（intent.py）
+### 8.2 意图识别（intent.py）
 
 ```python
 import requests
@@ -524,7 +739,7 @@ def identify_intent(user_message, scenarios):
     }
 ```
 
-### 6.3 消息监听与发送（messenger.py）
+### 8.3 消息监听与发送（messenger.py）
 
 ```python
 import subprocess
@@ -543,6 +758,19 @@ def listen_at_messages(callback):
         event = json.loads(line)
         callback(event)
 
+def listen_group_messages(callback):
+    """常驻监听群消息，每收到一条调用 callback(event)"""
+    proc = subprocess.Popen(
+        ["dws", "event", "consume", "user_im_message_receive_group",
+         "--flatten", "-f", "ndjson"],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        text=True
+    )
+
+    for line in proc.stdout:
+        event = json.loads(line)
+        callback(event)
+
 def send_message(conversation_id, text):
     """向群内发送消息"""
     subprocess.run([
@@ -550,151 +778,413 @@ def send_message(conversation_id, text):
         "--group", conversation_id,
         "--text", text
     ], capture_output=True)
-
-def wait_for_reply(conversation_id, sender_id, timeout=300):
-    """监听群消息，等待指定发送人的回复"""
-    proc = subprocess.Popen(
-        ["dws", "event", "consume", "user_im_message_receive_group",
-         "--group", conversation_id,
-         "--flatten", "-f", "ndjson",
-         "--duration", f"{timeout}s"],
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        text=True
-    )
-
-    for line in proc.stdout:
-        event = json.loads(line)
-        if event["sender_open_dingtalk_id"] == sender_id:
-            return event["content"]
-
-    return None  # 超时
 ```
 
-### 6.4 会话状态管理（session.py）
+### 8.4 会话状态管理（session.py）
 
 ```python
-from dataclasses import dataclass, field
-from datetime import datetime
-from enum import Enum
+import redis
+import json
 import uuid
+from datetime import datetime
 
-class SessionState(Enum):
-    PENDING_CONFIRM1 = "pending_confirm1"   # 等待第一轮确认
-    PENDING_CONFIRM2 = "pending_confirm2"   # 等待第二轮确认
-    EXECUTING = "executing"                 # 执行中
-    DONE = "done"                           # 完成
-    CANCELLED = "cancelled"                 # 已取消
+r = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
+SESSION_TTL = 1800  # 30分钟
 
-@dataclass
-class Session:
-    session_id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    conversation_id: str = ""
-    sender: str = ""
-    sender_open_dingtalk_id: str = ""
-    original_message: str = ""
-    scenario_id: str = ""
-    scenario_name: str = ""
-    parameters: dict = field(default_factory=dict)
-    state: SessionState = SessionState.PENDING_CONFIRM1
-    created_at: datetime = field(default_factory=datetime.now)
-    updated_at: datetime = field(default_factory=datetime.now)
+class SessionState:
+    PENDING_CONFIRM1 = "pending_confirm1"
+    PENDING_CONFIRM2 = "pending_confirm2"
+    EXECUTING = "executing"
+    DONE = "done"
+    CANCELLED = "cancelled"
+    FAILED = "failed"
 
-# 内存存储（后续可换 SQLite）
-sessions: dict[str, Session] = {}
+def create_session(event, intent_result) -> str:
+    """创建会话，设置用户锁，返回 session_id"""
+    session_id = str(uuid.uuid4())
+    sender_id = event["sender_open_dingtalk_id"]
 
-def create_session(event, intent_result) -> Session:
-    session = Session(
-        conversation_id=event["conversation_id"],
-        sender=event["sender"],
-        sender_open_dingtalk_id=event["sender_open_dingtalk_id"],
-        original_message=event["content"],
-        scenario_id=intent_result["scenario_id"],
-        parameters=intent_result["parameters"],
-    )
-    sessions[session.session_id] = session
-    return session
+    # 设置用户锁
+    r.set(f"user_lock:{sender_id}", session_id, ex=SESSION_TTL)
+
+    # 保存会话状态
+    session_data = {
+        "session_id": session_id,
+        "conversation_id": event["conversation_id"],
+        "sender": event["sender"],
+        "sender_open_dingtalk_id": sender_id,
+        "original_message": event["content"],
+        "scenario_id": intent_result["scenario_id"],
+        "scenario_name": intent_result.get("scenario_name", ""),
+        "parameters": json.dumps(intent_result.get("parameters", {})),
+        "state": SessionState.PENDING_CONFIRM1,
+        "created_at": datetime.now().isoformat(),
+        "updated_at": datetime.now().isoformat(),
+    }
+    r.hset(f"session:{session_id}", mapping=session_data)
+    r.expire(f"session:{session_id}", SESSION_TTL)
+
+    # 初始化聊天上下文
+    r.rpush(f"context:{session_id}", json.dumps({
+        "role": "user",
+        "content": event["content"],
+        "timestamp": datetime.now().isoformat()
+    }))
+    r.expire(f"context:{session_id}", SESSION_TTL)
+
+    return session_id
+
+def get_session(session_id: str) -> dict | None:
+    """获取会话状态"""
+    data = r.hgetall(f"session:{session_id}")
+    return data if data else None
+
+def update_session_state(session_id: str, state: str):
+    """更新会话状态"""
+    r.hset(f"session:{session_id}", "state", state)
+    r.hset(f"session:{session_id}", "updated_at", datetime.now().isoformat())
+
+def append_context(session_id: str, role: str, content: str):
+    """追加聊天上下文"""
+    r.rpush(f"context:{session_id}", json.dumps({
+        "role": role,
+        "content": content,
+        "timestamp": datetime.now().isoformat()
+    }))
+
+def get_context(session_id: str) -> list[dict]:
+    """获取完整聊天上下文"""
+    raw_list = r.lrange(f"context:{session_id}", 0, -1)
+    return [json.loads(item) for item in raw_list]
+
+def check_user_lock(sender_id: str) -> str | None:
+    """检查用户是否有活跃会话，返回 session_id 或 None"""
+    return r.get(f"user_lock:{sender_id}")
+
+def release_user_lock(sender_id: str):
+    """释放用户锁"""
+    r.delete(f"user_lock:{sender_id}")
+
+def end_session(session_id: str, sender_id: str):
+    """结束会话：释放用户锁，清理 Redis 数据"""
+    release_user_lock(sender_id)
+    r.delete(f"session:{session_id}")
+    r.delete(f"context:{session_id}")
+
+def find_active_session_by_sender(conversation_id: str, sender_id: str) -> str | None:
+    """根据群ID+发送人查找活跃会话"""
+    lock_session_id = check_user_lock(sender_id)
+    if not lock_session_id:
+        return None
+    session = get_session(lock_session_id)
+    if session and session["conversation_id"] == conversation_id:
+        return lock_session_id
+    return None
 ```
 
-### 6.5 主流程编排（main.py）
+### 8.5 持久化存储（store.py）
 
 ```python
+import sqlite3
+import json
+from datetime import datetime
+
+DB_PATH = "dingtalk_workflow.db"
+
+def get_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    """初始化数据库表"""
+    conn = get_db()
+    conn.executescript("""
+        CREATE TABLE IF NOT EXISTS step_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id TEXT NOT NULL,
+            step_type TEXT NOT NULL,
+            status TEXT NOT NULL,
+            input TEXT,
+            output TEXT,
+            error TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS session_log (
+            session_id TEXT PRIMARY KEY,
+            conversation_id TEXT NOT NULL,
+            sender_id TEXT NOT NULL,
+            original_message TEXT NOT NULL,
+            scenario_id TEXT,
+            scenario_name TEXT,
+            parameters TEXT,
+            final_status TEXT NOT NULL,
+            workflow_result TEXT,
+            started_at DATETIME NOT NULL,
+            finished_at DATETIME
+        );
+        CREATE TABLE IF NOT EXISTS unknown_message (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            conversation_id TEXT NOT NULL,
+            sender_id TEXT NOT NULL,
+            content TEXT NOT NULL,
+            reviewed INTEGER DEFAULT 0,
+            mapped_scenario TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
+    conn.commit()
+    conn.close()
+
+def log_step(session_id: str, step_type: str, status: str,
+             input_data=None, output_data=None, error=None):
+    """记录操作步骤"""
+    conn = get_db()
+    conn.execute(
+        "INSERT INTO step_log (session_id, step_type, status, input, output, error) "
+        "VALUES (?, ?, ?, ?, ?, ?)",
+        (session_id, step_type, status,
+         json.dumps(input_data, ensure_ascii=False) if input_data else None,
+         json.dumps(output_data, ensure_ascii=False) if output_data else None,
+         error)
+    )
+    conn.commit()
+    conn.close()
+
+def log_session(session_id: str, session_data: dict, final_status: str,
+                workflow_result=None):
+    """记录会话汇总"""
+    conn = get_db()
+    conn.execute(
+        "INSERT OR REPLACE INTO session_log "
+        "(session_id, conversation_id, sender_id, original_message, "
+        "scenario_id, scenario_name, parameters, final_status, "
+        "workflow_result, started_at, finished_at) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (session_id, session_data["conversation_id"],
+         session_data["sender_open_dingtalk_id"],
+         session_data["original_message"],
+         session_data.get("scenario_id"),
+         session_data.get("scenario_name"),
+         session_data.get("parameters"),
+         final_status,
+         json.dumps(workflow_result, ensure_ascii=False) if workflow_result else None,
+         session_data.get("created_at"),
+         datetime.now().isoformat())
+    )
+    conn.commit()
+    conn.close()
+
+def log_unknown_message(conversation_id: str, sender_id: str, content: str):
+    """记录未识别消息到待审核队列"""
+    conn = get_db()
+    conn.execute(
+        "INSERT INTO unknown_message (conversation_id, sender_id, content) "
+        "VALUES (?, ?, ?)",
+        (conversation_id, sender_id, content)
+    )
+    conn.commit()
+    conn.close()
+```
+
+### 8.6 状态机驱动（state_machine.py）
+
+```python
+from session import (SessionState, get_session, update_session_state,
+                     append_context, end_session, find_active_session_by_sender)
+from store import log_step, log_session
+from messenger import send_message
+from workflow import execute_workflow
+
+def is_confirmed(text: str) -> bool:
+    keywords = ["确认", "好的", "是", "OK", "对", "没错", "执行", "可以"]
+    return any(kw in text for kw in keywords)
+
+def is_cancelled(text: str) -> bool:
+    keywords = ["取消", "不要", "算了", "放弃"]
+    return any(kw in text for kw in keywords)
+
+def is_correction(text: str) -> bool:
+    keywords = ["不对", "不是", "错了", "修改", "应该是"]
+    return any(kw in text for kw in keywords)
+
+def advance_state(session_id: str, user_reply: str):
+    """根据当前状态和用户回复，推进状态机"""
+    session = get_session(session_id)
+    if not session:
+        return
+
+    conversation_id = session["conversation_id"]
+    sender_id = session["sender_open_dingtalk_id"]
+    state = session["state"]
+
+    # 记录用户回复到上下文
+    append_context(session_id, "user", user_reply)
+
+    if state == SessionState.PENDING_CONFIRM1:
+        handle_confirm1(session_id, session, user_reply, conversation_id, sender_id)
+
+    elif state == SessionState.PENDING_CONFIRM2:
+        handle_confirm2(session_id, session, user_reply, conversation_id, sender_id)
+
+def handle_confirm1(session_id, session, user_reply, conversation_id, sender_id):
+    """处理第一轮确认的回复"""
+    if is_confirmed(user_reply):
+        # 确认 → 进入第二轮
+        update_session_state(session_id, SessionState.PENDING_CONFIRM2)
+        log_step(session_id, "confirm1", "success", input_data={"reply": user_reply})
+
+        params = json.loads(session.get("parameters", "{}"))
+        params_text = "\n  ".join(f"{k}: {v}" for k, v in params.items())
+        scenario_name = session.get("scenario_name") or session.get("scenario_id", "")
+        msg = (f"⚡ 即将执行：\n"
+               f"  操作：{scenario_name}\n"
+               f"  详情：{params_text}\n\n"
+               f"确认执行？回复「确认」开始执行，回复「取消」终止。")
+        send_message(conversation_id, msg)
+        append_context(session_id, "assistant", msg)
+
+    elif is_correction(user_reply):
+        # 修正 → 重新识别（保持同一会话）
+        log_step(session_id, "confirm1", "correction", input_data={"reply": user_reply})
+        # TODO: 调用意图识别重新处理 user_reply，更新会话参数，重新发送确认1
+
+    elif is_cancelled(user_reply):
+        # 取消 → 结束
+        update_session_state(session_id, SessionState.CANCELLED)
+        log_step(session_id, "confirm1", "cancelled", input_data={"reply": user_reply})
+        log_session(session_id, session, "cancelled")
+        send_message(conversation_id, "已取消。")
+        end_session(session_id, sender_id)
+
+def handle_confirm2(session_id, session, user_reply, conversation_id, sender_id):
+    """处理第二轮确认的回复"""
+    if is_confirmed(user_reply):
+        # 确认 → 执行工作流
+        update_session_state(session_id, SessionState.EXECUTING)
+        log_step(session_id, "confirm2", "success", input_data={"reply": user_reply})
+        send_message(conversation_id, "正在执行...")
+        append_context(session_id, "assistant", "正在执行...")
+
+        # 执行工作流
+        params = json.loads(session.get("parameters", "{}"))
+        try:
+            result = execute_workflow(session.get("scenario_id"), params)
+            update_session_state(session_id, SessionState.DONE)
+            log_step(session_id, "execute", "success", output_data=result)
+            log_session(session_id, session, "completed", workflow_result=result)
+            send_message(conversation_id, f"✅ 执行完成：\n  {result}")
+            append_context(session_id, "assistant", f"✅ 执行完成：\n  {result}")
+        except Exception as e:
+            update_session_state(session_id, SessionState.FAILED)
+            log_step(session_id, "execute", "failed", error=str(e))
+            log_session(session_id, session, "failed")
+            send_message(conversation_id, f"❌ 执行失败：{str(e)}")
+            append_context(session_id, "assistant", f"❌ 执行失败：{str(e)}")
+
+        end_session(session_id, sender_id)
+
+    elif is_cancelled(user_reply):
+        # 取消 → 结束
+        update_session_state(session_id, SessionState.CANCELLED)
+        log_step(session_id, "confirm2", "cancelled", input_data={"reply": user_reply})
+        log_session(session_id, session, "cancelled")
+        send_message(conversation_id, "已取消。")
+        end_session(session_id, sender_id)
+```
+
+### 8.7 主流程编排（main.py）
+
+```python
+import json
+import threading
 from intent import load_scenarios, identify_intent
-from messenger import listen_at_messages, send_message, wait_for_reply
-from session import create_session, SessionState
+from session import (create_session, check_user_lock, get_session,
+                     append_context, find_active_session_by_sender)
+from store import init_db, log_step, log_session, log_unknown_message
+from messenger import listen_at_messages, listen_group_messages, send_message
+from state_machine import advance_state
 
 scenarios = load_scenarios()
 
-def handle_message(event):
+def handle_at_message(event):
+    """处理 @消息：意图识别 + 创建会话"""
     content = event["content"]
     conversation_id = event["conversation_id"]
     sender_id = event["sender_open_dingtalk_id"]
 
-    # 1. 意图识别
+    # 检查用户锁：同一用户同一时间只能有一个活跃会话
+    active_session_id = check_user_lock(sender_id)
+    if active_session_id:
+        send_message(conversation_id,
+            f"⚠️ 您有正在处理的任务，请先完成或取消后再发起新请求。")
+        return
+
+    # 意图识别
     result = identify_intent(content, scenarios)
 
     if result["scenario_id"] == "unknown":
         send_message(conversation_id,
             "❓ 暂时无法识别您的需求，请补充说明。\n"
             f"当前支持的场景：{', '.join(s['name'] for s in scenarios)}")
-        # 记录到待审核队列
-        log_unknown_message(content)
+        log_unknown_message(conversation_id, sender_id, content)
         return
 
-    # 2. 创建会话
-    session = create_session(event, result)
+    # 记录意图识别步骤
+    session_id = create_session(event, result)
+    log_step(session_id, "intent", "success",
+             input_data={"message": content}, output_data=result)
 
-    # 3. 第一轮确认
-    params_text = "\n  ".join(f"{k}: {v}" for k, v in result["parameters"].items())
-    send_message(conversation_id,
-        f"📋 需求识别结果：\n"
-        f"  场景：{result.get('scenario_name', result['scenario_id'])}\n"
-        f"  参数：{params_text}\n\n"
-        f"请确认是否正确？回复「确认」继续，或补充修改。")
+    # 发送第一轮确认
+    scenario_name = next(
+        (s["name"] for s in scenarios if s["id"] == result["scenario_id"]),
+        result["scenario_id"]
+    )
+    params_text = "\n  ".join(f"{k}: {v}" for k, v in result.get("parameters", {}).items())
+    msg = (f"📋 需求识别结果：\n"
+           f"  场景：{scenario_name}\n"
+           f"  参数：{params_text}\n\n"
+           f"请确认是否正确？回复「确认」继续，或补充修改。")
+    send_message(conversation_id, msg)
+    append_context(session_id, "assistant", msg)
+    log_step(session_id, "confirm1", "pending")
 
-    # 4. 等待第一轮确认
-    reply = wait_for_reply(conversation_id, sender_id)
-    if not reply or not is_confirmed(reply):
-        if reply and is_cancelled(reply):
-            send_message(conversation_id, "已取消。")
-        return
+def handle_group_message(event):
+    """处理群消息：查找对应会话，推进状态机"""
+    conversation_id = event["conversation_id"]
+    sender_id = event["sender_open_dingtalk_id"]
+    content = event["content"]
 
-    # 5. 第二轮确认
-    session.state = SessionState.PENDING_CONFIRM2
-    send_message(conversation_id,
-        f"⚡ 即将执行：\n"
-        f"  操作：{result.get('scenario_name', result['scenario_id'])}\n"
-        f"  详情：{params_text}\n\n"
-        f"确认执行？回复「确认」开始执行，回复「取消」终止。")
+    # 查找该用户在当前群的活跃会话
+    session_id = find_active_session_by_sender(conversation_id, sender_id)
+    if not session_id:
+        return  # 不是确认回复，忽略
 
-    # 6. 等待第二轮确认
-    reply = wait_for_reply(conversation_id, sender_id)
-    if not reply or not is_confirmed(reply):
-        if reply and is_cancelled(reply):
-            send_message(conversation_id, "已取消。")
-        return
+    # 推进状态机
+    advance_state(session_id, content)
 
-    # 7. 执行工作流
-    session.state = SessionState.EXECUTING
-    send_message(conversation_id, "正在执行...")
-    result = execute_workflow(session.scenario_id, session.parameters)
+def start_at_listener():
+    """启动 @消息监听线程"""
+    listen_at_messages(handle_at_message)
 
-    # 8. 反馈结果
-    session.state = SessionState.DONE
-    send_message(conversation_id, f"✅ 执行完成：\n  {result}")
+def start_group_listener():
+    """启动群消息监听线程"""
+    listen_group_messages(handle_group_message)
 
-def is_confirmed(text):
-    keywords = ["确认", "好的", "是", "OK", "对", "没错", "执行", "可以"]
-    return any(kw in text for kw in keywords)
+if __name__ == "__main__":
+    init_db()
 
-def is_cancelled(text):
-    keywords = ["取消", "不要", "算了", "放弃"]
-    return any(kw in text for kw in keywords)
+    # 两个监听线程并行运行
+    t1 = threading.Thread(target=start_at_listener, daemon=True)
+    t2 = threading.Thread(target=start_group_listener, daemon=True)
+    t1.start()
+    t2.start()
 
-# 启动
-listen_at_messages(handle_message)
+    # 主线程保持运行
+    t1.join()
 ```
 
-### 6.6 工作流执行器（workflow.py）
+### 8.8 工作流执行器（workflow.py）
 
 ```python
 import importlib
@@ -720,7 +1210,7 @@ def run(parameters):
     return f"已为病例 {case_id} 安排对咬合处理"
 ```
 
-## 7. 待验证技术点
+## 9. 待验证技术点
 
 | # | 验证项 | 方法 | 状态 |
 |---|--------|------|------|
@@ -729,18 +1219,22 @@ def run(parameters):
 | 3 | 两个 dws event consume 能否同时运行 | 本地测试 | 待验证 |
 | 4 | dws event consume `--duration` 参数是否支持 | `dws schema "event consume"` | 待验证 |
 | 5 | 群消息监听能否按 `--group` 过滤 | `dws event consume --help` | 待验证 |
+| 6 | Redis 连接稳定性 + TTL 过期清理 | 本地测试 | 待验证 |
+| 7 | 两个监听线程能否稳定并行运行 | 本地测试 | 待验证 |
+| 8 | 群消息监听能否区分不同群的消息 | `dws event consume` 事件结构 | 待验证 |
 
-## 8. 待讨论问题清单
+## 10. 待讨论问题清单
 
 | # | 问题 | 优先级 |
 |---|------|--------|
 | 1 | 场景注册表——需要业务方提供常见场景列表 | 高 |
 | 2 | 确认回复中"部分修正"如何处理 | 高 |
 | 3 | 工作流执行的具体形式（当前方案：独立 Python 文件） | 高 |
-| 4 | 状态存储方式（当前方案：内存，后续换 SQLite） | 中 |
-| 5 | 多场景匹配时的处理策略 | 中 |
-| 6 | confidence 阈值设定 | 中 |
-| 7 | 超时时间窗口长度 | 低 |
-| 8 | 并发会话处理 | 低 |
-| 9 | 日志与监控 | 低 |
-| 10 | 部署方案 | 低 |
+| 4 | 多场景匹配时的处理策略 | 中 |
+| 5 | confidence 阈值设定 | 中 |
+| 6 | 超时时间窗口长度 | 中 |
+| 7 | 超时后如何通知用户（主动发消息 vs 等用户再 @） | 中 |
+| 8 | Redis 不可用时的降级方案（退回内存存储？） | 中 |
+| 9 | 并发会话数上限（防止 Redis 内存溢出） | 低 |
+| 10 | 日志与监控 | 低 |
+| 11 | 部署方案 | 低 |
