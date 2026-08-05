@@ -206,7 +206,7 @@ Chroma 是 RAG 的"记忆库"。没有它，每次检索都要遍历所有向量
 
 | 产出 | 说明 |
 |------|------|
-| `learning/rag/cosine_similarity.py` | 手写余弦相似度 |
+| `rag/cosine_similarity.py` | 手写余弦相似度 |
 | `learning/rag/embedding_demo.py` | Embedding API 调用 |
 | `learning/rag/text_splitter.py` | 文本分片脚本 |
 | `learning/rag/chroma_demo.py` | Chroma 增删查 |

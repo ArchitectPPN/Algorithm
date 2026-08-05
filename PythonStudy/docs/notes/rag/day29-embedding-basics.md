@@ -152,7 +152,7 @@ for a, b in pairs:
 
 ## 产出文件
 
-`learning/rag/cosine_similarity.py` — 包含手写余弦相似度 + ollama embedding 调用 + 对比实验
+`rag/cosine_similarity.py` — 包含手写余弦相似度 + ollama embedding 调用 + 基础验证 + 对比实验
 
 ---
 
