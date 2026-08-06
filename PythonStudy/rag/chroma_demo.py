@@ -45,7 +45,10 @@ chroma_path = os.path.join(os.path.dirname(__file__), "..", "chroma_data")
 client = chromadb.PersistentClient(path=chroma_path)
 
 # 如果已存在则先删除（方便重复运行）
-client.delete_collection("knowledge_base")
+try:
+    client.delete_collection("knowledge_base")
+except Exception:
+    pass  # 集合不存在时忽略，首次运行正常
 
 collection = client.get_or_create_collection(
     name="knowledge_base",

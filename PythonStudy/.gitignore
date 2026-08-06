@@ -24,6 +24,9 @@ config/
 .vscode/
 .idea/
 
+# RAG 向量数据库（运行时生成，不提交）
+chroma_data/
+
 # myagent - 练习目录（可选，根据需求决定）
 # 如果你希望练习文件也提交到 git，就注释掉下面这行
 # myagent/
