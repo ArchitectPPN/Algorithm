@@ -8,7 +8,6 @@ import os
 import sys
 import requests
 import chromadb
-from typing import Optional
 
 # 添加父目录到路径
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
@@ -221,19 +220,22 @@ class RAGPipeline:
                 f"【片段】{r['content'][:300]}\n"
             )
             answer = self._llm(prompt, model=rerank_model, max_tokens=400)  # 必须给足，否则思考占满返回空
-            cleaned = answer.strip()
-            # 从尾部提取结论（R1 思考在中间，结论在末尾）
-            tail = cleaned[-10:]
-            if "不相关" in tail:
-                is_relevant = False
-            elif "相关" in tail:
-                is_relevant = True
-            else:
-                is_relevant = False  # 提取不到结论 → 宁可漏
-            if is_relevant:
+            if self._is_relevant(answer):
                 relevant.append(r)
-            print(f"    精筛 [{r['file']}#{r['chunk_index']}] 相似度 {r['similarity']:.3f} → 判断: {tail!r}")
+            print(f"    精筛 [{r['file']}#{r['chunk_index']}] 相似度 {r['similarity']:.3f} → 判断: {answer.strip()[-20:]!r}")
         return relevant
+
+    def _is_relevant(self, answer: str) -> bool:
+        """从 LLM 精筛回答中提取相关性结论。宁可漏，不可错。
+
+        注意：不能直接用 endswith("相关") —— "不相关".endswith("相关") 是 True！
+        R1 输出可能带思考/标点（如 "无关。\n\n"、"相关。"、"不相关"），需清洗。
+        取末尾 30 字判断：含否定词（不相关/无关）→ False；否则含"相关" → True。
+        """
+        cleaned = answer.strip()[-30:]
+        if "不相关" in cleaned or "无关" in cleaned:
+            return False
+        return "相关" in cleaned
 
     # ── 基于检索片段生成回答（RAG 完整流程的"生成"环节） ──
     def generate(self, query: str, contexts: list[dict], model: str = "deepseek-r1:7b") -> str:
@@ -303,8 +305,26 @@ if __name__ == "__main__":
     # CLI 用法：
     #   python rag_pipeline.py "查询"         → 余弦检索（只看 Top-K 片段）
     #   python rag_pipeline.py ask "查询"      → 完整 RAG：粗筛 + LLM 精筛 + 生成回答
+    #   python rag_pipeline.py repl             → 交互问答模式（连续提问，输入 exit 退出）
     #   python rag_pipeline.py                  → 构建索引 + 5 个测试查询
-    if len(sys.argv) > 2 and sys.argv[1] == "ask":
+    if len(sys.argv) > 1 and sys.argv[1] == "repl":
+        print("RAG 问答模式：输入问题回车，输入 exit 退出")
+        print("-" * 50)
+        while True:
+            try:
+                q = input("\n> ").strip()
+            except (EOFError, KeyboardInterrupt):
+                print("\n再见！")
+                break
+            if q in ("exit", "quit", "退出", "q"):
+                print("再见！")
+                break
+            if not q:
+                continue
+            result = rag.ask(q)
+            print("=" * 50)
+            print(result["answer"])
+    elif len(sys.argv) > 2 and sys.argv[1] == "ask":
         query = sys.argv[2]
         result = rag.ask(query)
         print("=" * 50)
