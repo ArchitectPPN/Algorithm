@@ -202,9 +202,10 @@ class RAGPipeline:
         （400+）：推理模型会先输出冗长思考，token 配额不足时正文没输出就返回空。
         （踩过坑：lfm2 太弱会复述片段，llama3.2 判断抖动，只有 R1 给足 token 最稳）
 
-        解析策略（宁可漏，不可错）：R1 结论在输出末尾，从尾部提取。
-        ⚠️ 坑：不能直接用 endswith("相关") —— "不相关".endswith("相关") 是 True！
-           必须先排除"不相关"，再看尾部是否"相关"。
+        解析策略（宁可漏，不可错）：prompt 强制输出结构化 JSON
+        `{"related": true/false}`，`_is_relevant()` 解析 JSON 取结论。
+        ⚠️ 不用子串判断"相关/不相关"——"不存在相关性".endswith("相关") 是 True，
+           否定句会误判成相关（Day34 坑 5 的延伸）。JSON 解析失败 → 默认不相关。
 
         Args:
             query: 用户查询
@@ -215,27 +216,39 @@ class RAGPipeline:
         for r in candidates:
             prompt = (
                 "你是知识库相关性判断助手。判断下面的【问题】和【片段】是否相关。\n"
-                "只回答两个字：相关 或 不相关。\n\n"
+                "只输出 JSON 结论，不要输出任何其他内容：\n"
+                '  相关 → {"related": true}\n'
+                '  不相关 → {"related": false}\n\n'
                 f"【问题】{query}\n"
                 f"【片段】{r['content'][:300]}\n"
             )
             answer = self._llm(prompt, model=rerank_model, max_tokens=400)  # 必须给足，否则思考占满返回空
             if self._is_relevant(answer):
                 relevant.append(r)
-            print(f"    精筛 [{r['file']}#{r['chunk_index']}] 相似度 {r['similarity']:.3f} → 判断: {answer.strip()[-20:]!r}")
+            print(f"    精筛 [{r['file']}#{r['chunk_index']}] 相似度 {r['similarity']:.3f} → 判断: {answer.strip()[-30:]!r}")
         return relevant
 
     def _is_relevant(self, answer: str) -> bool:
-        """从 LLM 精筛回答中提取相关性结论。宁可漏，不可错。
+        """从 LLM 精筛回答中解析 JSON 结论。宁可漏，不可错。
 
-        注意：不能直接用 endswith("相关") —— "不相关".endswith("相关") 是 True！
-        R1 输出可能带思考/标点（如 "无关。\n\n"、"相关。"、"不相关"），需清洗。
-        取末尾 30 字判断：含否定词（不相关/无关）→ False；否则含"相关" → True。
+        prompt 要求输出 {"related": true/false}，这里解析它。
+        - 能解析出 JSON 的 related 字段 → 以它为准
+        - 解析失败（LLM 没遵守格式）→ 默认不相关（宁可漏，不可错）
+        - 不依赖"相关/不相关"子串判断，规避"不存在相关性"这类包含"相关"的否定句误判
         """
-        cleaned = answer.strip()[-30:]
-        if "不相关" in cleaned or "无关" in cleaned:
-            return False
-        return "相关" in cleaned
+        import json
+        cleaned = answer.strip()
+        # 提取 JSON 片段（R1 可能在 JSON 前后有思考内容，取最后一段含 {} 的部分）
+        start = cleaned.rfind("{")
+        end = cleaned.rfind("}")
+        if start != -1 and end != -1 and end > start:
+            try:
+                data = json.loads(cleaned[start:end + 1])
+                # 只认真正的布尔 True；LLM 若输出字符串 "yes"/"true" 也一律不放行（宁可漏，不可错）
+                return data.get("related") is True
+            except (json.JSONDecodeError, ValueError):
+                pass
+        return False  # 解析失败 → 宁可漏，不可错
 
     # ── 基于检索片段生成回答（RAG 完整流程的"生成"环节） ──
     def generate(self, query: str, contexts: list[dict], model: str = "deepseek-r1:7b") -> str:
