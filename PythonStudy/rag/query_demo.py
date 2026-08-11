@@ -13,6 +13,9 @@ Day36：元数据过滤（where 条件检索）
 ⚠️ 依赖 ollama 运行 nomic-embed-text 模型（http://localhost:11434）
 """
 
+# 让 3.9 支持 dict | None 这类 3.10+ 注解写法（注解惰性求值，不报 TypeError）
+from __future__ import annotations
+
 import os
 import sys
 import requests
