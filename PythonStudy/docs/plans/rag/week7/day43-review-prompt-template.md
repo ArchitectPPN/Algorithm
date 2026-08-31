@@ -241,5 +241,6 @@ B 组靠 http-api-auth 规范纠正为"token 未验证"。规范上下文给了�
 ## 产出文件
 
 - `rag/review_prompts.py`
+- `rag/ab_compare.py`（A/B 对照实验脚本，Day47 批量评估基于此扩展）
+- `rag/ab_results_day43.json`（A/B 原始实验数据）
 - `data/test_code/vuln_sql.py` / `vuln_log.py` / `vuln_auth.py` / `README.md`
-- 临时实验脚本 `tmp_test_prompt.py`（不入库，含 A/B 对照逻辑可复用）

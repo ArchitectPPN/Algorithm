@@ -1,0 +1,61 @@
+{
+  "vuln_log.py | A无RAG": {
+    "ok": true,
+    "parsed": {
+      "summary": "代码存在严重安全风险，日志泄露敏感信息且认证逻辑未实现",
+      "issues": [
+        {
+          "location": "login函数",
+          "severity": "high",
+          "category": "安全",
+          "problem": "日志记录泄露用户密码等敏感信息",
+          "basis": "安全规范[1]",
+          "suggestion": "修改日志语句，移除密码字段\n使用logger.debug代替info级别日志\n对密码进行哈希处理后再记录"
+        },
+        {
+          "location": "check_credentials函数",
+          "severity": "high",
+          "category": "安全",
+          "problem": "硬编码返回True导致认证逻辑失效",
+          "basis": "安全规范[2]",
+          "suggestion": "实现实际的凭证验证逻辑\n建议使用加密存储密码\n添加凭证有效性校验"
+        }
+      ]
+    },
+    "chunks": [],
+    "tokens": 774,
+    "elapsed_s": 120.0
+  },
+  "vuln_log.py | B有RAG": {
+    "ok": true,
+    "parsed": {
+      "summary": "日志记录了敏感信息password，违反安全规范",
+      "issues": [
+        {
+          "location": "login函数日志语句",
+          "severity": "high",
+          "category": "安全",
+          "problem": "日志记录了密码等敏感信息",
+          "basis": "[1]",
+          "suggestion": "修改日志语句为：logger.info(f\"user login: {username}\")，避免记录密码等敏感字段"
+        }
+      ]
+    },
+    "chunks": [
+      {
+        "file": "log-best-practices.md",
+        "distance": 0.384
+      },
+      {
+        "file": "error-handling.md",
+        "distance": 0.394
+      },
+      {
+        "file": "log-best-practices.md",
+        "distance": 0.437
+      }
+    ],
+    "tokens": 1411,
+    "elapsed_s": 125.7
+  }
+}
