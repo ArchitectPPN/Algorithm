@@ -187,8 +187,59 @@ def delete_user(request):
 - [ ] 能解释为什么片段要编号、basis 为什么允许 null
 - [ ] 能说出 system role 为什么比把要求塞进单条 prompt 更有效
 
+## 实验结果（2026-08-31 实测）
+
+### ⚠️ 实验设计踩坑：测试代码不能带"答案提示"
+
+初版 vuln_*.py 的 docstring 写了"预期应检出 SQL 注入"——这会把答案泄漏给 LLM，
+污染 A/B 对照（无 RAG 组也能从注释看出该报什么）。**已修正**：代码文件只留纯代码，
+埋雷说明统一放 `data/test_code/README.md`。
+
+> 教训：对照实验的变量必须只有"有无 RAG"，测试材料里任何提示性内容都是污染源。
+
+### A/B 对照数据（3b 跑全量 + 8b 验证 vuln_log）
+
+| 代码 | 组 | 检出情况 | basis 引用 |
+|------|-----|---------|-----------|
+| vuln_sql | A 3b | ✅ SQL 注入 | None |
+| vuln_sql | B 3b | ✅ SQL 注入 | [1]→sql-best-practices（真实） |
+| vuln_auth | A 3b | ❌ **误判**：把 IDOR 说成 SQL 注入 | None |
+| vuln_auth | B 3b | ✅ token 未验签（漏 IDOR） | [1]→http-api-auth（真实） |
+| vuln_log | A 3b | ⚠️ 半对：说"默认日志级别泄露"（没抓到密码明文） | [1] **幻觉**（A 组无规范可引） |
+| vuln_log | B 3b | ❌ **漏检密码明文**：只报"缺时间戳/模块名" | [1]→log-best（真实但挂错条目） |
+| vuln_log | A 8b | ✅ 密码泄露 + check_credentials 硬编码 | "安全规范[1]" **幻觉** |
+| vuln_log | B 8b | ✅ 密码泄露 | [1]→log-best（真实） |
+
+### 关键发现
+
+**1. RAG 的价值不是"检得多"，是"说得有依据"**
+A 组（无 RAG）basis 要么 None 要么幻觉（编造不存在的规范编号）；B 组 basis 全部指向真实规范文件。
+无 RAG 的审查意见无法验证真伪；有 RAG 至少可以核对"引用的规范是否真的支持这个结论"。
+
+**2. RAG 不是银弹：证据在眼前，弱模型也用不上**
+vuln_log B 组（3b）：检索命中的 chunk0 白纸黑字写着"禁止把敏感信息打到日志（密码、Token、身份证号）"，
+但 3b 只报了"缺时间戳/模块名"——**证据齐了，模型关联不起来**（被 chunk 开头的日志级别内容带偏）。
+换 8b 同条件立刻检出。→ RAG 系统质量 = 检索质量 × 模型能力，两个短板哪个短都拖垮整体。
+
+**3. 无 RAG 的模型会"乱贴标签"**
+vuln_auth A 组把 IDOR 越权误判成 SQL 注入（看到 `params["id"]` 就条件反射）；
+B 组靠 http-api-auth 规范纠正为"token 未验证"。规范上下文给了模型更准的分类框架。
+
+### 3b 输出 JSON 的三个坑及修法（已修两个）
+
+| 坑 | 现象 | 修法 |
+|----|------|------|
+| 未转义引号 | suggestion 贴代码时 `f"SELECT..."` 的双引号截断 JSON | ✅ ollama 请求加 `"format": "json"`（语法层约束） |
+| 输出截断 | suggestion 贴完整函数，写超 num_predict 断在中途 | ✅ 模板约束"关键修改点，最多 3 行代码" |
+| basis 格式混乱 | 同一模型输出 `"1"` / `"[1]"` / `"安全规范[1]"` 三种 | ⏳ Day45 的 extract_basis 正则要容错纯数字 + 校验幻觉 |
+
+### 模型选型结论（结合 Day42 对比）
+
+- 审查场景选 **8b**：3b 会漏检（vuln_log 教训），漏检比慢更致命
+- 8b 的 A 组也产生幻觉引用 → 幻觉不是 3b 专属，**引用校验（Day45）必须做**，不能靠"换个好模型"解决
+
 ## 产出文件
 
 - `rag/review_prompts.py`
-- `data/test_code/vuln_sql.py` / `vuln_log.py` / `vuln_auth.py`
-- 本文件补充"实验结果"小节
+- `data/test_code/vuln_sql.py` / `vuln_log.py` / `vuln_auth.py` / `README.md`
+- 临时实验脚本 `tmp_test_prompt.py`（不入库，含 A/B 对照逻辑可复用）
