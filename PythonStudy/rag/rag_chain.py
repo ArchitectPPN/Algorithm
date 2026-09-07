@@ -116,7 +116,10 @@ class RAGChain:
                 "model": self.model,
                 "prompt": prompt,
                 "stream": False,
-                "options": {"num_predict": 500},  # Day40 经验值：快模型给太大反而拖慢且啰嗦
+                # num_predict 500=Day40 经验值（太大反而拖慢啰嗦）
+                # temperature 0=温度稳定性实验结论（day42 笔记）：不设则 ollama 默认 0.8，
+                # 同输入每次输出都在抽签（实测 t=1 下 20 次采样 20 个版本）
+                "options": {"num_predict": 500, "temperature": 0},
             },
             timeout=self.llm_timeout,
         )
