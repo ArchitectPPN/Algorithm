@@ -6,7 +6,7 @@ Day45：审查结果引用校验器——治幻觉的代码防线
 
 四条判定规则（全部来自实测过的幻觉形态）：
   R1 没检索过任何片段 + basis 非 null   → error（100% 幻觉，Day44 vuln_log 实锤）
-  R2 basis 编号超出片段范围（如 [5]）   → error（编造编号）
+  R2 任一编号超出片段范围（含"根据[2]和[5]"这类多引用）→ error（编造编号）
   R3 basis 非空但解析不出编号           → error（格式混乱，Day43 见过 "安全规范[1]"）
   R4 basis 非 [n] 标准格式（如 "1"）    → warning（能定位但格式不标准，Day43 B 组见过）
 
@@ -42,30 +42,36 @@ class CitationIssue:
     detail: dict       # 机器可读：basis 原值 / 提取编号 / 真实来源（若有）
 
 
-def extract_basis(basis) -> tuple[int | None, bool]:
-    """从 basis 字段提取编号。
+def extract_bases(basis) -> tuple[list[int], bool]:
+    """从 basis 字段提取**全部** [n] 编号（多引用场景）。
 
     Returns:
-        (编号或 None, 是否标准 [n] 格式)
+        (编号列表, 是否标准 [n] 格式)
 
-    兼容三种实测格式（Day43/44）：
-      "[1]"        → (1, True)   标准
-      "1"          → (1, False)  纯数字（Day43 B 组出现过），能定位，格式 warning
-      "安全规范[1]" → (1, False)  带杂质的方括号（Day43 A 组幻觉形态），格式 warning
-      None/null    → (None, True) 合法（附加建议）
-      "OWASP..."   → (None, False) 解析不出编号 → error（R3）
+    兼容实测格式（Day43/44/45）：
+      "[1]"          → ([1], True)   标准
+      "1"            → ([1], False)  纯数字，能定位，格式 warning
+      "安全规范[1]"   → ([1], False)  带杂质，能定位，格式 warning
+      "你[1]好"      → ([1], False)  噪声文本嵌编号，能定位，格式 warning（宽容的代价）
+      "根据[2]和[5]" → ([2,5], False) 多引用，逐个校验——任一编号是幻觉整条 error
+      None/null      → ([], True)    合法（附加建议）
+      "OWASP..."     → ([], False)   解析不出编号 → error（R3）
+
+    ⚠️ 2026-09-09 加固：v1 只取第一个编号（re.search），
+    "根据[2]和[5]" 里 [5] 超范围也漏检——学习者攻击性测试发现的绕过路径。
     """
     if basis is None:
-        return None, True
+        return [], True
     text = str(basis)
-    m = re.search(r"\[(\d+)\]", text)          # 优先方括号里的数字
-    if m:
-        n = int(m.group(1))
-        return n, (text.strip() == f"[{n}]")   # 整个值就是 [n] 才算标准格式
+    nums = [int(m) for m in re.findall(r"\[(\d+)\]", text)]
+    if nums:
+        # 标准格式：恰好一个编号且整个值就是 "[n]"
+        is_std = len(nums) == 1 and text.strip() == "[{}]".format(nums[0])
+        return nums, is_std
     m = re.fullmatch(r"\s*(\d+)\s*", text)      # 退而求其次：纯数字
     if m:
-        return int(m.group(1)), False
-    return None, False                          # 解析不出（如 "OWASP Top 10"）
+        return [int(m.group(1))], False
+    return [], False                            # 解析不出（如 "OWASP Top 10"）
 
 
 def verify_citations(review, chunks: list[dict]) -> list[CitationIssue]:
@@ -91,14 +97,14 @@ def verify_citations(review, chunks: list[dict]) -> list[CitationIssue]:
 
     for i, issue in enumerate(review.get("issues", []), start=1):
         basis = issue.get("basis")
-        n, is_std = extract_basis(basis)
+        nums, is_std = extract_bases(basis)
 
-        # 合法情况 1：附加建议（basis=null）
-        if n is None and is_std:
+        # 合法：附加建议（basis=null）
+        if not nums and basis is None:
             continue
 
-        # R3：非空但解析不出编号（编了规范名而不是编号）
-        if n is None and not is_std:
+        # R3：非空但解析不出任何编号（编了规范名而不是编号）
+        if not nums and basis is not None:
             found.append(CitationIssue(
                 "error", i,
                 f"basis={basis!r} 解析不出片段编号（疑似编造规范名，R3）",
@@ -110,25 +116,27 @@ def verify_citations(review, chunks: list[dict]) -> list[CitationIssue]:
             found.append(CitationIssue(
                 "error", i,
                 f"全程未检索任何片段，basis={basis!r} 是凭空编造的引用（R1）",
-                {"basis": basis, "extracted": n, "real_source": None}))
+                {"basis": basis, "extracted": nums, "real_source": None}))
             continue
 
-        # R2：编号超范围（编造编号）
-        if n < 1 or n > n_chunks:
+        # R2：逐个校验，任一编号超范围 → 幻觉
+        # （2026-09-09 加固：v1 只校验第一个编号，"根据[2]和[5]"里 [5] 编造也漏检）
+        bad_nums = [n for n in nums if n < 1 or n > n_chunks]
+        if bad_nums:
             found.append(CitationIssue(
                 "error", i,
-                f"basis={basis!r} 的编号 {n} 超出本次检索范围（1-{n_chunks}），疑似编造（R2）",
-                {"basis": basis, "extracted": n, "range": f"1-{n_chunks}"}
-            ))
+                f"basis={basis!r} 中编号 {bad_nums} 超出本次检索范围（1-{n_chunks}），疑似编造（R2）",
+                {"basis": basis, "extracted": nums, "bad": bad_nums,
+                 "range": f"1-{n_chunks}"}))
             continue
 
-        # 编号真实存在 → 检查格式（R4）+ 带出真实来源供人工核对张冠李戴
-        real = chunks[n - 1]
+        # 全部编号真实存在 → 格式检查（R4）+ 带出全部真实来源供人工核对张冠李戴
         if not is_std:
+            real_files = [chunks[n - 1]["file"] for n in nums]
             found.append(CitationIssue(
                 "warning", i,
-                f"basis={basis!r} 能定位到片段 {n}（来源 {real['file']}）但格式不标准（R4）",
-                {"basis": basis, "extracted": n, "real_source": real["file"]}))
+                f"basis={basis!r} 能定位到片段 {nums}（来源 {real_files}）但格式不标准（R4）",
+                {"basis": basis, "extracted": nums, "real_sources": real_files}))
 
     return found
 
@@ -143,12 +151,14 @@ def verdict(issues: list[CitationIssue]) -> str:
 
 
 if __name__ == "__main__":
-    # 自测：四种形态各喂一个（不调 LLM，纯规则验证）
+    # 自测：六种形态各喂一个（不调 LLM，纯规则验证）
     review = {"issues": [
-        {"basis": "[1]", "problem": "标准引用"},                # PASS（有 3 条片段时）
-        {"basis": "[5]", "problem": "超范围编号"},               # R2 error
-        {"basis": "OWASP Top 10", "problem": "编规范名"},        # R3 error
-        {"basis": None, "problem": "附加建议"},                  # 合法跳过
+        {"basis": "[1]", "problem": "标准引用"},                 # PASS（有 3 条片段时）
+        {"basis": "[5]", "problem": "超范围编号"},                # R2 error
+        {"basis": "OWASP Top 10", "problem": "编规范名"},         # R3 error
+        {"basis": None, "problem": "附加建议"},                   # 合法跳过
+        {"basis": "根据[2]和[5]", "problem": "多引用含幻觉编号"},   # R2 error（v1 漏检，已加固）
+        {"basis": "你[1]好", "problem": "噪声文本嵌编号"},          # R4 warning（宽容放行）
     ]}
     chunks = [{"file": "sql-best-practices.md"}, {"file": "log-best-practices.md"},
               {"file": "http-api-auth.md"}]
