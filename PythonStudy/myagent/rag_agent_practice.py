@@ -36,6 +36,7 @@ import requests
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from rag.rag_chain import RAGChain
 from rag.review_prompts import REVIEW_FORMAT, extract_json
+from rag.citation_check import verify_citations, verdict
 
 OLLAMA_URL = "http://localhost:11434"
 
@@ -148,12 +149,16 @@ def run_review_agent(code: str, model: str = "qwen3:8b", max_loops: int = 5) -> 
                 answer_json = extract_json(answer)
             except (ValueError, json.JSONDecodeError):
                 answer_json = None
+            # Day45：引用校验——prompt 治不住幻觉（Day44 三轮迭代实锤），代码核对每个 basis
+            citation_issues = verify_citations(answer_json, all_chunks) if answer_json else []
             return {
                 "answer": answer,
                 "answer_json": answer_json,
                 "steps": step,
                 "retrievals": retrievals,
                 "chunks": all_chunks,
+                "citation_issues": [i.__dict__ for i in citation_issues],
+                "citation_verdict": verdict(citation_issues),
                 "elapsed_ms": (time.perf_counter() - start) * 1000,
             }
 
@@ -234,3 +239,10 @@ if __name__ == "__main__":
         print(f"\n共 {len(issues)} 条问题，basis 引用:")
         for i, iss in enumerate(issues, 1):
             print(f"  {i}. {iss.get('basis')} | {str(iss.get('problem'))[:60]}")
+
+    print(f"\n【引用校验】{result.get('citation_verdict', 'N/A')}")
+    for ci in result.get("citation_issues", []):
+        mark = "❌" if ci["severity"] == "error" else "⚠️"
+        print(f"  {mark} issue#{ci['issue_idx']}: {ci['message']}")
+    if result.get("citation_verdict") == "PASS" and not result.get("citation_issues"):
+        print("  ✅ 所有 basis 引用均指向真实检索到的片段")
