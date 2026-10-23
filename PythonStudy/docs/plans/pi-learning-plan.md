@@ -12,11 +12,32 @@
 
 | 项 | 值 |
 |---|---|
-| 路径 | `D:\AiAgent\pi`（origin：`earendil-works/pi`） |
-| 版本 | `v1.4.0-22-g936e5f40a`（2026-10-22 提交），与 `origin/main` 同步，落后 0 个提交 |
+| 源码路径 | `D:\AiAgent\pi`（origin：`earendil-works/pi`） |
+| 源码版本 | `v1.4.0-22-g936e5f40a`（2026-10-22 提交），与 `origin/main` 同步，落后 0 个提交 |
+| 全局 CLI | `@earendil-works/pi-coding-agent@1.3.0`，命令 `pi` 可用（`C:\Users\niujunqing\.npm-global`） |
 | Node | 要求 `>=22.19.0`，本机 v22.22.2，满足 |
-| 依赖 | 未安装 `node_modules`；若要运行 CLI，先 `npm install` |
+| 源码依赖 | 未安装 `node_modules`；若要跑仓库版，先 `npm install` |
+| 用户配置 | `~/.pi` **不存在**，说明装了但从未启动过 |
 | 分支 | `main`，工作区干净 |
+
+> **版本差**：CLI 是 1.3.0，源码是 1.4.0-22。**读源码一律以仓库为准**，CLI 只用于观察行为。两者相差一个小版本，`agent` 包核心机制未变（行号已验证），但 CLI 层可能有细节差异，遇到不一致时以仓库代码为判断依据。
+
+### 官方文档已在本地，不必联网
+
+全局包内含 **43 篇**官方文档，路径 `C:\Users\niujunqing\.npm-global\node_modules\@earendil-works\pi-coding-agent\docs\`。计划中要读的几篇都在：
+
+| 文档 | 行数 | 对应 Day |
+|---|---|---|
+| `how-pi-works.md` | 49 | Day 3 |
+| `message-types.md` | 279 | Day 1–2 |
+| `skills.md` | 93 | Day 12 |
+| `session-format.md` | 293 | Day 15 |
+| `compaction.md` | 463 | Day 19 |
+| `codemode.md` | 230 | Day 21 |
+| `mcp.md` | 272 | Day 10 |
+| `extensions.md` | 277 | Day 6 后可选 |
+
+示例代码在同级 `examples/`（含 `sdk/`、`rpc-client.ts`、`extensions/`），可直接运行参考，比看官网示例省事。
 
 **行号已逐项校验**，与 `pi-code-reading-guide.md` 第八节标注一致：
 
