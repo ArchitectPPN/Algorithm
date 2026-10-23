@@ -36,6 +36,59 @@ Pi 有**两套消息类型**，而不是一套：
 
 值得注意的是 `CustomAgentMessages` 默认是**空接口**（L365-367），靠 TypeScript 的 declaration merging 由应用侧扩展。核心包不认识任何具体自定义类型——这是"分层不带业务"的具体手法。
 
+#### "投影"的确切含义（2026-10-23 实读 `core/messages.ts` 后补）
+
+"投影"容易被理解成"类型转换"，但两者在三点上不同。实测 `core/messages.ts:148-196` 的 `convertToLlm` 实现：
+
+```ts
+return messages
+  .map((m): Message | undefined => {
+    switch (m.role) {
+      case "bashExecution":
+        if (m.excludeFromContext) return undefined;        // 1 → 0，丢弃
+        return { role: "user", content: [{ type: "text", text: bashExecutionToText(m) }], ... };
+      case "custom": { ... return { role: "user", ... }; }
+      case "branchSummary": { ... return { role: "user", ... }; }
+      case "compactionSummary": { ... return { role: "user", ... }; }
+      case "system": case "user": case "assistant": case "toolResult":
+        return m;                                           // 1 → 1，原样透传
+    }
+  })
+  .filter((m) => m !== undefined);                          // 执行上面的丢弃
+```
+
+**区别一：不是一一对应。** 用 `map` + `filter` 而非简单转换，因为它支持 **1→0（丢弃）**、**1→1（透传）**、以及 1→N（文档示例用 `flatMap` 演示拆分）。
+
+**区别二：有损。** `BashExecutionMessage` 有七个字段（`command`/`output`/`exitCode`/`cancelled`/`truncated`/`fullOutputPath`/`timestamp`），投影后只剩一段文本加时间戳——`exitCode: 1` 变成句子里的 "Command exited with code 1"。`CompactionSummaryMessage.tokensBefore` 则**完全丢弃**。
+
+这正是投影的价值所在：`tokensBefore` 是 UI 显示"压缩了多少"需要的，模型不需要。**降维时只留该留的，其余留在会话记录里**。
+
+**区别三：降维方向固定。** 四种自定义消息在 AgentMessage 层各有独立 `role`，投影后**全部变成 `user`**：
+
+| AgentMessage | 投影结果 | 处理方式 |
+|---|---|---|
+| `system` / `user` / `assistant` / `toolResult` | 同名类型 | 原样透传 |
+| `bashExecution` | `user` | 转文本；`excludeFromContext` 时丢弃 |
+| `custom` | `user` | 内容直接搬 |
+| `branchSummary` | `user` | 加 XML 前缀后缀 |
+| `compactionSummary` | `user` | 加 XML 前缀后缀 |
+
+原因不可能更改：**LLM API 只认四种 role，无法新增第五种**。所以"自定义消息类型"只能存在于 AgentMessage 层，到了 LLM 层必须归一。
+
+这也修正了本文 Day 1 自测题第 4 题的预设（已改）——Pi 并非"用独立角色"，它在会话记录层用独立 role，投影后同样是 `user` 加前缀，**与你的 `Message.summary()` 做法同构**。差别在三处（实测 `message.py:73-75`）：
+
+```python
+return cls(role="user", content=f"[对话历史摘要]\n{content}")
+```
+
+| | Pi | 你的实现 | 影响 |
+|---|---|---|---|
+| 前缀定义 | 具名常量 `COMPACTION_SUMMARY_PREFIX` | 内联 f-string | 常量可被测试引用、可被检索；内联串无法断言 |
+| 措辞 | "The conversation history before this point **was compacted** into the following summary" | "[对话历史摘要]" | Pi 明确告知模型**前文已被丢弃**；你的措辞让模型以为摘要就是全部历史 |
+| 边界标记 | XML `<summary>...</summary>` | 方括号 | XML 可被可靠解析与截断；方括号在内容含 `]` 时会歧义 |
+
+第一条是工程习惯，后面两条是**语义正确性**问题。第二处尤其值得改：模型不知道上下文被压缩过，就会把摘要当成完整历史，遇到"你刚才说的第三点是什么"这类追问会答得似是而非。
+
 **三个"契约"值得单独记**，它们都是"must not throw"：
 
 | 位置                       | 契约                                                                          | 为什么                     |
@@ -123,7 +176,7 @@ isError → timestamp → usage → stopReason
 1. `convertToLlm` 为什么不能放在 provider 层，而要作为 `AgentLoopConfig` 的必填回调？
 2. 如果要让 agent 支持"图片输入"，改动应该落在 `AgentMessage` 还是 `Message`？为什么？
 3. 一个工具返回 `{terminate: true}`，另一个返回 `{terminate: false}`，同批次——循环会停吗？依据是哪一行？
-4. 你的 `Message.summary()` 用 `role="user"` 加前缀模拟摘要。Pi 用独立的 `CompactionSummaryMessage` 角色。两种做法各有什么代价？
+4. 你的 `Message.summary()` 用 `role="user"` 加前缀模拟摘要。Pi 在 AgentMessage 层用独立的 `role: "compactionSummary"`，但投影到 LLM 层后**同样是 `user` + XML 前缀**。既然如此，多设一层独立 role 换来了什么？（提示：看 `tokensBefore` 字段在投影前后是否还在）
 
 > 第 4 题没有标准答案，但答案会直接决定 Day 19 怎么改 `context_manager.py`。
 
@@ -143,18 +196,18 @@ isError → timestamp → usage → stopReason
 
 `AgentEvent` 声明了 10 个 type（L516–539），但 `processEvents` 的 switch 只有 **7 个 case**：
 
-| 事件 | `processEvents` 有没有 case | 它做了什么 |
-|---|---|---|
-| `agent_start` | **无** | 纯通知，直接转发监听器 |
-| `agent_end` | 有 | 清 `streamingMessage` |
-| `turn_start` | **无** | 纯通知 |
-| `turn_end` | 有 | 若 assistant 且带 `errorMessage` → 记入 state |
-| `message_start` | 有 | `streamingMessage = event.message` |
-| `message_update` | 有 | 同上（覆盖） |
-| `message_end` | 有 | 清 `streamingMessage`，`messages.push` |
-| `tool_execution_start` | 有 | `pendingToolCalls.add(id)` |
-| `tool_execution_update` | **无** | 纯通知 |
-| `tool_execution_end` | 有 | `pendingToolCalls.delete(id)` |
+| 事件                      | `processEvents` 有没有 case | 它做了什么                                    |
+| ----------------------- | ------------------------ | ---------------------------------------- |
+| `agent_start`           | **无**                    | 纯通知，直接转发监听器                              |
+| `agent_end`             | 有                        | 清 `streamingMessage`                     |
+| `turn_start`            | **无**                    | 纯通知                                      |
+| `turn_end`              | 有                        | 若 assistant 且带 `errorMessage` → 记入 state |
+| `message_start`         | 有                        | `streamingMessage = event.message`       |
+| `message_update`        | 有                        | 同上（覆盖）                                   |
+| `message_end`           | 有                        | 清 `streamingMessage`，`messages.push`     |
+| `tool_execution_start`  | 有                        | `pendingToolCalls.add(id)`               |
+| `tool_execution_update` | **无**                    | 纯通知                                      |
+| `tool_execution_end`    | 有                        | `pendingToolCalls.delete(id)`            |
 
 **这个分类是理解整层的钥匙**：无 case 的三个事件不携带状态语义，它们存在的唯一目的是让 UI 知道"某件事开始了"。判断标准很简单——**看它是否需要改变 `AgentState` 的任一字段**。
 
@@ -243,6 +296,7 @@ set tools(...) / get tools()        // accessor
 set messages(...) / get messages()  // accessor
 readonly isStreaming: boolean;
 ```
+
 
 **（1）`systemPrompt` 只读，改提示词必须 append 一条 system 消息。**
 
