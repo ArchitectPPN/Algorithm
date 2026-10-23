@@ -14,17 +14,17 @@
 |---|---|
 | 源码路径 | `D:\AiAgent\pi`（origin：`earendil-works/pi`） |
 | 源码版本 | `v1.4.0-22-g936e5f40a`（2026-10-22 提交），与 `origin/main` 同步，落后 0 个提交 |
-| 全局 CLI | `@earendil-works/pi-coding-agent@1.3.0`，命令 `pi` 可用（`C:\Users\niujunqing\.npm-global`） |
+| 全局 CLI | `@earendil-works/pi-coding-agent@1.4.0`，命令 `pi` 可用（`C:\Users\niujunqing\.npm-global`） |
 | Node | 要求 `>=22.19.0`，本机 v22.22.2，满足 |
 | 源码依赖 | 未安装 `node_modules`；若要跑仓库版，先 `npm install` |
 | 用户配置 | `~/.pi` **不存在**，说明装了但从未启动过 |
 | 分支 | `main`，工作区干净 |
 
-> **版本差**：CLI 是 1.3.0，源码是 1.4.0-22。**读源码一律以仓库为准**，CLI 只用于观察行为。两者相差一个小版本，`agent` 包核心机制未变（行号已验证），但 CLI 层可能有细节差异，遇到不一致时以仓库代码为判断依据。
+> **版本已对齐**（2026-10-23）：CLI 1.4.0，源码 `v1.4.0-22`——同一 minor 线，源码只多 22 个提交。读到的代码与跑出来的行为可以直接互相验证，不必再担心"文档说的和实际跑的不一致"。
 
 ### 官方文档已在本地，不必联网
 
-全局包内含 **43 篇**官方文档，路径 `C:\Users\niujunqing\.npm-global\node_modules\@earendil-works\pi-coding-agent\docs\`。计划中要读的几篇都在：
+全局包内含 **44 篇**官方文档，路径 `C:\Users\niujunqing\.npm-global\node_modules\@earendil-works\pi-coding-agent\docs\`。计划中要读的几篇都在（行数已按 1.4.0 核对，除 `extensions.md` 由 277 增至 400 外，其余与 1.3.0 一致）：
 
 | 文档 | 行数 | 对应 Day |
 |---|---|---|
@@ -35,9 +35,23 @@
 | `compaction.md` | 463 | Day 19 |
 | `codemode.md` | 230 | Day 21 |
 | `mcp.md` | 272 | Day 10 |
-| `extensions.md` | 277 | Day 6 后可选 |
+| `extensions.md` | 400 | Day 6 后可选 |
+| `sdk.md` / `rpc.md` / `security.md` | — | 备查（嵌入与安全模型） |
 
 示例代码在同级 `examples/`（含 `sdk/`、`rpc-client.ts`、`extensions/`），可直接运行参考，比看官网示例省事。
+
+### 用 CLI 验证机制（读代码时的活体对照）
+
+版本对齐后，CLI 可作为"读到的代码是否真的这样跑"的验证器。四个最有用的观察点：
+
+| 想验证什么 | 命令入口 | 对应 Day |
+|---|---|---|
+| 事件流顺序：`tool_result` 与 `tool_execution_end` 谁按源序、谁按完成序 | `pi -p "<需要多次工具调用的任务>" --mode json` | Day 4 |
+| 工具集变更是否增量声明、默认工具是否只有四个 | `pi -p "..." --tools read,bash --mode json` | Day 5 |
+| 无工具模式下提示词还剩什么（验证 skills 段依赖 read/bash） | `pi -p "..." --no-tools --mode json` | Day 6 |
+| 会话树分叉：从旧节点另开分支 | `pi --fork <session-id> -p "..."` | Day 18 |
+
+> 原则：**先读代码形成预期，再用 CLI 验证**。反过来的话，看到的现象无法解释，等于白看。
 
 **行号已逐项校验**，与 `pi-code-reading-guide.md` 第八节标注一致：
 
