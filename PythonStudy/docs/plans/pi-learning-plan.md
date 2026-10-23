@@ -2,7 +2,9 @@
 
 > **定位**：RAG 软暂停期主线。目标不是"读懂 Pi 源码"，而是**吃下内核 + 完成四项结构改造 + 产出可演示作品与可量化数据**。
 >
-> **配套读物**：`docs/notes/pi-architecture-analysis.md`（架构定位）、`docs/notes/pi-code-reading-guide.md`（行号级导读）、`docs/notes/agent-harness-gap-analysis.md`（九项能力缺口）。
+> **配套读物**：`docs/notes/pi-组件学习地图.md`（**以组件为轴的索引**，先读这篇建立框架）、`docs/notes/pi-architecture-analysis.md`（架构定位）、`docs/notes/pi-code-reading-guide.md`（行号级导读）、`docs/notes/agent-harness-gap-analysis.md`（九项能力缺口）。
+>
+> **两种读法可切换**：本文按「时间」组织（Day 1→22），组件地图按「能力」组织（工具调用／提示词工厂／MCP／记忆）。同一批内容，两套坐标系，不必二选一。
 >
 > **Day 编号说明**：本文 Day 1–22 为本计划内的相对学习日，每天约 2h，与 `transition-plan` 的 Day29–64（RAG 区间）无关，不要混记。
 
