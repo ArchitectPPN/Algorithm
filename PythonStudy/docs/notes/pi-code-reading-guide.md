@@ -455,7 +455,7 @@ declare const tools: {
 | Pi | 行数 | 你的对应文件 | 行数 | 差距在哪 |
 |---|---|---|---|---|
 | `agent-loop.ts` | 959 | `agent/core/agent_loop.py` | 338 | 你有 `max_rounds` 硬上限；没有 steering/follow-up 双通道；没有终止聚合 |
-| `types.ts` | 540 | `agent/core/message.py` | 75 | 你的消息类型缺 `terminate`、`isError`、`durationMs` 三态 |
+| `types.ts` | 540 | `agent/core/message.py` | 75 | 缺 `isError`、`timestamp`、`usage`、`stopReason` 四项（`terminate` 属工具结果而非消息，`durationMs` 只在嵌套调用记录里） |
 | `agent.ts` | 623 | `agent/core/session_manager.py` | 176 | 你没有「事件归约成状态」这一层，状态是直接改的 |
 | `skills.ts` | 514 | `agent/skills/loader.py` | 114 | 需确认是整篇注入还是只注入描述 |
 | `compaction.ts` | 1104 | `agent/core/context_manager.py` | 104 | 缺拆轮处理、缺 fileOps 提取 |
