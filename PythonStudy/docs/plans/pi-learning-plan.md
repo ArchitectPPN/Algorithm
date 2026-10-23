@@ -8,6 +8,33 @@
 
 ---
 
+## 本地代码环境（2026-10-23 实测核对）
+
+| 项 | 值 |
+|---|---|
+| 路径 | `D:\AiAgent\pi`（origin：`earendil-works/pi`） |
+| 版本 | `v1.4.0-22-g936e5f40a`（2026-10-22 提交），与 `origin/main` 同步，落后 0 个提交 |
+| Node | 要求 `>=22.19.0`，本机 v22.22.2，满足 |
+| 依赖 | 未安装 `node_modules`；若要运行 CLI，先 `npm install` |
+| 分支 | `main`，工作区干净 |
+
+**行号已逐项校验**，与 `pi-code-reading-guide.md` 第八节标注一致：
+
+| 文件 | 行数 | 关键锚点（已命中） |
+|---|---|---|
+| `packages/agent/src/types.ts` | 539 | — |
+| `packages/agent/src/agent-loop.ts` | 959 | `runLoop` L172、`failToolCallsFromTruncatedMessage` L488、`shouldTerminateToolBatch` L700、`declareToolChanges` L342 |
+| `packages/agent/src/agent.ts` | 623 | — |
+| `packages/coding-agent/src/core/skills.ts` | 514 | `formatSkillsForPrompt` L358 |
+| `packages/coding-agent/src/core/system-prompt.ts` | 229 | `diffSystemPromptSections` L217 |
+| `packages/coding-agent/src/core/compaction/compaction.ts` | 1104 | `shouldCompact` L267 等五个函数 |
+
+> **旧快照（v0.82.0）的用法**：更新前的本地版本为 v0.82.0（2026-07-25，落后 1,960 个提交），结构为集中式 `agent/src/harness/`，且 skills 是**整篇注入**（`harness/skills.ts:39` 直接拼 `${skill.content}`）。它不进工作区，需要对照时用 `git show v0.82.0:packages/agent/src/harness/skills.ts`。
+>
+> 这个对照在 Day 12–14 有直接用途：**Pi 自己从「整篇注入」演进到了「渐进披露」**，与你 `loader.py` 的处境同构。面试可讲"对比两个版本理解演进动机"，比只讲最终实现更有说服力。
+
+---
+
 ## 零、为什么从 v2 的"18 天"改成 22 天
 
 v2 把完整档写成"标准 12 天 + 6 天增量"，是加法估算法，细排后不成立：
