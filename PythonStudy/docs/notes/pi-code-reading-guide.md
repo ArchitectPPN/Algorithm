@@ -17,7 +17,7 @@ Pi 全仓库是 11 个包的 TS monorepo，`packages/coding-agent/src/core` 一�
 
 | 层级 | 文件 | 规模 | 判定 | 理由 |
 |---|---|---|---|---|
-| 一 | `agents/src/types.ts` | 540 行 | **全读** | 数据契约，不理解它后面全是天书 |
+| 一 | `agent/src/types.ts` | 540 行 | **全读** | 数据契约，不理解它后面全是天书 |
 | 一 | `agent/src/agent-loop.ts` | 959 行 | **全读** | 控制流本体，全项目最高价值 |
 | 一 | `agent/src/agent.ts` | 623 行 | **全读** | 状态与生命周期，loop 的有状态外壳 |
 | 二 | `coding-agent/src/core/system-prompt.ts` | 229 行 | 读 2 个函数 | 提示词分段化与增量 patch |
