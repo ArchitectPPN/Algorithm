@@ -1,6 +1,7 @@
 # Memory Index
 
-- [RAG Week7 进度](rag-week7-progress.md) — Day42-45 完成（4/7），下次从 Day46 开始；09-09 起改"学习者写、AI 审"模式
+- [Pi 学习进度](pi-learning-progress.md) — 2026-10-25 元日启动（Day 3：agent-loop.ts 骨架），当前主线；下次 Day 4-5
+- [RAG Week7 进度](rag-week7-progress.md) — 软暂停中：Day42-45 提交（4/7），Day46 代码未提交待收尾
 - [RAG Week6 进度](rag-week6-progress.md) — Week6 已完成（Day35-41）
 - [Day40 FastAPI 检索服务](day40-retrieval-service-experiment.md) — 距离分布定阈值 0.6、MMR λ 验证、服务实现要点
 - [Day39 评估 + 查询改写](day39-evaluation-experiment.md) — MRR 指标、改写优先级、测试集歧义判断
