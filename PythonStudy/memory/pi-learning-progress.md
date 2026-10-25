@@ -16,7 +16,7 @@ Pi 源码学习（RAG 软暂停期主线），目标：吃下内核 + 四项结�
 **已完成**：
 - 预备：Day 1-2 产出 ✅（10-23 提交）——types.ts（539 行）数据契约笔记、事件全集与状态归约边界
 
-**元日任务（2026-10-25，1.5h）**：
+**元日任务（2026-10-25，1.5h）**：任务单 `docs/plans/pi-days/day03.md`（**每日任务单独立成文件，pi-days/dayNN.md，每天一个，AI 收尾时生成次日**）
 - `how-pi-works.md`（49 行全读，约 25min）——全局组件链路
 - `agent-loop.ts` **L1-171**（约 60min）——四入口层级（agentLoop L47 / agentLoopContinue L80 / runAgentLoop L111 / runAgentLoopContinue L137 / createAgentStream L162）+ 事件流出链路
 - 验收（轻量）：口头回答三问——四入口谁包谁、事件怎么从 emit 流到消费方、emit 为什么允许同步异步
