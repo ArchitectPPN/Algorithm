@@ -51,7 +51,7 @@
 | **502–515** | `AgentContext` | 一次运行期的不可变快照 | 和 `AgentState` 的区别 |
 | **516–539** | `AgentEvent` | **10 类事件全集**。逐个标：哪些会改状态 | 哪三类事件丢了不影响状态 |
 
-> Day 2 已把 66–539 的结论写进 `docs/notes/pi-notes-核心机制.md`，可直接对照。
+> Day 2 已把 66–539 的结论写进 `docs/pi/notes/核心机制.md`，可直接对照。
 
 ### B. `packages/agent/src/agent-loop.ts`（959 行，Day 3–5）
 
@@ -228,7 +228,7 @@
 
 ---
 
-## 按天拆开（配合 `pi-learning-plan.md` 的 22 天）
+## 按天拆开（配合 `learning-plan.md` 的 22 天）
 
 | Day | 文件 | 行区间 | 当天必须答出来的问题 |
 |---|---|---|---|

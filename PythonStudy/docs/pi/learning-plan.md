@@ -1,12 +1,12 @@
 # Pi 学习计划 v3（完整档）
 
-> ## 📍 当前任务：`docs/plans/pi-days/day01.md`（元日 2026-10-25 · Day 01 · 1.5h）
+> ## 📍 当前任务：`docs/pi/days/day01.md`（元日 2026-10-25 · Day 01 · 1.5h）
 >
-> 每日任务单独立成文件：`docs/plans/pi-days/dayNN.md`，每天一个，完成后由 AI 生成次日的。本文件只放总计划与节奏规则，不重复每日细节。
+> 每日任务单独立成文件：`docs/pi/days/dayNN.md`，每天一个，完成后由 AI 生成次日的。本文件只放总计划与节奏规则，不重复每日细节。
 
 > **定位**：RAG 软暂停期主线。目标不是"读懂 Pi 源码"，而是**吃下内核 + 完成四项结构改造 + 产出可演示作品与可量化数据**。
 >
-> **配套读物**：`docs/plans/pi-reading-checklist.md`（**行号级阅读清单，打开代码时手边放这份**）、`docs/notes/pi-组件学习地图.md`（**以组件为轴的索引**，先读这篇建立框架）、`docs/notes/pi-architecture-analysis.md`（架构定位）、`docs/notes/pi-code-reading-guide.md`（行号级导读）、`docs/notes/agent-harness-gap-analysis.md`（九项能力缺口）。
+> **配套读物**：`docs/pi/reading-checklist.md`（**行号级阅读清单，打开代码时手边放这份**）、`docs/pi/notes/组件学习地图.md`（**以组件为轴的索引**，先读这篇建立框架）、`docs/pi/notes/architecture-analysis.md`（架构定位）、`docs/pi/notes/code-reading-guide.md`（行号级导读）、`docs/pi/notes/agent-harness-gap-analysis.md`（九项能力缺口）。
 >
 > **两种读法可切换**：本文按「时间」组织（Day 1→22），组件地图按「能力」组织（工具调用／提示词工厂／MCP／记忆）。同一批内容，两套坐标系，不必二选一。
 >
@@ -61,7 +61,7 @@
 
 > 原则：**先读代码形成预期，再用 CLI 验证**。反过来的话，看到的现象无法解释，等于白看。
 
-**行号已逐项校验**，与 `pi-code-reading-guide.md` 第八节标注一致：
+**行号已逐项校验**，与 `code-reading-guide.md` 第八节标注一致：
 
 | 文件 | 行数 | 关键锚点（已命中） |
 |---|---|---|
@@ -261,19 +261,19 @@ v2 把完整档写成"标准 12 天 + 6 天增量"，是加法估算法，细排
 ## 六、产出物清单
 
 **已完成**（2026-10-22）
-- [x] `docs/notes/pi-architecture-analysis.md`
-- [x] `docs/notes/pi-code-reading-guide.md`
-- [x] `docs/notes/agent-harness-gap-analysis.md`
+- [x] `docs/pi/notes/architecture-analysis.md`
+- [x] `docs/pi/notes/code-reading-guide.md`
+- [x] `docs/pi/notes/agent-harness-gap-analysis.md`
 
 **阶段产出**
-- [ ] `docs/notes/pi-notes-核心机制.md`（Day 1–6：八问答案 + 三张图）
+- [ ] `docs/pi/notes/核心机制.md`（Day 1–6：八问答案 + 三张图）
 - [ ] `agent/core/message.py`：消息三态（Day 7）
 - [ ] `agent/core/event_reducer.py`：事件归约层（Day 8–9）
 - [ ] `agent/mcp_client.py`：stdio 连接 + 工具注入（Day 10–11）
 - [ ] `agent/skills/loader.py`：渐进披露 + **token 对比数据**（Day 12–14）
 - [ ] `agent/core/memory_tree.py`：树形会话 + 分支回溯（Day 15–18）
 - [ ] `agent/core/context_manager.py`：token 预算 + 修静默丢弃 + 拆轮（Day 19–20）
-- [ ] `docs/notes/pi-vs-myagent.md`：完整对照表（Day 22）
+- [ ] `docs/pi/notes/pi-vs-myagent.md`：完整对照表（Day 22）
 - [ ] `docs/interview/` 新增 3 张卡：loop 收敛 / 上下文经济学 / 状态持久化取舍（Day 22）
 
 ---

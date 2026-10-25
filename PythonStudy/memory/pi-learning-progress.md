@@ -8,16 +8,16 @@ metadata:
 ---
 
 Pi 源码学习（RAG 软暂停期主线），目标：吃下内核 + 四项结构改造 + 可演示作品与可量化数据。
-计划：`docs/plans/pi-learning-plan.md`（v3）；行号级导读：`docs/plans/pi-reading-checklist.md`（打开代码时手边放）。
+计划：`docs/pi/learning-plan.md`（v3）；行号级导读：`docs/pi/reading-checklist.md`（打开代码时手边放）。
 
 **🗓 元日 2026-10-25 = Day 01 真正起点**（学习者明确：未开始过；10-23 的"Day 1/2 产出"提交是 AI 预研笔记，不计入进度）。
 **节奏：每天 1.5h**（用户确认上限，原 2h 压缩；总天数预计拉长到约 30 天，验收标准不变）。
 **铁律：Day 完成的唯一标准 = 学习者本人的产出**（自答/骨架/笔记），AI 代做的不算——Week7 教训，Day 01 就拦住。
 
 **已完成**：
-- 无（元日即 Day 01 起点；AI 预研笔记 `docs/notes/pi-notes-核心机制.md` 降级为参考资料）
+- 无（元日即 Day 01 起点；AI 预研笔记 `docs/pi/notes/核心机制.md` 降级为参考资料）
 
-**元日任务（2026-10-25，1.5h）**：任务单 `docs/plans/pi-days/day01.md`（**每日任务单独立成文件 pi-days/dayNN.md，AI 收尾时生成次日**）
+**元日任务（2026-10-25，1.5h）**：任务单 `docs/pi/days/day01.md`（**每日任务单独立成文件 pi-days/dayNN.md，AI 收尾时生成次日**）
 - `types.ts` **L1–192**（前半）：L33-63 供应商抽象（StreamFn/执行模式枚举）→ L66-146 钩子与决策（terminate 归属/判别联合）→ L147-192 一轮边界（finishTurn 返回 end）
 - 验收：过关问题答案贴给 AI，对照源码逐条核对
 
