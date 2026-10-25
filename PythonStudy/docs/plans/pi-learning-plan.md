@@ -1,5 +1,13 @@
 # Pi 学习计划 v3（完整档）
 
+> ## 📍 当前任务（2026-10-25 元日 · 1.5h）——完成后此块滚动更新
+>
+> 1. **`how-pi-works.md` 全读**（49 行，25min）——路径 `C:\Users\niujunqing\.npm-global\node_modules\@earendil-works\pi-coding-agent\docs\how-pi-works.md`；全局组件链路：一次 prompt 流经哪些组件
+> 2. **`D:\AiAgent\pi\packages\agent\src\agent-loop.ts` L1–171**（60min）——四入口层级（`agentLoop` L47 → `runAgentLoop` L111；`agentLoopContinue` L80 / `createAgentStream` L162）+ 事件流出链路（emit → AgentEventSink → EventStream → 消费方）
+> 3. **验收三问**（贴答案给 AI 核对）：①四个入口谁包谁？②事件从 `emit` 到消费方的链路？③`emit` 类型 `Promise<void> | void` 意味着什么？
+>
+> 明天（Day 4）：`agent-loop.ts` L172–300（runLoop 骨架：双层循环 / steering 双轮询 / turn 生命周期）+ 默写骨架验收
+
 > **定位**：RAG 软暂停期主线。目标不是"读懂 Pi 源码"，而是**吃下内核 + 完成四项结构改造 + 产出可演示作品与可量化数据**。
 >
 > **配套读物**：`docs/plans/pi-reading-checklist.md`（**行号级阅读清单，打开代码时手边放这份**）、`docs/notes/pi-组件学习地图.md`（**以组件为轴的索引**，先读这篇建立框架）、`docs/notes/pi-architecture-analysis.md`（架构定位）、`docs/notes/pi-code-reading-guide.md`（行号级导读）、`docs/notes/agent-harness-gap-analysis.md`（九项能力缺口）。
