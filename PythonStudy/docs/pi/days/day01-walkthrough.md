@@ -162,11 +162,21 @@ final class BeforeToolCallResult
 
 **这段在讲什么**：`beforeToolCall` 钩子（工具执行**前**的拦截点）可以返回这个对象行使否决权：
 - `block: true` → 这次工具调用不执行了，loop 会生成一个错误 tool result 顶上（`reason` 就是错误文案）
-- `terminate: true` → 不光否决这一次，还提示 agent 在这批工具跑完后**停下整个循环**
+- `terminate: true` → **仅当同时有 `block: true` 时才生效**（`agent-loop.ts:755-759` 只在 block 分支里读它），含义是"这批跑完后不必再回模型一轮"。单独返回 `{terminate:true}` 不给 block，是**空操作**——这是本文件最容易踩的一个坑
 
 你认得这个设计——你裸写 agent 时 `execute_tool()` 里"工具不存在返回错误字符串给模型自纠错"是同一类机制，但 Pi 把"拦不拦"从硬编码变成了**可注入的钩子决策**。你在 `agent/permissions/engine.py` 见过的权限引擎，本质上就是一个 `beforeToolCall` 钩子的实现。
 
-**过关问题"terminate 属于哪一层"**：注意它出现在**钩子的返回值**里，而不是消息/工具结果的字段里——它是"钩子给循环的信号"，不是"数据本身带的状态"。这个归属决定了谁能设置它（只有钩子），谁不能（工具自己不能在返回值里说"停"……但注意 L103 的 `AfterToolCallResult` 里也有 terminate——工具执行后的钩子也能设。记住：都是**钩子层**的信号）。
+**过关问题"terminate 属于哪一层"**：它不是消息字段，而是**工具结果对象上的一个可选布尔**（`AgentToolResult.terminate`，`types.ts:445`）。一共有**三个设置点**，工具自己就是一个：
+
+| 设置点 | 代码位置 | 语义 |
+|--------|---------|------|
+| 工具 `execute()` 的返回值 | `types.ts:445` | 工具自己声明"我这个结果是终局" |
+| `beforeToolCall` 返回 | `agent-loop.ts:755-759` | **必须先 `block: true`**，terminate 才会被写进占位结果 |
+| `afterToolCall` 返回 | `agent-loop.ts:902` | `afterResult.terminate ?? result.terminate`，可加也可撤（撤要显式给 `false`） |
+
+所以它既不是"只有钩子能设"，也不是"数据本身带的状态"——准确说法是：**工具结果上的一个 hint 字段，执行链上三个位置都能写它**。
+
+实测一条硬事实：`packages/coding-agent/src/core/tools/` 下的**八个**内置工具（`bash` / `edit` / `find` / `grep` / `ls` / `powershell` / `read` / `write`，按各文件 `name` 字段实测）**没有一个设置 terminate**，全仓库设成 `true` 的只有测试与 `examples/extensions/structured-output.ts`。这条事实本身就是"什么情况下该打 true"的最强判据，见下一节。
 
 ### 💬 元日讨论沉淀（本节是讨论最密的一段）
 
@@ -190,6 +200,50 @@ final class BeforeToolCallResult
 **三层术语**（防止"循环"一词混用）：**批（batch）**= 模型一条 assistant 消息吐出的全部 tool_call（1 个也算一批）；**轮（turn）**= 一批 + 结果回喂 + 后续处理；**循环（loop）**= 多轮直到终止。`block` 作用域：批内单个调用；`terminate` 作用域：批结束后的循环去留。
 
 PHP 类比：中间件——路由管道里 middleware 对**单个请求**返回 403（请求打不到 controller），管道继续服务下一个请求。`block` = 单请求 403；`terminate` = "这轮服务完就打烊"的信号，且要求全员同意。
+
+#### 什么情况下该打 `true`（判据与反例）
+
+先看清 terminate **唯一的作用**：跳过"这批工具结果回给模型"的那一次自动请求。它不终止循环、不拦截工具、不改消息——`agent-loop.ts:281` 只有一行 `hasMoreToolCalls = !executedToolBatch.terminate`。
+
+所以判据就是一句话：**这次调用的结果本身就是最终产物，模型再回一轮也产生不了新信息。**
+
+| 该打 `true` | 为什么 | Pi 的实例 |
+|---|---|---|
+| 结果即交付物（结构化数据、最终答案对象） | 模型回一轮只能把同样的内容复述成散文，纯浪费 | `structured-output.ts`：`execute()` 返回 `terminate: true` |
+| 把 agent 当函数调用（RPC/SDK 场景），调用方只要返回值 | 调用方不读自然语言，多一轮是纯延迟 | 同上，导出场景 |
+| 守卫判定整个运行已无意义（如"本项目禁用 bash"） | 停下来是结论本身 | `README.md:249`：`{ block: true, reason: "bash is disabled", terminate: true }` |
+| 控制权交接给外部系统，结果即终点 | 后续由别的系统接手 | 交接/委派类工具 |
+
+| 不该打 `true` | 为什么 |
+|---|---|
+| read / bash / grep / edit 等供模型继续推理的工具 | 模型必须看到结果才能决定下一步。**这就是内置工具全部不设 terminate 的原因** |
+| 结果是 `isError` | 错误是"该纠错"的信号，打 true 会让"失败"直接变成"静默结束"，用户只看到一条报错 |
+| 用户期待一句解释 | terminate 之后没有 assistant 文本，用户看到的是裸工具结果 |
+| 纯省 token 的动机 | 省下的一轮通常几百 token，误判一次却整轮白跑 |
+
+**成本是不对称的，所以默认值必须是 `false`。** 漏打 → 多一次请求（延迟 + 几百 token）；误打 → 模型失去总结与纠错机会，且"本来还要继续"的任务会静默中断。后者是功能缺失，前者只是开销。Pi 八个内置工具全部取默认，正是这条不对称的选择结果。
+
+四个自问，全 yes 才打 `true`：
+
+1. 这个结果**本身就是**交付物，而不是供模型判断的材料？
+2. 模型看到它之后**确实无事可做**（无后续工具、无纠错、无汇报）？
+3. 用户/调用方要的是**数据**而不是**一段话**？
+4. 这批里其他调用**也都不需要回模型**？（并行批里几乎不可能同时成立，所以实践中等价于"这批只有一个调用且它是终局动作"）
+
+第 4 条也解释了为什么"批里只有一个 terminate"的直觉会流行：**能触发终止的批，现实中几乎都是单调用批**。但规则是"全部 true 才停"，不是"只能有一个 true"——两者在单调用批上表现一致，在多调用批上完全不同（见上文 1867 号测试：一个 block+terminate、一个正常执行 → 继续）。
+
+**terminate 是弱提示，只关掉四个"继续理由"中的一个**：
+
+| 继续理由 | terminate 能关掉吗 |
+|---|---|
+| 有工具结果要回给模型 | ✅ 能（这是它唯一的作用） |
+| 队列里有 steering 消息（用户边跑边插话） | ❌ 不能，`pendingMessages.length > 0` 仍进内层循环 |
+| 有 follow-up 消息（等 agent 干完再补的） | ❌ 不能，外层循环继续 |
+| `finishTurn` 返回 `{action:"continue"}` | ❌ 不能，`explicitContinuation` 仍强制一轮 |
+
+对成本敏感的路径还有一处副作用：`compaction.md:37` 提到，工具批终止且队列无消息时，Pi **会跳过轮间那次压缩检查**——省的是又一次省，但前提是"确实不需要再回模型"。
+
+**对你项目的直接结论**：你 `agent/tools/base.py` 的 `ToolResult` 没有 terminate，而现在这七个工具（读文件、执行命令、改文件…）**没有一个该打 true**——它们全是"供模型继续推理"的中间动作。真正需要 terminate 的是你还没有的那类工具：`structured_output`（比如把 `/review` 的结构化结论直接返回给调用方）、`handoff`（交接给人工）。所以 Day 7 加 `terminate` 字段时，别急着给现有工具打标——**字段加进去、默认全 false、等出现终局型工具才用**，这才是 Pi 的实际形态。
 
 ---
 
@@ -479,3 +533,6 @@ PHP 类比：批处理队列——**事务**全处理完才 commit（给模型�
 4. `PrepareRequest` 的返回类型为什么是 `Omit<AgentLoopTurnUpdate, "messages">` 而不是完整的 `AgentLoopTurnUpdate`？
 5. **`finishTurn` 返回 `{action:"continue"}` 时，会不会额外多发一次模型请求？**（2026-10-27 补充）
 6. **模型报错（`stopReason === "error"`）时，`finishTurn` 返回 `continue` 还有效吗？**（2026-10-27 补充）
+7. **一个批里有三个工具调用，只有第二个返回了 `terminate: true`，这批跑完会不会停？为什么 Pi 要这么设计，而不是"任一 true 就停"？**（2026-10-27 补充）
+8. **`beforeToolCall` 返回 `{terminate: true}` 但不给 `block`，会发生什么？**（2026-10-27 补充）
+9. **为什么 Pi 的 `read` / `bash` / `edit` 全都不设 `terminate`？如果给 `bash` 打上 `true`，会出现什么现象？**（2026-10-27 补充）
