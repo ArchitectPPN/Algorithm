@@ -1,46 +1,46 @@
-# Day 02（2026-10-26 · 1.5h）
+# Day 02（2026-10-28 周三 · 1.5h）
 
-> **今日主题**：Day 01 收尾（L147–192）+ `types.ts` 后半开篇（L193–274：`AgentLoopConfig` 前半）
+> **今日主题**：`types.ts` L193–280——`AgentLoopConfig` 前半（必填两样 + 三个可插手时刻）
 > **源码**：`D:\AiAgent\pi\packages\agent\src\types.ts`（539 行）
-> **承接**：昨天已讨论透 L1–146（含溢出到 batch/并行机制），剩 L147–192 未走
+> **承接**：Day 01 已于 10-27 收口（L1–192 全部走完，含补充深读）。今天从 L193 起。
+>
+> 📖 **解读文档**：[`day02-walkthrough.md`](day02-walkthrough.md)——逐段 TS 原文 + PHP 对照 + 默认行为表，文末 5 道自测。
 
 ---
 
-## 任务 1：L147–192 收尾（25min）
-
-📖 解读：[`day02-walkthrough.md`](day02-walkthrough.md) **第 11–16 节**（比 day01-walkthrough 第 8、9 节多了一节：`prepareRequest` vs `prepareNextTurn` 对照）
-
-| 行区间 | 类型 | 过关问题 |
-|--------|------|---------|
-| L147–158 | `AgentTurnDecision` / `FinishTurn` | `finishTurn` 返回 `{action: "end"}` 会怎样？返回 undefined 呢？**error/aborted 时钩子还管用吗？** |
-| L160–170 | `AgentLoopTurnUpdate` | 这个 DTO 里哪四个字段可以改？"Replacement" 意味着替换还是合并？ |
-| L179–189 | `AgentRequestUpdate` / `PrepareRequest` | **为什么返回类型是 `Omit<AgentLoopTurnUpdate, "messages">`？**（提示：L184 注释——pending messages 此时已追加） |
-| L191 + 对比 | `PrepareNextTurnContext` | `prepareRequest` 与 `prepareNextTurn` 差在哪三处？ |
-
-## 任务 2：自测四问（15min）
-
-`day01-walkthrough.md` 文末 4 道自测，答案贴给 AI 核对——这是 Day 01 的正式验收。
-
-## 任务 3：L193–280 `AgentLoopConfig` 前半（45min）——全文件最密段的开始
-
-📖 **解读已就位**：[`day02-walkthrough.md`](day02-walkthrough.md)（第 17–25 节，含 L147–192 收尾的第 11–16 节）
+## 任务 1：L193–222 `model` + `convertToLlm`（35min）
 
 | 行区间 | 内容 | 过关问题 |
 |--------|------|---------|
-| L194 | `model` | 整个接口里只有两个必填字段，另一个是谁？ |
-| L196–222 | `convertToLlm` | **投影发生在哪一步？为什么不许抛异常？** |
-| L224–244 | `transformContext` | 为什么它是"可选但强制异步"？ |
-| L246–254 | `getApiKey` | 为什么每次请求都要重新取一遍，而不是启动时取一次？ |
-| L256–271 | `finishTurn` / `prepareRequest` | `continue` 是"多发一次"还是"保证至少一次"？ |
-| L273–280 | `prepareNextTurn` | 和 `prepareRequest` 差在哪三处？ |
+| L193–194 | 接口声明 + `model` | **整个接口只有两个必填字段，另一个是谁？为什么偏偏是这两个？** |
+| L196–222 | `convertToLlm` | **投影发生在哪一步？"must not throw" 为什么不是"报个错而已"？** |
+| 注释示例 | `flatMap` 的 1→0 / 1→1 | 投影与"类型转换"的差别在哪里 |
 
-**读法**（清单建议）：这一段逐个回调问自己"**不给这个回调时，默认行为是什么**"——十回调的默认行为表就是 Day 02 的核心产出。前半（7 项）已列在 walkthrough 第 25 节，今天先记住这 7 行，Day 03 补后半。
+## 任务 2：L224–254 `transformContext` + `getApiKey`（35min）
+
+| 行区间 | 内容 | 过关问题 |
+|--------|------|---------|
+| L224–244 | `transformContext` | **为什么可选却强制 `Promise`？为什么必须在 `convertToLlm` 之前？** |
+| L246–254 | `getApiKey` | **为什么每次请求都要重新取，而不是启动时取一次？** |
+| 偷看 L397–410 | 四步装配实证 | `transformContext → convertToLlm → normalizeContext → getApiKey` 的顺序能否默写 |
+
+> 这两节是最能直接搬到 `agent/` 项目里的：`transformContext` 对应 `context_manager.py` 的挂载点，`getApiKey` 对应长跑任务的凭据刷新。
+
+## 任务 3：L256–280 三个钩子 + 默认行为表（20min）
+
+| 行区间 | 内容 | 过关问题 |
+|--------|------|---------|
+| L256–264 | `finishTurn` | `{action:"end"}` 为什么是"真停"（不轮询队列） |
+| L266–271 | `prepareRequest` | *including the first* / *this and later requests* / *does not poll queues* 三句各约束什么 |
+| L273–280 | `prepareNextTurn` | 它比 `prepareRequest` 多的那个能力是什么 |
+| — | 产出 | 填写 walkthrough 第 9 节那张 7 行默认行为表（**不看原文填**） |
 
 ---
 
 ## 完成清单
 
-- [ ] 任务 1：L147–192 收尾
-- [ ] 任务 2：自测四问核对通过
-- [ ] 任务 3：AgentLoopConfig 前半 + 默认行为表（前半）
-- [ ] AI 收尾：更新勾选 + 生成 `day03.md`
+- [ ] 任务 1：L193–222
+- [ ] 任务 2：L224–254（含 L397–410 顺序默写）
+- [ ] 任务 3：L256–280 + 7 行默认行为表
+- [ ] 自测 5 问贴回来核对
+- [ ] AI 收尾：更新勾选 + 生成 `day03.md`（L282–348：`getSteeringMessages` / `getFollowUpMessages` / `toolExecution` / `beforeToolCall` / `afterToolCall`）

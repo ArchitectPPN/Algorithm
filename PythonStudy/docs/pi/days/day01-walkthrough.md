@@ -333,6 +333,76 @@ export interface PrepareNextTurnContext extends AgentTurnContext {}
 
 ---
 
+## 补充深读（2026-10-27）：L147–192 的四处易错点
+
+前面第 7–10 节把类型讲清了，但**语义**上有四处容易读偏。这四条只有读注释和实际调用点才看得出来。
+
+### 补充 1 · L149–158：`continue` 不是"多发一次"，是"保证至少一次"
+
+`FinishTurn` 的注释里这句最难读，但最要紧：
+
+> On a normal turn, `{ action: "continue" }` **ensures one next provider request**. Tool-result, steering, or follow-up scheduling **can satisfy that request and adds no extra request**; otherwise the loop continues once with the current context.
+
+拆开是两层：
+
+- 循环接下来**本来就要**再发一次请求（因为刚有工具结果要回给模型）
+- 这次请求**已经满足**了 `continue` 的要求 → **不会额外多跑一轮**
+
+所以 `continue` 的真实作用是**"不许在这里停下"**。当循环本来就想停（没有工具调用、没有 steering、没有 follow-up）时，`continue` 把它拽回来再跑一次。
+
+**PHP 对照**：像是 `do { } while ($hook->wantsMore())` 里的 `wantsMore()`——它不是"再加一轮"，而是"别退出"。
+
+### 补充 2 · L153：`error` / `aborted` 是硬出口，钩子管不了
+
+同一段注释最后一句：
+
+> Error and aborted responses remain **hard exits**.
+
+即使 `finishTurn` 返回 `{action:"continue"}`，模型报错或用户中止时循环照样结束。**安全阀优先于扩展点**——扩展点可以在正常路径上做任何决定，但不能覆盖"该停了"的判定。
+
+这条原则值得直接搬进你自己的框架：任何 `on_xxx` 钩子都不该有权在错误状态下阻止退出，否则调试时会遇到"明明报错了却还在跑"。
+
+### 补充 3 · L160–170：`AgentLoopTurnUpdate` 是"替换"，不是"合并"
+
+```ts
+/** Replacement runtime state used by the agent loop before starting another provider request. */
+```
+
+四个字段全可选，但**给了就是整个换掉**。不是往旧 context 里塞几条消息，而是用你返回的那个对象作为新的运行时状态。
+
+和 `afterToolCall` 注释里的 "No deep merge is performed"（L338）是同一取向：**要么别给，要么给全**。半合并在嵌套结构上会产生"我以为我改了、其实没改"的隐性 bug。
+
+**PHP 对照细节**：TS 的 `field?: T` 是"字段可不存在"，PHP 的 `?T $field = null` 是"存在但为 null"。**在"区分有没有给"这件事上 TS 更准**——`"model" in obj` 一句就能判断，PHP 要 `array_key_exists()` 和 `=== null` 分开写。
+
+### 补充 4 · ⚠️ `prepareRequest` vs `prepareNextTurn`：名字极像，三处全不同
+
+这对最容易混，混了就写错钩子。第 9、10 节分别讲了它们，但没并排比过：
+
+| | `prepareRequest`（L186） | `prepareNextTurn`（L278） |
+|---|---|---|
+| **时机** | **每次**请求前，**含第一次** | `turn_end` **之后**、且循环**将要继续**时 |
+| **作用域** | **本次及之后所有请求**（"this and later requests", L269） | **只影响下一轮**（"affect that turn", L275） |
+| **能否追加 messages** | ❌ 类型禁止（`Omit` 掉，因已追加完毕） | ✅ `messages[]`，它是唯一能在轮间插消息的钩子 |
+| **是否轮询队列** | 不轮询（L269 明说 *does not poll queues*） | 不轮询（steering/follow-up 由循环自己轮询） |
+
+一句话记：**`prepareRequest` 改的是常驻设置，`prepareNextTurn` 递的是下一轮的一次性补丁。**
+
+为什么必须两个：一个"改状态"，一个"递参数"。合成一个的话，你就得靠返回值去猜"这次改的模型是只影响这一轮，还是往后都算"——那是靠猜，不是靠类型表达。
+
+### 补充 5 · 一处风格不统一，别硬找解释
+
+返回值类型三处不一致：
+
+| 类型 | 允许 `void`？ | 允许 `undefined`？ |
+|---|---|---|
+| `FinishTurn` | ✅ | ✅（`Promise<AgentTurnDecision \| undefined>`） |
+| `PrepareRequest` | ✅ | ✅ |
+| `prepareNextTurn` | ❌ | ✅ |
+
+`void` 和 `undefined` 在"没意见"这个语义上重复了，`prepareNextTurn` 只留了一种写法。**同一代码库风格不完全统一是常态**——看到差异先想"是不是不同时间写的"，而不是硬找一个设计理由。
+
+---
+
 ## 全文串一遍：这 192 行在定义什么
 
 一句话：**agent loop 和外部世界之间的全部接缝**。
@@ -407,3 +477,5 @@ PHP 类比：批处理队列——**事务**全处理完才 commit（给模型�
 2. `beforeToolCall` 钩子想否决一次工具调用，返回什么？想连带让整批跑完就停，加什么字段？
 3. `AgentTurnDecision` 这种"二选一"建模，PHP 里你怎么写？TS 里为什么能一行？
 4. `PrepareRequest` 的返回类型为什么是 `Omit<AgentLoopTurnUpdate, "messages">` 而不是完整的 `AgentLoopTurnUpdate`？
+5. **`finishTurn` 返回 `{action:"continue"}` 时，会不会额外多发一次模型请求？**（2026-10-27 补充）
+6. **模型报错（`stopReason === "error"`）时，`finishTurn` 返回 `continue` 还有效吗？**（2026-10-27 补充）
