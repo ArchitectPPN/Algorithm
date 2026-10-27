@@ -8,28 +8,33 @@
 
 ## 任务 1：L147–192 收尾（25min）
 
-对照解读文档 [`day01-walkthrough.md`](day01-walkthrough.md) 第 8、9 节：
+📖 解读：[`day02-walkthrough.md`](day02-walkthrough.md) **第 11–16 节**（比 day01-walkthrough 第 8、9 节多了一节：`prepareRequest` vs `prepareNextTurn` 对照）
 
 | 行区间 | 类型 | 过关问题 |
 |--------|------|---------|
-| L147–158 | `AgentTurnDecision` / `FinishTurn` | `finishTurn` 返回 `{action: "end"}` 会怎样？返回 undefined 呢？ |
-| L160–170 | `AgentLoopTurnUpdate` | 这个 DTO 里哪四个字段可以改？ |
+| L147–158 | `AgentTurnDecision` / `FinishTurn` | `finishTurn` 返回 `{action: "end"}` 会怎样？返回 undefined 呢？**error/aborted 时钩子还管用吗？** |
+| L160–170 | `AgentLoopTurnUpdate` | 这个 DTO 里哪四个字段可以改？"Replacement" 意味着替换还是合并？ |
 | L179–189 | `AgentRequestUpdate` / `PrepareRequest` | **为什么返回类型是 `Omit<AgentLoopTurnUpdate, "messages">`？**（提示：L184 注释——pending messages 此时已追加） |
+| L191 + 对比 | `PrepareNextTurnContext` | `prepareRequest` 与 `prepareNextTurn` 差在哪三处？ |
 
 ## 任务 2：自测四问（15min）
 
 `day01-walkthrough.md` 文末 4 道自测，答案贴给 AI 核对——这是 Day 01 的正式验收。
 
-## 任务 3：L193–274 `AgentLoopConfig` 前半（45min）——全文件最密段的开始
+## 任务 3：L193–280 `AgentLoopConfig` 前半（45min）——全文件最密段的开始
 
-⚠️ 这段 AI 会先出解读文档 `day02-walkthrough.md`（PHP 对照，开工时生成），照旧左边源码右边解读。
+📖 **解读已就位**：[`day02-walkthrough.md`](day02-walkthrough.md)（第 17–25 节，含 L147–192 收尾的第 11–16 节）
 
 | 行区间 | 内容 | 过关问题 |
 |--------|------|---------|
-| L193–~230 | `AgentLoopConfig` 开头：`model` / `convertToLlm` / streamFn 装配 | `convertToLlm` 把什么转成什么？不给它时默认行为是什么？ |
-| ~230–274 | 回调群前半（`beforeToolCall` / `afterToolCall` / `finishTurn`…） | 每个回调一句话：什么时候被调、不给会怎样 |
+| L194 | `model` | 整个接口里只有两个必填字段，另一个是谁？ |
+| L196–222 | `convertToLlm` | **投影发生在哪一步？为什么不许抛异常？** |
+| L224–244 | `transformContext` | 为什么它是"可选但强制异步"？ |
+| L246–254 | `getApiKey` | 为什么每次请求都要重新取一遍，而不是启动时取一次？ |
+| L256–271 | `finishTurn` / `prepareRequest` | `continue` 是"多发一次"还是"保证至少一次"？ |
+| L273–280 | `prepareNextTurn` | 和 `prepareRequest` 差在哪三处？ |
 
-**读法**（清单建议）：这一段逐个回调问自己"**不给这个回调时，默认行为是什么**"——十回调的默认行为表就是 Day 02 的核心产出。
+**读法**（清单建议）：这一段逐个回调问自己"**不给这个回调时，默认行为是什么**"——十回调的默认行为表就是 Day 02 的核心产出。前半（7 项）已列在 walkthrough 第 25 节，今天先记住这 7 行，Day 03 补后半。
 
 ---
 
