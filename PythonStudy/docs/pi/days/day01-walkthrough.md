@@ -207,6 +207,78 @@ PHP 类比：中间件——路由管道里 middleware 对**单个请求**返回
 
 所以判据就是一句话：**这次调用的结果本身就是最终产物，模型再回一轮也产生不了新信息。**
 
+#### 四个例子走一遍：同一个字段，四种命运
+
+先破一个误解：terminate **不是工具的属性**，是**那一次调用结果对象上的字段**。同一个工具这次给 `true`、下次给 `false` 完全合法；它也完全不关心自己是批里的第几个。字段的生命周期只有五步：
+
+| 步骤 | 谁写/谁读 | 位置 |
+|---|---|---|
+| ① 模型吐 `tool_call` | — | — |
+| ② `beforeToolCall` 可写 | 钩子（**仅当同时 `block`**） | `agent-loop.ts:755-759` |
+| ③ `execute()` 返回结果对象 | **工具自己** | `types.ts:445` |
+| ④ `afterToolCall` 可覆盖 | 钩子（`??` 语义，可加可撤） | `agent-loop.ts:902` |
+| ⑤ 批末 `every()` 聚合 | 循环读标 | `agent-loop.ts:700-702` |
+
+②③④ 是"打标"，⑤ 是"读标"。⑤ 之后这个字段就作废了——**它不进消息、不进会话记录**（`README.md:509` 明确写 *runtime-only*，编译进 transcript 的 `toolResult` 是标准结果），所以事后回放历史查不到它。这也是它容易让人困惑的原因：**没有任何地方能"看见"它，只能从行为反推**。
+
+**例 1 · `read` 工具，不打** —— 用户看到的是"一句总结"
+
+```
+用户  看看 README 讲了什么
+模型  (tool_call: read {path:"README.md"})        ← 批里只有这一个调用
+read  execute → {content:"# Pi\n...", details:{}} ← 没有 terminate 字段
+批末  every([undefined]) → false
+循环  hasMoreToolCalls = true → 再发一次请求
+模型  "这个 README 讲的是…"                       ← 用户看到的正是这句
+```
+
+**例 2 · `structured_output`，打** —— 用户看到的是"数据"，且没有那句总结
+
+```
+调用方 给我这次评审的 JSON 结论（SDK/RPC 场景）
+模型   (tool_call: structured_output {headline, summary, actionItems})
+工具   execute → {content:..., details:{...}, terminate: true}
+批末   every([true]) → true
+循环   hasMoreToolCalls = false → 跳过回喂 → agent_end
+结果   调用方拿到 details；用户端没有任何"好的，以下是…"
+```
+
+两个例子的差别就一句话：**打不打 `true`，用户端看到的是"有没有那句总结"**。第 2 例里模型若要回一轮，只能把同一份 JSON 再念成散文——纯浪费，所以停。
+
+**例 3 · 守卫 `block + terminate`** —— 整个运行作废
+
+```
+项目 settings 禁用 bash，模型仍试了一次
+beforeToolCall → {block:true, reason:"bash is disabled", terminate:true}
+占位错误结果 result.terminate = true             ← L757-759
+批末 every([true]) → true → 本轮到此为止
+```
+
+注意这里的代价：模型**失去了解释的机会**。不加 terminate，它会说"这个项目禁用了命令执行，我改用 read 看看"——多数时候这才是你要的。所以这个写法只在"整个会话都该结束"时成立，不是"某个工具被拦"的默认反应。
+
+**例 4 · 同一个工具，这次 true、下次 false**
+
+```ts
+// 假设的 finish_task 工具：只有真干完了才允许停
+async execute(_id, _params) {
+	const remaining = countRemainingTasks();          // 6 → 0 取决于当次状态
+	return {
+		content: [{ type: "text", text: remaining === 0 ? "全部完成" : `还剩 ${remaining} 项` }],
+		details: {},
+		terminate: remaining === 0,                    // ← 逐次决定，不是声明一次
+	};
+}
+```
+
+这一例专治"字段什么时候打上"的困惑：**打标发生在 `execute()` 返回的那一刻，值由当时的业务状态决定**，不是写在工具定义里的静态配置。
+
+**为什么实践中"打 true"几乎总等于"批里只有一个调用"**：全员同意制下，多调用批要同时满足几乎不可能。Pi 的解法是用**提示词**约束模型单独调用它——`structured-output.ts` 里那条 `promptGuidelines` 就是干这个的：
+
+> "Use structured_output as your final action… After calling structured_output, do not emit another assistant response in the same turn."
+
+所以真正落地一个终止型工具，是"**工具返回 `true` + 提示词要求它单独调用**"两件事配套，缺一半就会退化成"偶尔生效"。
+
+
 | 该打 `true` | 为什么 | Pi 的实例 |
 |---|---|---|
 | 结果即交付物（结构化数据、最终答案对象） | 模型回一轮只能把同样的内容复述成散文，纯浪费 | `structured-output.ts`：`execute()` 返回 `terminate: true` |
