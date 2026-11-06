@@ -489,6 +489,31 @@ export type FinishTurn = (
 
 **`signal?: AbortSignal`**（第二个参数）：取消令牌——用户按了 Ctrl+C 或点了停止按钮，运行时会把这个 signal 置为 aborted，钩子内部可以检查 `signal.aborted` 提前收工。PHP 没有这个原生概念（最长见识的一段：TS 的异步生态里"可取消"是一等公民，每个长操作都带）。
 
+### 🔍 补充深读 1 · `continue` 不是"多发一次"，是"保证至少一次"
+
+`FinishTurn` 的注释里这句最难读，但最要紧：
+
+> On a normal turn, `{ action: "continue" }` **ensures one next provider request**. Tool-result, steering, or follow-up scheduling **can satisfy that request and adds no extra request**; otherwise the loop continues once with the current context.
+
+拆开是两层：
+
+- 循环接下来**本来就要**再发一次请求（因为刚有工具结果要回给模型）
+- 这次请求**已经满足**了 `continue` 的要求 → **不会额外多跑一轮**
+
+所以 `continue` 的真实作用是**"不许在这里停下"**。当循环本来就想停（没有工具调用、没有 steering、没有 follow-up）时，`continue` 把它拽回来再跑一次。
+
+**PHP 对照**：像是 `do { } while ($hook->wantsMore())` 里的 `wantsMore()`——它不是"再加一轮"，而是"别退出"。
+
+### 🔍 补充深读 2 · `error` / `aborted` 是硬出口，钩子管不了
+
+同一段注释最后一句：
+
+> Error and aborted responses remain **hard exits**.
+
+即使 `finishTurn` 返回 `{action:"continue"}`，模型报错或用户中止时循环照样结束。**安全阀优先于扩展点**——扩展点可以在正常路径上做任何决定，但不能覆盖"该停了"的判定。
+
+这条原则值得直接搬进你自己的框架：任何 `on_xxx` 钩子都不该有权在错误状态下阻止退出，否则调试时会遇到"明明报错了却还在跑"。
+
 ---
 
 ## 9. L161–189：`AgentLoopTurnUpdate` / `PrepareRequest`——"下一轮之前，你还能改牌"
@@ -517,6 +542,18 @@ export type AgentRequestUpdate = Omit<AgentLoopTurnUpdate, "messages">;
 
 **业务含义**：`PrepareRequest` 是每次调 LLM **前**的最后修改窗口——可以换模型（下一轮降级到便宜模型）、改上下文、调思考档位。你 Day 44 的三方案对照里"固定管道 B 的检索词写死"，如果用 Pi 的钩子体系，"按代码内容动态选检索词"就可以是 `PrepareRequest` 钩子里干的事。
 
+### 🔍 补充深读 3 · `AgentLoopTurnUpdate` 是"替换"，不是"合并"
+
+```ts
+/** Replacement runtime state used by the agent loop before starting another provider request. */
+```
+
+四个字段全可选，但**给了就是整个换掉**。不是往旧 context 里塞几条消息，而是用你返回的那个对象作为新的运行时状态。
+
+和 `afterToolCall` 注释里的 "No deep merge is performed"（L338）是同一取向：**要么别给，要么给全**。半合并在嵌套结构上会产生"我以为我改了、其实没改"的隐性 bug。
+
+**PHP 对照细节**：TS 的 `field?: T` 是"字段可不存在"，PHP 的 `?T $field = null` 是"存在但为 null"。**在"区分有没有给"这件事上 TS 更准**——`"model" in obj` 一句就能判断，PHP 要 `array_key_exists()` 和 `=== null` 分开写。
+
 ---
 
 ## 10. L191：`PrepareNextTurnContext`——空继承
@@ -529,52 +566,9 @@ export interface PrepareNextTurnContext extends AgentTurnContext {}
 
 它现在的意义是"**目前和 AgentTurnContext 完全相同，但给它留了独立演化的名字**"——以后要给它加字段，只动这一行，所有用它的地方不用改。你裸写代码时常常直接复用同一个类，类型名即文档：**"turn 结束的上下文"和"准备下一轮的上下文"今天是同一个东西，明天可能不是。**
 
----
+### 🔍 补充深读 4 · `prepareRequest` vs `prepareNextTurn`：名字极像，三处全不同
 
-## 补充深读（2026-10-27）：L147–192 的四处易错点
-
-前面第 7–10 节把类型讲清了，但**语义**上有四处容易读偏。这四条只有读注释和实际调用点才看得出来。
-
-### 补充 1 · L149–158：`continue` 不是"多发一次"，是"保证至少一次"
-
-`FinishTurn` 的注释里这句最难读，但最要紧：
-
-> On a normal turn, `{ action: "continue" }` **ensures one next provider request**. Tool-result, steering, or follow-up scheduling **can satisfy that request and adds no extra request**; otherwise the loop continues once with the current context.
-
-拆开是两层：
-
-- 循环接下来**本来就要**再发一次请求（因为刚有工具结果要回给模型）
-- 这次请求**已经满足**了 `continue` 的要求 → **不会额外多跑一轮**
-
-所以 `continue` 的真实作用是**"不许在这里停下"**。当循环本来就想停（没有工具调用、没有 steering、没有 follow-up）时，`continue` 把它拽回来再跑一次。
-
-**PHP 对照**：像是 `do { } while ($hook->wantsMore())` 里的 `wantsMore()`——它不是"再加一轮"，而是"别退出"。
-
-### 补充 2 · L153：`error` / `aborted` 是硬出口，钩子管不了
-
-同一段注释最后一句：
-
-> Error and aborted responses remain **hard exits**.
-
-即使 `finishTurn` 返回 `{action:"continue"}`，模型报错或用户中止时循环照样结束。**安全阀优先于扩展点**——扩展点可以在正常路径上做任何决定，但不能覆盖"该停了"的判定。
-
-这条原则值得直接搬进你自己的框架：任何 `on_xxx` 钩子都不该有权在错误状态下阻止退出，否则调试时会遇到"明明报错了却还在跑"。
-
-### 补充 3 · L160–170：`AgentLoopTurnUpdate` 是"替换"，不是"合并"
-
-```ts
-/** Replacement runtime state used by the agent loop before starting another provider request. */
-```
-
-四个字段全可选，但**给了就是整个换掉**。不是往旧 context 里塞几条消息，而是用你返回的那个对象作为新的运行时状态。
-
-和 `afterToolCall` 注释里的 "No deep merge is performed"（L338）是同一取向：**要么别给，要么给全**。半合并在嵌套结构上会产生"我以为我改了、其实没改"的隐性 bug。
-
-**PHP 对照细节**：TS 的 `field?: T` 是"字段可不存在"，PHP 的 `?T $field = null` 是"存在但为 null"。**在"区分有没有给"这件事上 TS 更准**——`"model" in obj` 一句就能判断，PHP 要 `array_key_exists()` 和 `=== null` 分开写。
-
-### 补充 4 · ⚠️ `prepareRequest` vs `prepareNextTurn`：名字极像，三处全不同
-
-这对最容易混，混了就写错钩子。第 9、10 节分别讲了它们，但没并排比过：
+这对最容易混，混了就写错钩子：
 
 | | `prepareRequest`（L186） | `prepareNextTurn`（L278） |
 |---|---|---|
@@ -587,7 +581,7 @@ export interface PrepareNextTurnContext extends AgentTurnContext {}
 
 为什么必须两个：一个"改状态"，一个"递参数"。合成一个的话，你就得靠返回值去猜"这次改的模型是只影响这一轮，还是往后都算"——那是靠猜，不是靠类型表达。
 
-### 补充 5 · 一处风格不统一，别硬找解释
+### 🔍 补充深读 5 · 一处风格不统一，别硬找解释
 
 返回值类型三处不一致：
 
@@ -598,6 +592,30 @@ export interface PrepareNextTurnContext extends AgentTurnContext {}
 | `prepareNextTurn` | ❌ | ✅ |
 
 `void` 和 `undefined` 在"没意见"这个语义上重复了，`prepareNextTurn` 只留了一种写法。**同一代码库风格不完全统一是常态**——看到差异先想"是不是不同时间写的"，而不是硬找一个设计理由。
+
+---
+
+### 💬 续日讨论沉淀（2026-10-30）
+
+这组讨论把 `ToolResult.terminate` 和 `structured_output` 的关系串起来了：
+
+1. **`execute()` 的粒度是一次工具调用，不是一批**
+   - 模型返回 3 个 tool call（read / grep / touch），就是 3 次 `execute()`，一一对应
+   - `sequential` 下有明确先后；`parallel` 下发起序固定，**完成序由耗时决定**
+   - 因此"第一次/第二次/第三次"只对发起序成立；`terminate` 的批末 `every()` 聚合不依赖完成序
+
+2. **`terminate` 是 `execute()` 返回那一刻由业务状态决定的**
+   - 不是工具定义里的静态开关，而是本次执行结束时现场计算
+   - 例：`terminate: remaining === 0`——这次剩 6 返回 false，下次剩 0 返回 true
+   - 所以 Pi 框架从不计算这个值，作者必须在工具实现或钩子里写
+
+3. **`structured_output` 是具体工具，不是"一批工具结果的汇总"**
+   - 它的用途是模型向调用方提交最终结构化结果（SDK/RPC 场景）
+   - 模型调用它后，调用方读 `details`；不应再让模型把同一份 JSON 复述成散文
+   - `terminate: true` 负责框架侧停止；提示词负责模型侧不再输出总结，二者配套
+   - 终端用户是否看到该结果取决于宿主应用；更准确说它是"交给调用方"，不一定等于"给终端用户"
+
+一句话：**批里每个工具各算各的 terminate；批末全员 true 才停。`structured_output` 是特例：单独调用 + 自己返回 true，专用于提交最终结构化结果。**
 
 ---
 
