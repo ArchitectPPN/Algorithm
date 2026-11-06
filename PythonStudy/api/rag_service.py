@@ -27,6 +27,7 @@ Day40：知识库检索服务（FastAPI + RAG）
 from __future__ import annotations
 
 import os
+import re
 import sys
 import time
 from contextlib import asynccontextmanager
@@ -44,6 +45,8 @@ if hasattr(sys.stdout, "reconfigure"):
 # 添加父目录到路径，方便导入 rag 包（api/ 的父目录 = PythonStudy/）
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from rag.embedding_compare import get_embedding_bge, CHROMA_PATH
+from rag.citation_check import verify_citations, verdict
+from rag.review_prompts import build_review_prompt, build_review_prompt_bare
 
 
 # ══════════════════════════════════════════════════════════
@@ -159,6 +162,34 @@ class AskResponse(BaseModel):
     elapsed_ms: float
 
 
+class CodeReviewRequest(BaseModel):
+    """Day46：代码审查请求，use_rag=false 作为无 RAG 对照组"""
+
+    code: str = Field(..., min_length=1, max_length=10000, description="待审查代码")
+    use_rag: bool = Field(True, description="是否启用 RAG 检索规范")
+    model: str = Field(LLM_MODEL, description="生成模型（ollama 本地模型名）")
+    top_k: int = Field(DEFAULT_TOP_K, ge=1, le=10, description="检索片段数")
+
+
+class CodeReviewSource(BaseModel):
+    """审查引用的知识库片段"""
+
+    file: str
+    chunk_index: int
+    distance: float
+
+
+class CodeReviewResponse(BaseModel):
+    """Day46：审查接口响应，review 保持原始文本便于排查模型输出"""
+
+    review: str
+    use_rag: bool
+    sources: list[CodeReviewSource]
+    citation_issues: list[dict]
+    citation_verdict: str
+    elapsed_ms: float
+
+
 # ══════════════════════════════════════════════════════════
 # FastAPI 应用
 # ══════════════════════════════════════════════════════════
@@ -233,6 +264,43 @@ def _call_llm(prompt: str, model: str = LLM_MODEL, max_tokens: int = LLM_MAX_TOK
     )
     resp.raise_for_status()
     return resp.json()["response"]
+
+
+def _call_chat_llm(messages: list[dict], model: str, max_tokens: int = 1200) -> str:
+    """调用 ollama /api/chat，审查模板需要 system + user 两条 messages"""
+    resp = requests.post(
+        "http://localhost:11434/api/chat",
+        json={
+            "model": model,
+            "messages": messages,
+            "stream": False,
+            "think": False,
+            "options": {"temperature": 0, "num_predict": max_tokens},
+        },
+        timeout=180,
+    )
+    resp.raise_for_status()
+    return resp.json()["message"]["content"]
+
+
+def _infer_review_query(code: str) -> str:
+    """从代码关键词推断检索主题（Day46 简单版，Day47 根据实验补映射）"""
+    keyword_map = {
+        "SQL 注入 参数化查询": ("execute", "select", "insert", "update", "delete"),
+        "日志脱敏 敏感信息 禁止记录密码": ("password", "secret", "logger", "logging"),
+        "API 认证 鉴权 token 校验 越权": ("token", "auth", "permission", "user_id"),
+        "异常处理 error handling 捕获异常": ("except", "raise", "exception"),
+        "接口设计 分页 API 返回": ("list", "page", "limit", "offset", "response"),
+        "缓存设计 查询结果 缓存": ("cache", "redis", "query", "database"),
+    }
+    lowered = code.lower()
+    def _hit(word: str) -> bool:
+        # 子串边界：前后不能紧邻字母或数字（blacklist/apache/author/playlist 不命中）
+        # _ 不算边界外，标识符子串 check_auth / user_auth_token / update_at 命中
+        return re.search(rf"(?<![a-z0-9]){re.escape(word)}(?![a-z0-9])", lowered) is not None
+
+    topics = [topic for topic, words in keyword_map.items() if any(_hit(w) for w in words)]
+    return "；".join(topics) if topics else "Python 代码审查 安全 质量规范"
 
 
 def mmr_select(query_vec: list[float], candidate_vecs: list[list[float]],
@@ -442,8 +510,64 @@ def ask(req: AskRequest) -> AskResponse:
         query=req.query,
         answer=answer,
         sources=[{"file": r["file"], "chunk_index": r["chunk_index"], "distance": r["distance"]}
-                 for r in results],
+                for r in results],
         empty=False,
+        elapsed_ms=(time.perf_counter() - start) * 1000,
+    )
+
+
+@app.post("/review", response_model=CodeReviewResponse, tags=["审查"])
+def review_code(req: CodeReviewRequest) -> CodeReviewResponse:
+    """RAG 增强代码审查：检索规范 → 审查 → 引用校验"""
+    _ensure_ready()
+    if req.model not in ALLOWED_LLM_MODELS:
+        raise HTTPException(
+            status_code=422,
+            detail=f"model 不在白名单内，可用: {sorted(ALLOWED_LLM_MODELS)}",
+        )
+
+    start = time.perf_counter()
+    chunks = []
+    if req.use_rag:
+        results = _query_collection(_embed_query(_infer_review_query(req.code)), req.top_k)
+        chunks = _filter_by_distance(results, DEFAULT_MAX_DISTANCE)
+        if not chunks:  # 审查没法引用任何规范 → 跳过 LLM，避免白等 180s 后被 R1 拒绝
+            return CodeReviewResponse(
+                review="知识库中没有相关规范，已跳过审查。",
+                use_rag=True,
+                sources=[],
+                citation_issues=[],
+                citation_verdict='NO_CONTEXT',
+                elapsed_ms=(time.perf_counter() - start) * 1000,
+            )
+
+    messages = (
+        build_review_prompt(req.code, chunks)
+        if req.use_rag
+        else build_review_prompt_bare(req.code)
+    )
+    try:
+        answer = _call_chat_llm(messages, req.model)
+    except Exception as e:
+        raise HTTPException(
+            status_code=503,
+            detail=f"生成模型调用失败（model={req.model}），请确认 ollama 已启动且模型已安装: {e}",
+        )
+
+    citation_issues = verify_citations(answer, chunks) if req.use_rag else []
+    return CodeReviewResponse(
+        review=answer,
+        use_rag=req.use_rag,
+        sources=[
+            {
+                "file": item["file"],
+                "chunk_index": item["chunk_index"],
+                "distance": item["distance"],
+            }
+            for item in chunks
+        ],
+        citation_issues=[issue.__dict__ for issue in citation_issues],
+        citation_verdict=verdict(citation_issues),
         elapsed_ms=(time.perf_counter() - start) * 1000,
     )
 
